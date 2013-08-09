@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact name="deploy">
+    <output-path>C:/ProgramData/JetBrains/TeamCity/plugins</output-path>
+    <root id="root">
+      <element id="artifact" artifact-name="jmeter-plugin" />
+    </root>
+  </artifact>
+</component>

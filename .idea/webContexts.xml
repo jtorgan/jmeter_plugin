@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebContextManager">
+    <option name="state">
+      <map>
+        <entry key="file://$TeamCityDistribution$/webapps/ROOT/plugins/jmeter/jmeterStatisticGraphs.jsp" value="file://$TeamCityDistribution$/webapps/ROOT/plugins/jmeter" />
+      </map>
+    </option>
+  </component>
+</project>
+

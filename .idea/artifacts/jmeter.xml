@@ -1,0 +1,32 @@
+<component name="ArtifactManager">
+  <artifact name="jmeter">
+    <output-path>$PROJECT_DIR$/out/artifacts/jmeter</output-path>
+    <root id="root">
+      <element id="directory" name="agent">
+        <element id="archive" name="jmeter_agent.zip">
+          <element id="directory" name="lib">
+            <element id="artifact" artifact-name="common-jar" />
+            <element id="archive" name="jmeter-agent.jar">
+              <element id="module-output" name="agent" />
+            </element>
+          </element>
+          <element id="file-copy" path="$PROJECT_DIR$/agent/teamcity-plugin.xml" />
+        </element>
+      </element>
+      <element id="directory" name="server">
+        <element id="archive" name="jmeter-server.jar">
+          <element id="module-output" name="server" />
+        </element>
+        <element id="archive" name="jmeter-resources.jar">
+          <element id="directory" name="buildServerResources">
+            <element id="dir-copy" path="$PROJECT_DIR$/server/resources" />
+          </element>
+        </element>
+        <element id="archive" name="common-jar.jar">
+          <element id="module-output" name="common" />
+        </element>
+      </element>
+      <element id="file-copy" path="$PROJECT_DIR$/server/teamcity-server-plugin.xml" output-file-name="teamcity-plugin.xml" />
+    </root>
+  </artifact>
+</component>

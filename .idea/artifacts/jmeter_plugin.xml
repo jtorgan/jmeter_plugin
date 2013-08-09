@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact name="jmeter-plugin">
+    <output-path>$PROJECT_DIR$/out/artifacts/jmeter_plugin</output-path>
+    <root id="root">
+      <element id="archive" name="jmeter.zip">
+        <element id="artifact" artifact-name="jmeter" />
+      </element>
+    </root>
+  </artifact>
+</component>
