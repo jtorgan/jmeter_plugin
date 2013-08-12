@@ -4,11 +4,12 @@
     <info>
         <name>jmeter</name>
         <display-name>JMeter</display-name>
-        <version>0.1</version>
-        <vendor>
-            <name>@Plugin_Vendor@</name>
-            <url>@Plugin_Vendor_Url@</url>
-        </vendor>
+        <version>@version@</version>
+        <description>Build Runner for JMeter tests</description>
+        <!--<vendor>-->
+            <!--<name>@Plugin_Vendor@</name>-->
+            <!--<url>@Plugin_Vendor_Url@</url>-->
+        <!--</vendor>-->
     </info>
-    <deployment use-separate-classloader="true"/>
+    <deployment use-separate-classloader="false"/>
 </teamcity-plugin>

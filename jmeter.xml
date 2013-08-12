@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="jmeter-plugin" default="all">
+
+
+    <property file="build.properties"/>
+    <!-- Uncomment the following property if no tests compilation is needed -->
+    <!--
+    <property name="skip.tests" value="true"/>
+     -->
+
+    <!-- Compiler options -->
+
+    <property name="compiler.debug" value="on"/>
+    <property name="compiler.generate.no.warnings" value="off"/>
+    <property name="compiler.args" value=""/>
+    <property name="compiler.max.memory" value="128m"/>
+    <patternset id="ignored.files">
+        <exclude name="**/CVS/**"/>
+        <exclude name="**/SCCS/**"/>
+        <exclude name="**/RCS/**"/>
+        <exclude name="**/.DS_Store/**"/>
+        <exclude name="**/.svn/**"/>
+        <exclude name="**/.sbas/**"/>
+        <exclude name="**/.IJI.*/**"/>
+        <exclude name="**/vssver.scc/**"/>
+        <exclude name="**/vssver2.scc/**"/>
+        <exclude name="**/.pyc/**"/>
+        <exclude name="**/.pyo/**"/>
+        <exclude name="**/*.pyc/**"/>
+        <exclude name="**/*.pyo/**"/>
+        <exclude name="**/.git/**"/>
+        <exclude name="**/*.hprof/**"/>
+        <exclude name="**/_svn/**"/>
+        <exclude name="**/.hg/**"/>
+        <!--<exclude name="**/*.lib/**"/>-->
+        <!--<exclude name="**/*~/**"/>-->
+        <!--<exclude name="**/__pycache__/**"/>-->
+        <!--<exclude name="**/.bundle/**"/>-->
+        <!--<exclude name="**/*.orig/**"/>-->
+        <!--<exclude name="**/*.rbc/**"/>-->
+    </patternset>
+    <patternset id="library.patterns">
+        <include name="*.war"/>
+        <include name="*.ear"/>
+        <!--<include name="*.apk"/>-->
+        <include name="*.zip"/>
+        <include name="*.swc"/>
+        <include name="*.egg"/>
+        <include name="*.jar"/>
+    </patternset>
+    <patternset id="compiler.resources">
+        <include name="**/?*.properties"/>
+        <include name="**/?*.xml"/>
+        <include name="**/?*.gif"/>
+        <include name="**/?*.png"/>
+        <include name="**/?*.jpeg"/>
+        <include name="**/?*.jpg"/>
+        <include name="**/?*.html"/>
+        <include name="**/?*.dtd"/>
+        <include name="**/?*.tld"/>
+        <include name="**/?*.jsp"/>
+        <include name="**/?*.js"/>
+        <include name="**/?*.css"/>
+        <include name="**/?*.htm"/>
+        <include name="**/?*.ftl"/>
+        <include name="**/?*.config"/>
+    </patternset>
+
+
+    <!-- Project Libraries -->
+
+    <path id="library.teamcity_open_api_agent.classpath">
+        <pathelement location="${path.variable.teamcitydistribution}/devPackage/agent-api.jar"/>
+    </path>
+
+    <path id="library.teamcity_open_api_common.classpath">
+        <pathelement location="${path.variable.teamcitydistribution}/devPackage/common-api.jar"/>
+        <pathelement location="${path.variable.teamcitydistribution}/devPackage/runtime/runtime-util.jar"/>
+    </path>
+
+    <path id="library.teamcity_open_api_server.classpath">
+        <pathelement location="${path.variable.teamcitydistribution}/devPackage/server-api.jar"/>
+    </path>
+
+    <path id="library.teamcity_third-party_common.classpath">
+        <pathelement location="${path.variable.teamcitydistribution}/webapps/ROOT/WEB-INF/lib/annotations.jar"/>
+
+        <pathelement location="${path.variable.teamcitydistribution}/webapps/ROOT/WEB-INF/lib/openapi.jar"/>
+
+        <pathelement location="${path.variable.teamcitydistribution}/webapps/ROOT/WEB-INF/lib/spring.jar"/>
+        <pathelement location="${path.variable.teamcitydistribution}/webapps/ROOT/WEB-INF/lib/util.jar"/>
+    </path>
+
+    <path id="library.teamcity_third-party_server.classpath">
+        <pathelement location="${path.variable.teamcitydistribution}/webapps/ROOT/WEB-INF/lib/spring-webmvc.jar"/>
+    </path>
+
+    <path id="library.tomcat.classpath">
+        <pathelement location="${path.variable.teamcitydistribution}/lib/servlet-api.jar"/>
+    </path>
+
+
+
+
+
+    <!-- Modules -->
+
+    <!-- Module JMeter-common -->
+    <dirname property="module.jmeter_common.basedir" file="${ant.file}"/>
+
+    <property name="compiler.args.jmeter_common" value="${compiler.args}"/>
+
+    <property name="jmeter_common.output.dir" value="${module.jmeter_common.basedir}/out/production/jmeter_common"/>
+    <property name="jmeter_common.testoutput.dir" value="${module.jmeter_common.basedir}/out/test/jmeter_common"/>
+
+    <path id="jmeter_common.module.bootclasspath">
+        <!-- Paths to be included in compilation bootclasspath -->
+    </path>
+
+    <path id="jmeter_common.module.production.classpath">
+        <pathelement location="${jmeter_common.output.dir}"/>
+        <path refid="library.teamcity_open_api_common.classpath"/>
+        <path refid="library.teamcity_third-party_common.classpath"/>
+        <!--<path refid="lib.classpath"/>-->
+    </path>
+
+    <path id="jmeter_common.runtime.module.classpath">
+        <pathelement location="${jmeter_common.output.dir}"/>
+        <pathelement location="${jmeter_common.testoutput.dir}"/>
+        <path refid="library.teamcity_open_api_common.classpath"/>
+        <path refid="library.teamcity_third-party_common.classpath"/>
+    </path>
+
+
+    <patternset id="excluded.from.module.jmeter_common">
+        <patternset refid="ignored.files"/>
+    </patternset>
+
+    <patternset id="excluded.from.compilation.jmeter_common">
+        <patternset refid="excluded.from.module.jmeter_common"/>
+    </patternset>
+
+    <path id="jmeter_common.module.sourcepath">
+        <dirset dir="${module.jmeter_common.basedir}/common">
+            <include name="src"/>
+        </dirset>
+    </path>
+
+
+    <target name="compile.module.jmeter_common"
+            depends="compile.module.jmeter_common.production,compile.module.jmeter_common.tests"
+            description="Compile module jmeter_common"/>
+
+    <target name="compile.module.jmeter_common.production"
+            description="Compile module jmeter_common; production classes">
+        <mkdir dir="${jmeter_common.output.dir}"/>
+        <javac destdir="${jmeter_common.output.dir}" debug="${compiler.debug}"
+                nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true">
+            <compilerarg line="${compiler.args.jmeter_common}"/>
+            <bootclasspath refid="jmeter_common.module.bootclasspath"/>
+            <classpath refid="jmeter_common.module.production.classpath"/>
+            <src refid="jmeter_common.module.sourcepath"/>
+            <patternset refid="excluded.from.compilation.jmeter_common"/>
+        </javac>
+
+        <copy todir="${jmeter_common.output.dir}">
+            <fileset dir="${module.jmeter_common.basedir}/common/src">
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="compile.module.jmeter_common.tests" depends="compile.module.jmeter_common.production"
+            description="compile module jmeter_common; test classes" unless="skip.tests"/>
+
+    <target name="clean.module.jmeter_common" description="cleanup module">
+        <delete dir="${jmeter_common.output.dir}"/>
+        <delete dir="${jmeter_common.testoutput.dir}"/>
+        <delete dir="${module.jmeter_common.basedir}/out/"/>
+    </target>
+
+
+    <!-- Module JMeter-agent -->
+    <dirname property="module.jmeter_agent.basedir" file="${ant.file}"/>
+
+    <property name="compiler.args.jmeter_agent" value="${compiler.args}"/>
+
+    <property name="jmeter_agent.output.dir" value="${module.jmeter_agent.basedir}/out/production/jmeter_agent"/>
+    <property name="jmeter_agent.testoutput.dir" value="${module.jmeter_agent.basedir}/out/test/jmeter_agent"/>
+
+    <path id="jmeter_agent.module.bootclasspath">
+        <!-- Paths to be included in compilation bootclasspath -->
+    </path>
+
+    <path id="jmeter_agent.module.production.classpath">
+        <path refid="library.teamcity_open_api_agent.classpath"/>
+        <path refid="library.teamcity_open_api_common.classpath"/>
+        <path refid="library.teamcity_third-party_common.classpath"/>
+        <!--<path refid="library.classpath"/>-->
+
+        <pathelement location="${jmeter_common.output.dir}"/>
+        <pathelement location="${jmeter_common.testoutput.dir}"/>
+    </path>
+
+    <path id="jmeter_agent.runtime.module.classpath">
+        <pathelement location="${jmeter_agent.output.dir}"/>
+        <pathelement location="${jmeter_agent.testoutput.dir}"/>
+        <path refid="library.teamcity_open_api_agent.classpath"/>
+        <path refid="library.teamcity_open_api_common.classpath"/>
+        <path refid="library.teamcity_third-party_common.classpath"/>
+        <path refid="jmeter_common.runtime.module.classpath"/>
+    </path>
+
+
+    <patternset id="excluded.from.module.jmeter_agent">
+        <patternset refid="ignored.files"/>
+    </patternset>
+
+    <patternset id="excluded.from.compilation.jmeter_agent">
+        <patternset refid="excluded.from.module.jmeter_agent"/>
+    </patternset>
+
+    <path id="jmeter_agent.module.sourcepath">
+        <dirset dir="${module.jmeter_agent.basedir}/agent">
+            <include name="src"/>
+        </dirset>
+    </path>
+
+
+    <target name="compile.module.jmeter_agent"
+            depends="compile.module.jmeter_agent.production,compile.module.jmeter_agent.tests"
+            description="Compile module jmeter_agent"/>
+
+    <target name="compile.module.jmeter_agent.production" depends="compile.module.jmeter_common"
+            description="Compile module jmeter_agent; production classes">
+        <mkdir dir="${jmeter_agent.output.dir}"/>
+        <javac destdir="${jmeter_agent.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}"
+                memorymaximumsize="${compiler.max.memory}" fork="true">
+            <compilerarg line="${compiler.args.jmeter_agent}"/>
+            <bootclasspath refid="jmeter_agent.module.bootclasspath"/>
+            <classpath refid="jmeter_agent.module.production.classpath"/>
+            <src refid="jmeter_agent.module.sourcepath"/>
+            <patternset refid="excluded.from.compilation.jmeter_agent"/>
+        </javac>
+
+        <copy todir="${jmeter_agent.output.dir}">
+            <fileset dir="${module.jmeter_agent.basedir}/agent/src">
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="compile.module.jmeter_agent.tests" depends="compile.module.jmeter_agent.production"
+            description="compile module jmeter_agent; test classes" unless="skip.tests"/>
+
+    <target name="clean.module.jmeter_agent" description="cleanup module">
+        <delete dir="${jmeter_agent.output.dir}"/>
+        <delete dir="${jmeter_agent.testoutput.dir}"/>
+    </target>
+
+
+    <!-- Module JMeter-server -->
+    <dirname property="module.jmeter_server.basedir" file="${ant.file}"/>
+
+    <property name="compiler.args.jmeter_server" value="${compiler.args}"/>
+    <property name="jmeter_server.output.dir" value="${module.jmeter_common.basedir}/out/production/jmeter_server"/>
+    <property name="jmeter_server.testoutput.dir" value="${module.jmeter_common.basedir}/out/test/jmeter_server"/>
+
+    <path id="jmeter_server.module.bootclasspath">
+        <!-- Paths to be included in compilation bootclasspath -->
+    </path>
+
+    <path id="jmeter_server.module.classpath">
+        <path refid="library.tomcat.classpath"/>
+        <path refid="library.teamcity_open_api_server.classpath"/>
+        <path refid="library.teamcity_open_api_common.classpath"/>
+        <path refid="library.teamcity_third-party_common.classpath"/>
+        <path refid="library.teamcity_third-party_server.classpath"/>
+        <pathelement location="${jmeter_common.output.dir}"/>
+        <pathelement location="${jmeter_common.testoutput.dir}"/>
+    </path>
+
+    <path id="jmeter_server.runtime.module.classpath">
+        <pathelement location="${jmeter_server.output.dir}"/>
+        <pathelement location="${jmeter_server.testoutput.dir}"/>
+        <path refid="library.tomcat.classpath"/>
+        <path refid="library.teamcity_open_api_server.classpath"/>
+        <path refid="library.teamcity_open_api_common.classpath"/>
+        <path refid="library.teamcity_third-party_common.classpath"/>
+        <path refid="library.teamcity_third-party_server.classpath"/>
+        <path refid="jmeter_common.runtime.module.classpath"/>
+    </path>
+
+
+    <patternset id="excluded.from.module.jmeter_server">
+        <patternset refid="ignored.files"/>
+    </patternset>
+
+    <patternset id="excluded.from.compilation.jmeter_server">
+        <patternset refid="excluded.from.module.jmeter_server"/>
+    </patternset>
+
+    <path id="jmeter_server.module.sourcepath">
+        <dirset dir="${module.jmeter_server.basedir}/server">
+            <include name="resources"/>
+            <include name="src"/>
+        </dirset>
+    </path>
+
+
+    <target name="compile.module.jmeter_server"
+            depends="compile.module.jmeter_server.production,compile.module.jmeter_server.tests"
+            description="Compile module jmeter_server"/>
+
+    <target name="compile.module.jmeter_server.production" depends="compile.module.jmeter_common"
+            description="Compile module jmeter_server; production classes">
+        <mkdir dir="${jmeter_server.output.dir}"/>
+        <javac destdir="${jmeter_server.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}"
+               memorymaximumsize="${compiler.max.memory}" fork="true">
+            <compilerarg line="${compiler.args.jmeter_server}"/>
+            <bootclasspath refid="jmeter_server.module.bootclasspath"/>
+            <classpath refid="jmeter_server.module.classpath"/>
+            <src refid="jmeter_server.module.sourcepath"/>
+            <patternset refid="excluded.from.compilation.jmeter_server"/>
+        </javac>
+
+        <copy todir="${jmeter_server.output.dir}">
+            <fileset dir="${module.jmeter_server.basedir}/server/resources">
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+            <fileset dir="${module.jmeter_server.basedir}/server/src">
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="compile.module.jmeter_server.tests" depends="compile.module.jmeter_server.production"
+            description="compile module jmeter_server; test classes" unless="skip.tests"/>
+
+    <target name="clean.module.jmeter_server" description="cleanup module">
+        <delete dir="${jmeter_server.output.dir}"/>
+        <delete dir="${jmeter_server.testoutput.dir}"/>
+    </target>
+
+
+    <target name="init" description="Build initialization">
+        <!-- Perform any build initialization in this target -->
+    </target>
+
+    <target name="clean"
+            depends="compile.module.jmeter_common, compile.module.jmeter_agent, compile.module.jmeter_server"
+            description="cleanup all"/>
+
+    <target name="build.modules"
+            depends="init, clean, compile.module.jmeter_common, compile.module.jmeter_agent, compile.module.jmeter_server"
+            description="build all modules"/>
+
+    <target name="all" depends="build.modules" description="build all"/>
+</project>

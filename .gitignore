@@ -1,3 +1,20 @@
 .idea/workspace.xml
 out
 tests
+
+# Compiled source #
+###################
+*.class
+
+# Packages #
+*.zip
+
+# Logs and databases #
+*.log
+
+# Directories #
+bin/
+dist/
+temp/
+.classpath
+.project

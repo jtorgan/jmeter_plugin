@@ -1,29 +1,41 @@
-<project name="build hooks" default="replace-tokens-in-teamcity-plugin-xml" basedir=".">
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="jmeter-plugin"  default="dist" basedir=".">
 
+    <property file="../build.properties"/>
+    <property name="plugin.name" value="jmeter-plugin"/>
+    <property name="javac2.home" value="${basedir}/lib-compile"/>
 
-  <target name="replace-tokens-in-teamcity-plugin-xml">
-    <property name="home" value="${artifact.output.path}"/>
+    <import file="../teamcity-common.xml"/>
+    <import file="../jmeter.xml"/>
 
-    <echo message="replacing tokens in teamcity-plugin.xml file under ${home}"/>
+    <target name="package" depends="define.version">
+        <package.teamcity.plugin name="${plugin.name}"
+                                 common.output="${jmeter_common.output.dir}"
+                                 server.output="${jmeter_server.output.dir}"
+                                 agent.output="${jmeter_agent.output.dir}"
+                                 server.lib.dir="lib"
+                                 server.lib.includes="*.jar"
+                                 plugin.descriptor.file="${basedir}/teamcity-plugin.xml"
+                                 plugin.version="${plugin.version}"/>
+    </target>
 
-    <tstamp>
-      <format property="current.time" pattern="yyyyMMddHHmm"/>
-    </tstamp>
-    <condition property="build.number" value="SNAPSHOT-${current.time}" else="${build.number}">
-      <not>
-        <isset property="build.number"/>
-      </not>
-    </condition>
+    <target name="define.version" depends="define.version.if.under.teamcity">
+        <tstamp>
+            <format property="current.time" pattern="yyyyMMddHHmm"/>
+        </tstamp>
+        <property name="plugin.version" value="SNAPSHOT-${current.time}"/>
+    </target>
 
-    <echo message="Setting version to: ${build.number}"/>
-    <!-- update all references in teamcity-plugin.xml files -->
-    <replace dir="${home}" summary="true">
-      <include name="**/teamcity-plugin.xml"/>
+    <target name="define.version.if.under.teamcity" if="build.number">
+        <property name="plugin.version" value="${build.number}"/>
+    </target>
 
-      <replacefilter token="@Plugin_Version@" value="${build.number}"/>
-      <replacefilter token="@Plugin_Vendor@" value="JetBrains, s.r.o."/>
-      <replacefilter token="@Plugin_Vendor_Url@" value="http://www.jetbrains.com"/>
-    </replace>
-  </target>
+    <target name="dist" depends="check.teamcitydistribution, all, package"/>
+
+    <target name="clean" depends="jmeter-plugin.clean"/>
+
+    <target name="deploy" depends="dist">
+        <deploy.teamcity.plugin name="${plugin.name}"/>
+    </target>
 
 </project>
