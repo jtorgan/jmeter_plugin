@@ -75,35 +75,37 @@ public class JMeterStatistics {
 
 	/**
 	 * Check reference data with current report data.
-	 * Fail build if any aggregation value > reference value * delta
+	 * Fail build if any aggregate value > reference value * (1 + variation)
 	 * @param logger
 	 * @throws RunBuildException
 	 */
 	public void checkBuildSuccess(@NotNull BuildProgressLogger logger) throws RunBuildException {
-		BufferedReader reader;
-		try {
-			reader = new BufferedReader(new FileReader(referenceData));
-			String line = null;
-			while (reader.ready() && !(line = reader.readLine()).isEmpty()) {
-				String[] referenceItem = line.split(DEFAULT_DELIMITER);
-				if (referenceItem.length != 3) {
-					throw new RunBuildException("Reference data format: sample_name, metric, value! Metric names: average, min, max, line90 (caseInsensitive)");
+		if (referenceData != null) {
+			BufferedReader reader;
+			try {
+				reader = new BufferedReader(new FileReader(referenceData));
+				String line = null;
+				while (reader.ready() && !(line = reader.readLine()).isEmpty()) {
+					String[] referenceItem = line.split(DEFAULT_DELIMITER);
+					if (referenceItem.length != 3) {
+						throw new RunBuildException("Reference data format: sample_name, metric, value! Metric names: average, min, max, line90 (caseInsensitive)");
+					}
+					Aggregation aggregation = report.samplers.get(referenceItem[0]);
+					if (aggregation == null) {
+						aggregation = report;
+					}
+					JMeterStatisticsMetrics metric = JMeterStatisticsMetrics.valueOf(referenceItem[1].toUpperCase());
+					Double currentValue = aggregation.getAggregateValue(metric);
+					Double referenceValue = Double.valueOf(referenceItem[2]);
+					if (currentValue > referenceValue * (1 + delta)) {
+						logger.logBuildProblem(createBuildProblem(aggregation.title, metric.getTitle(), Math.round(referenceValue), Math.round(currentValue)));
+					}
 				}
-				Aggregation aggregation = report.samplers.get(referenceItem[0]);
-				if (aggregation == null) {
-					aggregation = report;
-				}
-				JMeterStatisticsMetrics metric = JMeterStatisticsMetrics.valueOf(referenceItem[1].toUpperCase());
-				Double currentValue = aggregation.getAggregateValue(metric);
-				Double referenceValue = Double.valueOf(referenceItem[2]);
-				if (currentValue > referenceValue * (1 + delta)) {
-					logger.logBuildProblem(createBuildProblem(aggregation.title, metric.getTitle(), Math.round(referenceValue), Math.round(currentValue)));
-				}
+			} catch (FileNotFoundException e) {
+				throw new RunBuildException("Not found file with reference data! Path - " + referenceData, e);
+			} catch (IOException e) {
+				throw new RunBuildException("Can not read file with reference data! Path - " + referenceData, e);
 			}
-		} catch (FileNotFoundException e) {
-			throw new RunBuildException("Not found file with reference data! Path - " + referenceData, e);
-		} catch (IOException e) {
-			throw new RunBuildException("Can not read file with reference data! Path - " + referenceData, e);
 		}
 	}
 

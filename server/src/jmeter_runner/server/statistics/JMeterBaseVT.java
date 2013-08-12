@@ -2,8 +2,7 @@ package jmeter_runner.server.statistics;
 
 import jetbrains.buildServer.log.Loggers;
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessage;
-import jetbrains.buildServer.serverSide.SBuild;
-import jetbrains.buildServer.serverSide.SBuildServer;
+import jetbrains.buildServer.serverSide.*;
 import jetbrains.buildServer.serverSide.buildLog.LogMessage;
 import jetbrains.buildServer.serverSide.statistics.BuildValueProvider;
 import jetbrains.buildServer.serverSide.statistics.ChartSettings;
@@ -20,19 +19,13 @@ import java.util.*;
 
 /**
  * Base registered value type.
- * Need to
  */
 public class JMeterBaseVT extends BuildFinishAwareValueTypeBase {
-	private static JMeterLocalStorage myKeysStorage;
 	private ValueProviderRegistry myRegistry;
 
 	public JMeterBaseVT(BuildDataStorage storage, ValueProviderRegistry valueProviderRegistry, SBuildServer server, String key) {
 		super(storage, valueProviderRegistry, server, key, JMeterPluginConstants.DURATION_FORMAT);
 		myRegistry = valueProviderRegistry;
-	}
-
-	public static JMeterLocalStorage getKeysStorage() {
-		return myKeysStorage;
 	}
 
 	@NotNull
@@ -55,8 +48,6 @@ public class JMeterBaseVT extends BuildFinishAwareValueTypeBase {
 
 		if (!serviceMessages.isEmpty()) {
 			Map<String, JMeterCompositeVT> compositeVTs = new HashMap<String, JMeterCompositeVT>();
-
-			myKeysStorage = new JMeterLocalStorage();
 
 			Set<String> metrics = new HashSet<String>();
 			Set<String> samples = new HashSet<String>();
@@ -81,22 +72,42 @@ public class JMeterBaseVT extends BuildFinishAwareValueTypeBase {
 				samples.add(sample);
 			}
 
-			String buildTypeExternalId = build.getBuildTypeExternalId();
-			myKeysStorage.saveMetrics(metrics, buildTypeExternalId);
-			myKeysStorage.saveSamples(samples, buildTypeExternalId);
+			SBuildType buildType = build.getBuildType();
+			if (buildType != null) {
+				saveJMeterParams(buildType, "metrics", metrics);
+				saveJMeterParams(buildType, "samples", samples);
+				buildType.persist();
+			}
 		}
 	}
 
-	public List<ValueProvider> getGraphs(String buildExternalID) {
+	public List<ValueProvider> getGraphs(SBuildType buildType) {
 		List<ValueProvider> valueProviders = new ArrayList<ValueProvider>();
-		if (myKeysStorage == null) {
-			myKeysStorage = new JMeterLocalStorage();
-		}
-		for(String metric : myKeysStorage.readMetrics(buildExternalID)) {
+
+		Map<String, String> params = buildType.getParameters();
+		String p = params.get("metrics");
+		String[] metrics = p.split(",");
+
+		for(String metric : metrics) {
 			valueProviders.add(updateOrCreateValueProvider(metric));
 		}
 		return valueProviders;
 	}
+
+	public void saveJMeterParams(@NotNull SBuildType buildType, final String key, Collection<String> values) {
+		StringBuilder builder = new StringBuilder();
+		for (String value : values) {
+			builder.append(value + ',');
+		}
+		buildType.addParameter(new BaseParameter(key, builder.toString(), null) {
+			@NotNull
+			@Override
+			protected String getCompareValue() {
+				return getValue();
+			}
+		});
+	}
+
 
 	@Nullable
 	private synchronized BuildValueProvider updateOrCreateValueProvider(@NotNull final String metricKey) {

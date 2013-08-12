@@ -45,7 +45,7 @@ public class JMeterStatisticsTab extends BuildTypeTab {
 		request.setAttribute("buildGraphHelper", new BuildGraphHelper(myRegistry, myProjectManager));
 		ValueProvider baseVT = myRegistry.getValueProvider(JMeterPluginConstants.BASE_TYPE_KEY);
 		if (baseVT != null && baseVT instanceof JMeterBaseVT) {
-			model.put("jmeterGraphs", ((JMeterBaseVT) baseVT).getGraphs(buildType.getExternalId()));
+			model.put("jmeterGraphs", ((JMeterBaseVT) baseVT).getGraphs(buildType));
 		}
 	}
 }

@@ -44,10 +44,10 @@
         </td>
     </tr>
     <tr>
-        <th><label for="jmeter.delta">Delta:</label></th>
+        <th><label for="jmeter.variation">Variation:</label></th>
         <td>
-            <props:textProperty name="jmeter.delta" className="longField"/>
-            <span class="smallNote">The values of JMeter metrics must not exceed values from last successful build considering deviation. Default - 0.05</span>
+            <props:textProperty name="jmeter.variation" className="longField"/>
+            <span class="smallNote">The values of metrics must not exceed the reference values considering permissible variation. Default - 0.05</span>
         </td>
     </tr>
 </l:settingsGroup>

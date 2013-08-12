@@ -69,7 +69,7 @@ public class JMeterBuildService extends BuildServiceAdapter {
 
 		JMeterStatistics statistics = new JMeterStatistics(logPath,
 				getWorkingDirectory().getPath() + "\\" + args.get(JMeterPluginConstants.PARAMS_REFERENCE_DATA),
-				args.get(JMeterPluginConstants.PARAMS_DELTA));
+				args.get(JMeterPluginConstants.PARAMS_VARIATION));
 		statistics.countAggregations();
 		statistics.logStatistics(getLogger());
 		statistics.checkBuildSuccess(getLogger());

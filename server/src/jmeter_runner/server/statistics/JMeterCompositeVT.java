@@ -2,6 +2,7 @@ package jmeter_runner.server.statistics;
 
 import jetbrains.buildServer.serverSide.SBuild;
 import jetbrains.buildServer.serverSide.SBuildServer;
+import jetbrains.buildServer.serverSide.SBuildType;
 import jetbrains.buildServer.serverSide.statistics.ChartSettings;
 import jetbrains.buildServer.serverSide.statistics.ValueProviderRegistry;
 import jetbrains.buildServer.serverSide.statistics.build.BuildChartSettings;
@@ -33,12 +34,11 @@ public class JMeterCompositeVT extends CompositeVTB {
 		return JMeterStatisticsMetrics.getTitleByKey(getKey());
 	}
 
-	public void fillModel(String externalID) {
+	public void fillModel(SBuildType buildType) {
 		myModel.clear();
-		JMeterLocalStorage storage = jmeter_runner.server.statistics.JMeterBaseVT.getKeysStorage();
-		List<String> sampleKeys = storage.readSamples(externalID);
-		for(int i = 0; i < sampleKeys.size(); i++) {
-			myModel.add(createValueType(sampleKeys.get(i), externalID));
+		String[] sampleKeys = buildType.getParameters().get("samples").split(",");
+		for(int i = 0; i < sampleKeys.length; i++) {
+			myModel.add(createValueType(sampleKeys[i], buildType.getExternalId()));
 		}
 	}
 
@@ -62,7 +62,7 @@ public class JMeterCompositeVT extends CompositeVTB {
 		if (!myModel.contains(valueType)) {
 			myModel.add(valueType);
 		}
-		myStorage.publishValue(valueType.getKey(), build.getBuildId(), BigDecimal.valueOf(Long.valueOf(value)));
+		myStorage.publishValue(valueType.myKey, build.getBuildId(), BigDecimal.valueOf(Long.valueOf(value)));
 	}
 
 
@@ -78,7 +78,7 @@ public class JMeterCompositeVT extends CompositeVTB {
 		String[] result = new String[myModel.size()];
 		for (int i = 0; i < myModel.size(); i++) {
 			SamplerVT vt = myModel.get(i);
-			result[i] = vt.getKey();
+			result[i] = vt.myKey;
 		}
 		return result;
 	}
@@ -88,8 +88,7 @@ public class JMeterCompositeVT extends CompositeVTB {
 	public List<BuildValue> getDataSet(@NotNull final ChartSettings _chartSettings) {
 		if (_chartSettings instanceof BuildChartSettings) {
 			BuildChartSettings settings = (BuildChartSettings) _chartSettings;
-//			Plugin reads keys for the model from its local storage ( TeamcityData/jmeter_local )
-			fillModel(settings.getBuildTypeId());
+			fillModel(myServer.getProjectManager().findBuildTypeByExternalId(settings.getBuildTypeId()));
 			return super.getDataSet(_chartSettings);
 		}
 		return Collections.emptyList();
@@ -100,22 +99,10 @@ public class JMeterCompositeVT extends CompositeVTB {
 		private String myTitle;
 		private String myBuildTypeId;
 
-		public String getKey() {
-			return myKey;
-		}
-
-		public String getTitle() {
-			return myTitle;
-		}
-
-		public String getBuildTypeId() {
-			return myBuildTypeId;
-		}
-
 		@Override
 		public boolean equals(Object obj) {
 			if (obj instanceof SamplerVT) {
-				return ((SamplerVT) obj).getKey().equals(myKey);
+				return ((SamplerVT) obj).myKey.equals(myKey);
 			}
 			return false;
 		}

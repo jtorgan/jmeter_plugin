@@ -14,7 +14,7 @@ public interface JMeterPluginConstants {
 	String PARAMS_METRIC_MIN = "jmeter.min";
 	String PARAMS_METRIC_AVG = "jmeter.avg";
 	String PARAMS_METRIC_LINE90 = "jmeter.90line";
-	String PARAMS_DELTA = "jmeter.delta";
+	String PARAMS_VARIATION = "jmeter.variation";
 	String PARAMS_REFERENCE_DATA = "jmeter.referenceData";
 
 	//	Service Messages constants

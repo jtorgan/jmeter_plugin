@@ -16,8 +16,8 @@
         <strong>${propertiesBean.properties['jmeter.referenceData']}</strong>
     </div>
     <div class="parameter">
-        Delta:
-        <strong>${propertiesBean.properties['jmeter.delta']}</strong>
+        Variation:
+        <strong>${propertiesBean.properties['jmeter.variation']}</strong>
     </div>
 </l:settingsGroup>
 
