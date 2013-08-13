@@ -2,7 +2,7 @@
 <project name="jmeter-plugin" default="dist">
 
   <property file="build.properties"/>
-  <property name="plugin.name" value="jmeter-plugin"/>
+  <property name="plugin.name" value="jmeter"/>
   <property name="javac2.home" value="${basedir}/lib-compile"/>
 
   <import file="teamcity-common.xml"/>
@@ -34,8 +34,8 @@
 
   <target name="clean" depends="jmeter.clean"/>
 
-  <target name="deploy" depends="dist">
-    <deploy.teamcity.plugin name="${plugin.name}"/>
-  </target>
+  <!--<target name="deploy" depends="dist">-->
+    <!--<deploy.teamcity.plugin name="${plugin.name}"/>-->
+  <!--</target>-->
 
 </project>
