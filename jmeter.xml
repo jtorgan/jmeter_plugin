@@ -51,14 +51,15 @@
         <include name="**/?*.html"/>
         <include name="**/?*.dtd"/>
         <include name="**/?*.tld"/>
-        <include name="**/?*.jsp"/>
         <include name="**/?*.js"/>
         <include name="**/?*.css"/>
         <include name="**/?*.htm"/>
         <include name="**/?*.ftl"/>
         <include name="**/?*.config"/>
     </patternset>
-
+    <patternset id="compiler.resources.jsp">
+        <include name="**/?*.jsp"/>
+    </patternset>
 
     <!-- Project Libraries -->
 
@@ -326,7 +327,7 @@
         </copy>
         <copy todir="${jmeter_server.output.dir}/buildServerResources">
             <fileset dir="${module.jmeter_server.basedir}/server/resources">
-                <patternset refid="compiler.resources"/>
+                <patternset refid="compiler.resources.jsp"/>
                 <type type="file"/>
             </fileset>
         </copy>
