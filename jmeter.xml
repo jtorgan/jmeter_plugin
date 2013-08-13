@@ -57,6 +57,7 @@
         <include name="**/?*.ftl"/>
         <include name="**/?*.config"/>
     </patternset>
+
     <patternset id="compiler.resources.jsp">
         <include name="**/?*.jsp"/>
     </patternset>

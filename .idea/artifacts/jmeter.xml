@@ -10,7 +10,6 @@
               <element id="module-output" name="agent" />
             </element>
           </element>
-          <element id="file-copy" path="$PROJECT_DIR$/agent/teamcity-plugin.xml" />
         </element>
       </element>
       <element id="directory" name="server">
@@ -26,7 +25,7 @@
           <element id="module-output" name="common" />
         </element>
       </element>
-      <element id="file-copy" path="$PROJECT_DIR$/server/teamcity-server-plugin.xml" output-file-name="teamcity-plugin.xml" />
+      <element id="file-copy" path="$PROJECT_DIR$/teamcity-plugin.xml" />
     </root>
   </artifact>
 </component>
