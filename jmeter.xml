@@ -91,7 +91,7 @@
 
     <path id="library.teamcity_third-party_server.classpath">
         <!--<pathelement location="${path.variable.teamcitydistribution}/webapps/ROOT/WEB-INF/lib/spring-webmvc.jar"/>-->
-        <fileset dir="${path.variable.teamcitydistribution}/webapps/ROOT/WEB-INF/lib/*.jar"/>
+        <fileset dir="${path.variable.teamcitydistribution}/webapps/ROOT/WEB-INF/lib" includes="*.jar" />
     </path>
 
     <path id="library.tomcat.classpath">
