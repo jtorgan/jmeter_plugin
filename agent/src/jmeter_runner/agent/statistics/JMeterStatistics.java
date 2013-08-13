@@ -1,12 +1,12 @@
 package jmeter_runner.agent.statistics;
 
-import com.sun.istack.internal.NotNull;
 import jetbrains.buildServer.BuildProblemData;
 import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.BuildProgressLogger;
 import jetbrains.buildServer.messages.DefaultMessagesInfo;
 import jmeter_runner.common.JMeterPluginConstants;
 import jmeter_runner.common.JMeterStatisticsMetrics;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
