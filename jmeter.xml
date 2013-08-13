@@ -2,7 +2,7 @@
 <project name="jmeter" default="all">
 
 
-    <!--<property file="build.properties"/>-->
+    <property file="build.properties"/>
     <!-- Uncomment the following property if no tests compilation is needed -->
     <!--
     <property name="skip.tests" value="true"/>
@@ -32,17 +32,10 @@
         <exclude name="**/*.hprof/**"/>
         <exclude name="**/_svn/**"/>
         <exclude name="**/.hg/**"/>
-        <!--<exclude name="**/*.lib/**"/>-->
-        <!--<exclude name="**/*~/**"/>-->
-        <!--<exclude name="**/__pycache__/**"/>-->
-        <!--<exclude name="**/.bundle/**"/>-->
-        <!--<exclude name="**/*.orig/**"/>-->
-        <!--<exclude name="**/*.rbc/**"/>-->
     </patternset>
     <patternset id="library.patterns">
         <include name="*.war"/>
         <include name="*.ear"/>
-        <!--<include name="*.apk"/>-->
         <include name="*.zip"/>
         <include name="*.swc"/>
         <include name="*.egg"/>
@@ -326,15 +319,18 @@
         </javac>
 
         <copy todir="${jmeter_server.output.dir}">
-            <fileset dir="${module.jmeter_server.basedir}/server/resources">
-                <patternset refid="compiler.resources"/>
-                <type type="file"/>
-            </fileset>
             <fileset dir="${module.jmeter_server.basedir}/server/src">
                 <patternset refid="compiler.resources"/>
                 <type type="file"/>
             </fileset>
         </copy>
+        <copy todir="${jmeter_server.output.dir}/buildServerResources">
+            <fileset dir="${module.jmeter_server.basedir}/server/resources">
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+
     </target>
 
     <target name="compile.module.jmeter_server.tests" depends="compile.module.jmeter_server.production"
