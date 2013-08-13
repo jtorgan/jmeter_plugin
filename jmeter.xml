@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="jmeter-plugin" default="all">
+<project name="jmeter" default="all">
 
 
-    <property file="build.properties"/>
+    <!--<property file="build.properties"/>-->
     <!-- Uncomment the following property if no tests compilation is needed -->
     <!--
     <property name="skip.tests" value="true"/>
@@ -84,15 +84,14 @@
 
     <path id="library.teamcity_third-party_common.classpath">
         <pathelement location="${path.variable.teamcitydistribution}/webapps/ROOT/WEB-INF/lib/annotations.jar"/>
-
         <pathelement location="${path.variable.teamcitydistribution}/webapps/ROOT/WEB-INF/lib/openapi.jar"/>
-
         <pathelement location="${path.variable.teamcitydistribution}/webapps/ROOT/WEB-INF/lib/spring.jar"/>
         <pathelement location="${path.variable.teamcitydistribution}/webapps/ROOT/WEB-INF/lib/util.jar"/>
     </path>
 
     <path id="library.teamcity_third-party_server.classpath">
-        <pathelement location="${path.variable.teamcitydistribution}/webapps/ROOT/WEB-INF/lib/spring-webmvc.jar"/>
+        <!--<pathelement location="${path.variable.teamcitydistribution}/webapps/ROOT/WEB-INF/lib/spring-webmvc.jar"/>-->
+        <fileset dir="${path.variable.teamcitydistribution}/webapps/ROOT/WEB-INF/lib/*.jar"/>
     </path>
 
     <path id="library.tomcat.classpath">
