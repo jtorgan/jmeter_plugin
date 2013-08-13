@@ -32,7 +32,7 @@
 
   <target name="dist" depends="check.teamcitydistribution, all, package"/>
 
-  <target name="clean" depends="jmeter-plugin.clean"/>
+  <target name="clean" depends="jmeter.clean"/>
 
   <target name="deploy" depends="dist">
     <deploy.teamcity.plugin name="${plugin.name}"/>
