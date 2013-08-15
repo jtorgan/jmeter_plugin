@@ -11,37 +11,50 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 public class JMeterBuildService extends BuildServiceAdapter {
+	private String workingDir;
 	private String testPath;
 	private String logPath;
 
 	@NotNull
 	public ProgramCommandLine makeProgramCommandLine() throws RunBuildException {
+		workingDir = getWorkingDirectory().getAbsolutePath() + File.separator;
+
 		Map<String, String> args = getRunnerParameters();
-		testPath = args.get(JMeterPluginConstants.PARAMS_TEST_PATH);
-		logPath = getWorkingDirectory().getPath() + "\\" + getLogPath();
+
+		testPath = workingDir + args.get(JMeterPluginConstants.PARAMS_TEST_PATH);
+		logPath = workingDir + getLogPath();
+
 		List<String> executableArgs = new ArrayList<String>();
 		executableArgs.add("-n");
 		executableArgs.add("-t");
 		executableArgs.add(testPath);
 		executableArgs.add("-l");
 		executableArgs.add(logPath);
-		return createProgramCommandline(getJMeterExecutable(), executableArgs);
+		String cmdParams = args.get(JMeterPluginConstants.PARAMS_CMD_ARGUMENTS);
+		if (cmdParams != null) {
+			Collections.addAll(executableArgs,cmdParams.split(" "));
+		}
+
+		return createProgramCommandline(getJMeterExecutable(args.get(JMeterPluginConstants.PARAMS_EXECUTABLE)), executableArgs);
 
 	}
 
 	@NotNull
-	private String getJMeterExecutable() throws RunBuildException {
+	private String getJMeterExecutable(String path) throws RunBuildException {
 		StringBuilder builder = new StringBuilder();
 		BuildAgentSystemInfo agentSystemInfo = getAgentConfiguration().getSystemInfo();
-		String jmeterHome = getEnvironmentVariables().get(JMeterPluginConstants.JMETER_HOME);
-		if (jmeterHome == null || jmeterHome.isEmpty()) {
-			throw new RunBuildException("JMeter executable path is not specified! Set variable at the agent: JMETER_HOME");
+		if (path == null || path.isEmpty()) {
+			throw new RunBuildException("JMeter home path is not specified!");
 		}
-		builder.append(jmeterHome);
+		builder.append(workingDir);
+		builder.append(path);
+		builder.append(File.separator);
+		builder.append("bin");
 		builder.append(File.separator);
 		builder.append(JMeterPluginConstants.JMETER_CMD);
 		if (agentSystemInfo.isWindows()) {
@@ -67,9 +80,11 @@ public class JMeterBuildService extends BuildServiceAdapter {
 		JMeterStatisticsMetrics.MIN.setIsSelected(Boolean.valueOf(args.get(JMeterPluginConstants.PARAMS_METRIC_MIN)));
 		JMeterStatisticsMetrics.LINE90.setIsSelected(Boolean.valueOf(args.get(JMeterPluginConstants.PARAMS_METRIC_LINE90)));
 
-		JMeterStatistics statistics = new JMeterStatistics(logPath,
-				getWorkingDirectory().getPath() + "\\" + args.get(JMeterPluginConstants.PARAMS_REFERENCE_DATA),
-				args.get(JMeterPluginConstants.PARAMS_VARIATION));
+		String referenceDataPath = args.get(JMeterPluginConstants.PARAMS_REFERENCE_DATA);
+
+		System.out.print(logPath);
+
+		JMeterStatistics statistics = new JMeterStatistics(logPath, referenceDataPath != null ? workingDir + referenceDataPath : null, args.get(JMeterPluginConstants.PARAMS_VARIATION));
 		statistics.countAggregations();
 		statistics.logStatistics(getLogger());
 		statistics.checkBuildSuccess(getLogger());

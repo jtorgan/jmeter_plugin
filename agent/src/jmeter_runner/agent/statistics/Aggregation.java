@@ -45,24 +45,21 @@ public abstract class Aggregation {
 	}
 
 	/**
-	 * Data row of jmeter results
+	 * Data row of jmeter results (default values)
+	 * need only two
 	 */
 	class Item {
 		final String timeStamp;
 		final long time;
 		final String label;
-		final String responseCode;
-		final boolean success;
 
 		Item(String[] values) {
-			if (values == null || values.length < 5) {  //failureMessage may be empty
-				throw new IllegalArgumentException("Default item values must be: timeStamp,time,label,responseCode,success,failureMessage");
+			if (values == null || values.length < 3) {  //failureMessage may be empty
+				throw new IllegalArgumentException("Item value should start with: timeStamp,time,label");
 			}
 			this.timeStamp = values[0];
 			this.time = Long.valueOf(values[1]);
 			this.label = values[2];
-			this.responseCode = values[3];
-			this.success = Boolean.valueOf(values[4]);
 		}
 	}
 }

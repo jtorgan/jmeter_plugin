@@ -18,14 +18,17 @@ public class JMeterStatistics {
 
 	private final String logPath;
 	private final String referenceData;
-	private final double delta;
+	private final double variation;
 	
 	private AggregateReport report;
 
-	public JMeterStatistics(@NotNull String logPath, @NotNull String referenceData, @NotNull String delta) {
+	public JMeterStatistics(@NotNull String logPath, String referenceData, String variation) {
+		System.out.print(referenceData);
+		System.out.print(variation);
+
 		this.logPath = logPath;
 		this.referenceData = referenceData;
-		this.delta = Double.parseDouble(delta);
+		this.variation = variation == null ? 0.05 : Double.parseDouble(variation);
 	}
 
 	/**
@@ -97,7 +100,7 @@ public class JMeterStatistics {
 					JMeterStatisticsMetrics metric = JMeterStatisticsMetrics.valueOf(referenceItem[1].toUpperCase());
 					Double currentValue = aggregation.getAggregateValue(metric);
 					Double referenceValue = Double.valueOf(referenceItem[2]);
-					if (currentValue > referenceValue * (1 + delta)) {
+					if (currentValue > referenceValue * (1 + variation)) {
 						logger.logBuildProblem(createBuildProblem(aggregation.title, metric.getTitle(), Math.round(referenceValue), Math.round(currentValue)));
 					}
 				}
