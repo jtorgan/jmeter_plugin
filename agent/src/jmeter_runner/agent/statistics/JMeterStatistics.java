@@ -37,7 +37,7 @@ public class JMeterStatistics {
 	 */
 	public void countAggregations() throws RunBuildException {
 		report = new AggregateReport();
-		BufferedReader reader;
+		BufferedReader reader = null;
 		try {
 			reader = new BufferedReader(new FileReader(logPath));
 			while (reader.ready()) {
@@ -53,6 +53,14 @@ public class JMeterStatistics {
 			throw new RunBuildException("Not found JMeter log file! Path - " + logPath, e);
 		} catch (IOException e) {
 			throw new RunBuildException("Can not read JMeter log file! Path - " + logPath, e);
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e) {
+					throw new RunBuildException("Can not close JMeter log file! Path - " + logPath, e);
+				}
+			}
 		}
 	}
 
@@ -84,7 +92,7 @@ public class JMeterStatistics {
 	 */
 	public void checkBuildSuccess(@NotNull BuildProgressLogger logger) throws RunBuildException {
 		if (referenceData != null) {
-			BufferedReader reader;
+			BufferedReader reader = null;
 			try {
 				reader = new BufferedReader(new FileReader(referenceData));
 				String line = null;
@@ -108,6 +116,14 @@ public class JMeterStatistics {
 				throw new RunBuildException("Not found file with reference data! Path - " + referenceData, e);
 			} catch (IOException e) {
 				throw new RunBuildException("Can not read file with reference data! Path - " + referenceData, e);
+			} finally {
+				if (reader != null) {
+					try {
+						reader.close();
+					} catch (IOException e) {
+						throw new RunBuildException("Can not close file with reference data! Path - " + logPath, e);
+					}
+				}
 			}
 		}
 	}
@@ -128,7 +144,7 @@ public class JMeterStatistics {
 		builder.append(last);
 		builder.append("; current value: ");
 		builder.append(current);
-		return BuildProblemData.createBuildProblem(metric + "_" + sample, "Performance worsened", builder.toString());
+		return BuildProblemData.createBuildProblem(metric + "_" + sample, JMeterPluginConstants.BUILD_PROBLEM_TYPE, builder.toString());
 	}
 
 }

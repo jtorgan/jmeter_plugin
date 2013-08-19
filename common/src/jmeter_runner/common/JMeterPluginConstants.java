@@ -32,4 +32,7 @@ public interface JMeterPluginConstants {
 //	statistics's constants
 	String BASE_TYPE_KEY = "JMBaseVT";
 	String DURATION_FORMAT = "duration";
+
+//	build problem type
+	String BUILD_PROBLEM_TYPE = "Performance worsened";
 }
