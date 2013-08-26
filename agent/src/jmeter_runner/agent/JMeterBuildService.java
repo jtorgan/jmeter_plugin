@@ -4,16 +4,13 @@ import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.BuildAgentSystemInfo;
 import jetbrains.buildServer.agent.runner.BuildServiceAdapter;
 import jetbrains.buildServer.agent.runner.ProgramCommandLine;
-import jmeter_runner.agent.statistics.JMeterStatistics;
+import jmeter_runner.agent.statistics.JMeterStatisticsProcessor;
 import jmeter_runner.common.JMeterPluginConstants;
 import jmeter_runner.common.JMeterStatisticsMetrics;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class JMeterBuildService extends BuildServiceAdapter {
 	private String workingDir;
@@ -81,13 +78,16 @@ public class JMeterBuildService extends BuildServiceAdapter {
 		JMeterStatisticsMetrics.LINE90.setIsSelected(Boolean.valueOf(args.get(JMeterPluginConstants.PARAMS_METRIC_LINE90)));
 
 		String referenceDataPath = args.get(JMeterPluginConstants.PARAMS_REFERENCE_DATA);
+		String variation = args.get(JMeterPluginConstants.PARAMS_VARIATION);
 
-		System.out.print(logPath);
+		JMeterStatisticsProcessor processor = new JMeterStatisticsProcessor();
+		processor.countAggregations(logPath);
+		processor.logStatistics(getLogger());
+		if (referenceDataPath != null)  {
+			processor.checkBuildSuccess(getLogger(), referenceDataPath, variation != null ? Double.parseDouble(variation) : 0.05);
+		}
 
-		JMeterStatistics statistics = new JMeterStatistics(logPath, referenceDataPath != null ? workingDir + referenceDataPath : null, args.get(JMeterPluginConstants.PARAMS_VARIATION));
-		statistics.countAggregations();
-		statistics.logStatistics(getLogger());
-		statistics.checkBuildSuccess(getLogger());
 	}
+
 
 }

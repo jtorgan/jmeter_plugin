@@ -7,13 +7,6 @@ import jetbrains.buildServer.agent.runner.CommandLineBuildServiceFactory;
 import jmeter_runner.common.JMeterPluginConstants;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Yuliya.Torhan
- * Date: 7/23/13
- * Time: 5:34 PM
- * To change this template use File | Settings | File Templates.
- */
 public class JMeterBuildServiceFactory implements CommandLineBuildServiceFactory {
 
 	@NotNull

@@ -22,17 +22,18 @@ public interface JMeterPluginConstants {
 	String SM_NAME = "buildJMeterStatistic";
 	String SM_KEY_METRIC = "metric";
 	String SM_KEY_VALUE = "value";
-	String SM_KEY_SAMPLE = "sample";
+	String SM_KEY_SERIES = "series";
 
-//  jsp files
+	//  jsp files
 	String VIEW_PARAMS_JSP = "viewJMeterRunParams.jsp";
 	String EDIT_PARAMS_JSP = "editJMeterRunParams.jsp";
 	String STATISTIC_TAB_JSP = "jmeterStatisticGraphs.jsp";
 
 //	statistics's constants
 	String BASE_TYPE_KEY = "JMBaseVT";
-	String DURATION_FORMAT = "duration";
 
 //	build problem type
-	String BUILD_PROBLEM_TYPE = "Performance worsened";
+	String BAD_PERFORMANCE_PROBLEM_TYPE = "Performance worsened";
+	String SERVER_ERROR_PROBLEM_TYPE = "Server error";
+
 }

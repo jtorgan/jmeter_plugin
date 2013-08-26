@@ -7,22 +7,22 @@ import jmeter_runner.common.JMeterPluginConstants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class JMeterBuildProblemTypeProvider extends BaseBuildProblemTypeDetailsProvider {
+public class JMeterPerformanceProblemTypeProvider extends BaseBuildProblemTypeDetailsProvider {
 
 	@Nullable
 	public String getStatusText(@NotNull final BuildProblemData buildProblem, @NotNull final SBuild build) {
-		return buildProblem.getDescription();
+		return JMeterPluginConstants.BAD_PERFORMANCE_PROBLEM_TYPE;
 	}
 
 	@NotNull
 	@Override
 	public String getType() {
-		return JMeterPluginConstants.BUILD_PROBLEM_TYPE;
+		return JMeterPluginConstants.BAD_PERFORMANCE_PROBLEM_TYPE;
 	}
 
 	@Nullable
 	@Override
 	public String getTypeDescription() {
-		return JMeterPluginConstants.BUILD_PROBLEM_TYPE;
+		return JMeterPluginConstants.BAD_PERFORMANCE_PROBLEM_TYPE;
 	}
 }

@@ -9,6 +9,7 @@
     <!-- see http://static.springsource.org/spring/docs/3.0.x/spring-framework-reference/html/beans.html -->
 
     <bean id="jmeterRunType" class="jmeter_runner.server.JMeterRunType"/>
+    <bean id="jmeterProblemType" class="jmeter_runner.server.JMeterPerformanceProblemTypeProvider"/>
 
     <bean id="jmeterStatisticGraphs" class="jmeter_runner.server.statistics.JMeterStatisticsTab" init-method="register">
         <constructor-arg index="0" ref="webControllerManager"/>

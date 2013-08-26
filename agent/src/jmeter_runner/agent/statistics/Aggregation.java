@@ -1,6 +1,7 @@
 package jmeter_runner.agent.statistics;
 
 import jmeter_runner.common.JMeterStatisticsMetrics;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Base class to count aggregate values
@@ -8,11 +9,11 @@ import jmeter_runner.common.JMeterStatisticsMetrics;
 public abstract class Aggregation {
 	final String title;
 
-	protected double sum;
-	protected int count;
-	protected double mean;
-	protected double min = Double.MAX_VALUE;
-	protected double max = Double.MIN_VALUE;
+	double sum;
+	int count;
+	double mean;
+	double min = Double.MAX_VALUE;
+	double max = Double.MIN_VALUE;
 
 	Aggregation(String title) {
 		this.title = title;
@@ -26,7 +27,7 @@ public abstract class Aggregation {
 		max = Math.max(itemValue, max);
 	}
 
-	protected abstract double get90line();
+	abstract double get90line();
 
 	Double getAggregateValue(JMeterStatisticsMetrics param)
 	{
@@ -44,22 +45,34 @@ public abstract class Aggregation {
 		}
 	}
 
+	String checkValue(@NotNull JMeterStatisticsMetrics metric, double referenceValue, double variation) {
+		Double currentValue = getAggregateValue(metric);
+		if (currentValue > referenceValue * (1 + variation)) {
+			return "Metric - " + metric + "; sampler - " + title + "; \nreference value: " + Math.round(referenceValue) + "; current value: " + Math.round(currentValue);
+		}
+		return null;
+	}
+
 	/**
 	 * Data row of jmeter results (default values)
 	 * need only two
 	 */
 	class Item {
 		final String timeStamp;
-		final long time;
+		final long elapsedTime;
 		final String label;
+		final String responseCode;
+		final String responseMessage;
 
 		Item(String[] values) {
-			if (values == null || values.length < 3) {  //failureMessage may be empty
-				throw new IllegalArgumentException("Item value should start with: timeStamp,time,label");
+			if (values == null || values.length < 5) {  //failureMessage may be empty
+				throw new IllegalArgumentException("JMeter result item format: timeStamp,elapsedTime,label,responseCode,responseMessage, ...");
 			}
 			this.timeStamp = values[0];
-			this.time = Long.valueOf(values[1]);
+			this.elapsedTime = Long.valueOf(values[1]);
 			this.label = values[2];
+			this.responseCode = values[3];
+			this.responseMessage = values[4];
 		}
 	}
 }
