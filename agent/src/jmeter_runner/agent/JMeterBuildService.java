@@ -81,10 +81,12 @@ public class JMeterBuildService extends BuildServiceAdapter {
 		String variation = args.get(JMeterPluginConstants.PARAMS_VARIATION);
 
 		JMeterStatisticsProcessor processor = new JMeterStatisticsProcessor();
+		JMeterBuildLogger logger = new JMeterBuildLogger(getLogger());
+
 		processor.countAggregations(logPath);
-		processor.logStatistics(getLogger());
+		processor.logStatistics(logger);
 		if (referenceDataPath != null)  {
-			processor.checkBuildSuccess(getLogger(), referenceDataPath, variation != null ? Double.parseDouble(variation) : 0.05);
+			processor.checkBuildSuccess(logger, referenceDataPath, variation != null ? Double.parseDouble(variation) : 0.05);
 		}
 
 	}
