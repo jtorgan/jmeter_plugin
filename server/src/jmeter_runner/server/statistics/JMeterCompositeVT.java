@@ -1,6 +1,7 @@
 package jmeter_runner.server.statistics;
 
 import jetbrains.buildServer.artifacts.RevisionRule;
+import jetbrains.buildServer.log.Loggers;
 import jetbrains.buildServer.serverSide.SBuild;
 import jetbrains.buildServer.serverSide.SBuildServer;
 import jetbrains.buildServer.serverSide.SBuildType;
@@ -135,13 +136,16 @@ public class JMeterCompositeVT extends CompositeVTB {
 	private List<BuildValue> correctBuildValues(List<BuildValue> buildValues) {
 		Map<Long, String> correctedBuildNumbers = new HashMap<Long, String>();
 
-		for (BuildValue value : buildValues) {
-			long buildId = value.getBuildId();
+		for (ListIterator<BuildValue> iterator = buildValues.listIterator(); iterator.hasNext();) {
+			BuildValue buildValue = iterator.next();
+			long buildId = buildValue.getBuildId();
 			if (!correctedBuildNumbers.containsKey(buildId) ) {
-	//			extract artifact dependency build number for actual buildId
+				//extract artifact dependency build number for actual buildId
 				SBuild build = myServer.findBuildInstanceById(buildId);
 				if (build == null) {
-					throw new IllegalArgumentException("Error to find build: " + value.toString());
+					Loggers.STATS.warn("Unable to find build: " + buildValue.toString());
+					iterator.remove();
+					continue;
 				}
 				for (SArtifactDependency artifact : build.getArtifactDependencies()) {
 					RevisionRule rule = artifact.getRevisionRule();
@@ -150,13 +154,15 @@ public class JMeterCompositeVT extends CompositeVTB {
 
 						SBuild artDepBuild = myServer.findBuildInstanceById(artDepBuildId);
 						if (artDepBuild == null) {
-							throw new IllegalArgumentException("Error to find build: " + value.toString());
+							Loggers.STATS.error("Unable to find build of artifact: " + buildValue.toString());
+							iterator.remove();
+						} else {
+							correctedBuildNumbers.put(buildId, artDepBuild.getBuildNumber());
 						}
-						correctedBuildNumbers.put(buildId, artDepBuild.getBuildNumber());
 					}
 				}
 			}
-			value.setBuildNumber(correctedBuildNumbers.get(buildId));
+			buildValue.setBuildNumber(correctedBuildNumbers.get(buildId));
 		}
 		return buildValues;
 	}

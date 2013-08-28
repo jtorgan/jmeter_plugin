@@ -5,5 +5,5 @@
 <%--@elvariable id="jmeterGraphs" type="java.util.Collection<jmeter_runner.server.statistics.JMeterCompositeVT>"--%>
 
 <c:forEach items="${jmeterGraphs}" var="graph">
-    <stats:buildGraph id="${graph.key}" valueType="${graph.key}" defaultFilter="showFailed"/>
+    <stats:buildGraph id="${graph.key}" valueType="${graph.key}"/>
 </c:forEach>
