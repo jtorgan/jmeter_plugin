@@ -16,5 +16,6 @@ tests
 bin/
 dist/
 temp/
+_tmp/
 .classpath
 .project

@@ -1,9 +1,8 @@
-<%@ page import="jetbrains.buildServer.web.openapi.PlaceId"
-        %><%@include file="/include-internal.jsp"
-        %><%@taglib prefix="stats" tagdir="/WEB-INF/tags/graph"
-        %>
-<%--@elvariable id="jmeterGraphs" type="java.util.Collection<jmeter_runner.server.statistics.JMeterCompositeVT>"--%>
+<%@ taglib prefix="stats" tagdir="/WEB-INF/tags/graph" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%--@elvariable id="jmeterGraphs" type="java.util.Collection<jmeter_runner.server.statistics.composite.JMCompositeVT>"--%>
 
 <c:forEach items="${jmeterGraphs}" var="graph">
-    <stats:buildGraph id="${graph.key}" valueType="${graph.key}"/>
+    <stats:buildGraph id="${graph.key}" valueType="${graph.key}" defaultFilter="showFailed" height="200" width="1000"/>
 </c:forEach>

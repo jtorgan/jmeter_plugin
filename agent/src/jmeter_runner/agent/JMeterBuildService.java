@@ -86,7 +86,7 @@ public class JMeterBuildService extends BuildServiceAdapter {
 		processor.countAggregations(logPath);
 		processor.logStatistics(logger);
 		if (referenceDataPath != null)  {
-			processor.checkBuildSuccess(logger, referenceDataPath, variation != null ? Double.parseDouble(variation) : 0.05);
+			processor.checkBuildSuccess(logger, getWorkingDirectory().getAbsolutePath() + File.separator + referenceDataPath, variation != null ? Double.parseDouble(variation) : 0.05);
 		}
 
 	}

@@ -13,6 +13,11 @@ public class JMeterBuildLogger {
 		this.logger = logger;
 	}
 
+	public void logMessage(final String message) {
+		logger.logMessage(DefaultMessagesInfo.createTextMessage(message));
+	}
+
+
 	public void logMessage(final String metricName, final long value, final String series) {
 		String message = createJMeterServiceMessage(metricName, value, series);
 		logger.logMessage(DefaultMessagesInfo.createTextMessage(message));

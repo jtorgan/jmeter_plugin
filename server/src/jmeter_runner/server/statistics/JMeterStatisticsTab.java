@@ -25,6 +25,7 @@ public class JMeterStatisticsTab extends BuildTypeTab {
 		myRegistry = valueProviderRegistry;
 		myProjectManager = projectManager;
 		addCssFile("/css/buildGraph.css");
+
 	}
 
 	@Override
@@ -43,9 +44,9 @@ public class JMeterStatisticsTab extends BuildTypeTab {
 	@Override
 	protected void fillModel(@NotNull Map<String, Object> model, @NotNull HttpServletRequest request, @NotNull SBuildType buildType, @Nullable SUser user) {
 		request.setAttribute("buildGraphHelper", new BuildGraphHelper(myRegistry, myProjectManager));
-		ValueProvider baseVT = myRegistry.getValueProvider(JMeterPluginConstants.BASE_TYPE_KEY);
-		if (baseVT != null && baseVT instanceof JMeterBaseVT) {
-			model.put("jmeterGraphs", ((JMeterBaseVT) baseVT).getGraphs(buildType));
+		ValueProvider provider = myRegistry.getValueProvider(JMeterPluginConstants.BASE_VALUE_PROVIDER);
+		if (provider != null && provider instanceof JMeterValueProvider) {
+			model.put("jmeterGraphs", ((JMeterValueProvider) provider).getGraphs(buildType));
 		}
 	}
 }

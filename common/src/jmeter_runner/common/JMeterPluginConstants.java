@@ -29,11 +29,17 @@ public interface JMeterPluginConstants {
 	String EDIT_PARAMS_JSP = "editJMeterRunParams.jsp";
 	String STATISTIC_TAB_JSP = "jmeterStatisticGraphs.jsp";
 
-//	statistics's constants
-	String BASE_TYPE_KEY = "JMBaseVT";
+//	statistic's constants
+	String METRIC_BUILD_TYPE_PARAMETER = "Metric";
+	String CODE_BUILD_TYPE_PARAMETER = "Code";
+	String SAMPLER_BUILD_TYPE_PARAMETER = "Sampler";
+
+	String INTEGER_FORMAT = "integer";
+	String DURATION_FORMAT = "duration";
+
+	String BASE_VALUE_PROVIDER = "JMeterValueProvider";
 
 //	build problem type
 	String BAD_PERFORMANCE_PROBLEM_TYPE = "Performance worsened";
 	String SERVER_ERROR_PROBLEM_TYPE = "Server error";
-
 }

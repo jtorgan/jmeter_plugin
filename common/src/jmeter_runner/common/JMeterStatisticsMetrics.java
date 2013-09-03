@@ -1,26 +1,22 @@
 package jmeter_runner.common;
 
 public enum JMeterStatisticsMetrics {
-	AVERAGE("JMeterAverage", "Average time", "Sampler", "duration"),
-	MAX("JMeterMax", "Max time", "Sampler", "duration"),
-	MIN("JMeterMin", "Min time", "Sampler","duration"),
-	LINE90("JMeter90Line", "90% line", "Sampler","duration"),
+	AVERAGE("JMeterAverage", "Average time"),
+	MAX("JMeterMax", "Max time"),
+	MIN("JMeterMin", "Min time"),
+	LINE90("JMeter90Line", "90% line"),
 
-	RESPONSE_CODE("JMeterResponseCode", "Response codes", "Code", "integer");
+	RESPONSE_CODE("JMeterResponseCode", "Response codes");
 
 
 	private String title;
 	private String key;
-	private String seriesTitle;
-	private String format;
 
 	private boolean selected = true;
 
-	JMeterStatisticsMetrics(String key, String title, String seriesTitle, String format) {
+	JMeterStatisticsMetrics(String key, String title) {
 		this.title = title;
 		this.key = key;
-		this.seriesTitle = seriesTitle;
-		this.format = format;
 	}
 
 	public void setIsSelected(boolean selected) {
@@ -37,13 +33,12 @@ public enum JMeterStatisticsMetrics {
 	public String getTitle() {
 		return title;
 	}
-	public String getSeriesTitle() {
-		return seriesTitle;
+	public String getReferenceTitle() {
+		return "Reference data: " + title;
 	}
-	public String getFormat() {
-		return format;
+	public String getReferenceKey() {
+		return getKey() + "_reference";
 	}
-
 	public static JMeterStatisticsMetrics getMetricByKey(String key) {
 		for(JMeterStatisticsMetrics metric : JMeterStatisticsMetrics.values()) {
 			if (metric.key.equals(key)) {
@@ -51,5 +46,12 @@ public enum JMeterStatisticsMetrics {
 			}
 		}
 		return null;
+	}
+	public static String getTitleByKey(String key) {
+		if (key.contains("_reference")) {
+			String[] tmp = key.split("_");
+			return getMetricByKey(tmp[0]).getReferenceTitle();
+		}
+		return getMetricByKey(key).getTitle();
 	}
 }

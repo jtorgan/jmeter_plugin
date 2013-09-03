@@ -48,7 +48,7 @@ public abstract class Aggregation {
 	String checkValue(@NotNull JMeterStatisticsMetrics metric, double referenceValue, double variation) {
 		Double currentValue = getAggregateValue(metric);
 		if (currentValue > referenceValue * (1 + variation)) {
-			return "Metric - " + metric + "; sampler - " + title + "; \nreference value: " + Math.round(referenceValue) + "; current value: " + Math.round(currentValue);
+			return "Metric - " + metric.getTitle() + "; sampler - " + title + "; \nreference value: " + Math.round(referenceValue) + "; current value: " + Math.round(currentValue);
 		}
 		return null;
 	}

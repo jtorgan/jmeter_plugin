@@ -98,12 +98,14 @@ public class JMeterStatisticsProcessor {
 			while (reader.ready() && !(line = reader.readLine()).isEmpty()) {
 				String[] referenceItem = line.split(DEFAULT_DELIMITER);
 				if (referenceItem.length != 3) {
-					throw new RunBuildException("Reference data format: sample_name, metric, value! Metric names: average, min, max, line90 (caseInsensitive)");
+					logger.logMessage("Wrong reference data format!\n format: <sample_name>, <metric>, <value>. find: " + referenceItem + "\n Available metrics: average, min, max, line90");
+					continue;
 				}
 				String sampler = referenceItem[0];
 				JMeterStatisticsMetrics metric = JMeterStatisticsMetrics.valueOf(referenceItem[1].toUpperCase());
 				Double referenceValue = Double.valueOf(referenceItem[2]);
 
+				logger.logMessage(metric.getReferenceKey(), Math.round(referenceValue), sampler);
 				String result = report.checkValue(sampler, metric, referenceValue, variation);
 				if (result != null) {
 					logger.logBuildProblem(metric.getTitle() + "_" + sampler, JMeterPluginConstants.BAD_PERFORMANCE_PROBLEM_TYPE, result);

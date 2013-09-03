@@ -17,12 +17,11 @@
         <constructor-arg index="2" ref="valueProviderRegistry"/>
     </bean>
 
-    <bean id="jmeterBuildStatistics" class="jmeter_runner.server.statistics.JMeterBaseVT">
+    <bean id="jmeterBuildStatistics" class="jmeter_runner.server.statistics.JMeterValueProvider">
         <constructor-arg index="0" ref="BuildDataStorage"/>
         <constructor-arg index="1" ref="valueProviderRegistry"/>
         <constructor-arg index="2" ref="buildServer"/>
-        <!-- JMeterPluginConstants.BASE_TYPE_KEY -->
-        <constructor-arg index="3" value="JMBaseVT"/>
+        <!-- JMeterPluginConstants.BASE_VALUE_PROVIDER -->
+        <constructor-arg index="3" value="JMeterValueProvider"/>
     </bean>
-
 </beans>
