@@ -40,38 +40,40 @@ public class JMeterValueProvider extends StorageValueProvider implements BuildFi
 	@Override
 	public void buildFinished(SBuild build) {
 		List<ServiceMessage> serviceMessages = getJMeterServiceMessages(build.getBuildLog());
+		if (!serviceMessages.isEmpty()) {
+			Set<String> metrics = new HashSet<String>();
+			Set<String> samplers = new HashSet<String>();
+			Set<String> codes = new HashSet<String>();
 
-		Set<String> metrics = new HashSet<String>();
-		Set<String> samplers = new HashSet<String>();
-		Set<String> codes = new HashSet<String>();
+			for (ServiceMessage serviceMessage : serviceMessages) {
+				final Map<String, String> args = serviceMessage.getAttributes();
+				String metric = args.get(JMeterPluginConstants.SM_KEY_METRIC);
+				String series = args.get(JMeterPluginConstants.SM_KEY_SERIES);
+				String value = args.get(JMeterPluginConstants.SM_KEY_VALUE);
 
-		for (ServiceMessage serviceMessage : serviceMessages) {
-			final Map<String, String> args = serviceMessage.getAttributes();
-			String metric = args.get(JMeterPluginConstants.SM_KEY_METRIC);
-			String series = args.get(JMeterPluginConstants.SM_KEY_SERIES);
-			String value = args.get(JMeterPluginConstants.SM_KEY_VALUE);
+				boolean isResponseCode = metric.equals(JMeterStatisticsMetrics.RESPONSE_CODE.getKey());
+				JMCompositeVT provider = updateOrCreateValueProvider(isResponseCode ? metric : series, JMCompositeVT.class);
+				if (provider != null) {
+					provider.publishValue(isResponseCode ? series : metric, build, value);
+				}
 
-			boolean isResponseCode = metric.equals(JMeterStatisticsMetrics.RESPONSE_CODE.getKey());
-			JMCompositeVT provider = updateOrCreateValueProvider(isResponseCode ? metric : series, JMCompositeVT.class);
-			if (provider != null) {
-				provider.publishValue(isResponseCode ? series : metric, build, value);
+				metrics.add(metric);
+				if (isResponseCode) {
+					codes.add(series);
+				} else {
+					samplers.add(series);
+				}
 			}
 
-			metrics.add(metric);
-			if (isResponseCode) {
-				codes.add(series);
-			} else {
-				samplers.add(series);
+			SBuildType buildType = build.getBuildType();
+			if (buildType != null) {
+				saveBuildParameters(buildType, JMeterPluginConstants.METRIC_BUILD_TYPE_PARAMETER, metrics);
+				saveBuildParameters(buildType, JMeterPluginConstants.SAMPLER_BUILD_TYPE_PARAMETER, samplers);
+				saveBuildParameters(buildType, JMeterPluginConstants.CODE_BUILD_TYPE_PARAMETER, codes);
+				buildType.persist();
 			}
 		}
 
-		SBuildType buildType = build.getBuildType();
-		if (buildType != null) {
-			saveBuildParameters(buildType, JMeterPluginConstants.METRIC_BUILD_TYPE_PARAMETER, metrics);
-			saveBuildParameters(buildType, JMeterPluginConstants.SAMPLER_BUILD_TYPE_PARAMETER, samplers);
-			saveBuildParameters(buildType, JMeterPluginConstants.CODE_BUILD_TYPE_PARAMETER, codes);
-			buildType.persist();
-		}
 	}
 
 	public List<ValueProvider> getGraphs(final SBuildType buildType) {
