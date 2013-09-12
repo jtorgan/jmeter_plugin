@@ -1,0 +1,32 @@
+#perfmon {
+}
+
+#perfmon td {
+  vertical-align: top;
+  padding: 0;
+}
+
+#perfmon .rightBar {
+  padding: 2px 0 0 20px;
+}
+
+#buildStages {
+  margin-top: 20px;
+}
+
+#buildStages ul {
+  margin: 0;
+}
+
+#buildLogDiv {
+  margin: 20px 0 0 12px;
+}
+
+#legend {
+  background: #f5f5f5;
+  padding: 5px;
+}
+
+#legendHint {
+  color: #888888;
+}

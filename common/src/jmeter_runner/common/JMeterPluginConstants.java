@@ -27,7 +27,8 @@ public interface JMeterPluginConstants {
 	//  jsp files
 	String VIEW_PARAMS_JSP = "viewJMeterRunParams.jsp";
 	String EDIT_PARAMS_JSP = "editJMeterRunParams.jsp";
-	String STATISTIC_TAB_JSP = "jmeterStatisticGraphs.jsp";
+	String STATISTIC_TAB_JSP = "statistic/avgMetricStat.jsp";
+	String PERFMON_STATISTIC_TAB_JSP = "statistic/systemStat.jsp";
 
 //	statistic's constants
 	String METRIC_BUILD_TYPE_PARAMETER = "Metric";
