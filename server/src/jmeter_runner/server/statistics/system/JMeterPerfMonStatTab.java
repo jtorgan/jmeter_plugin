@@ -31,6 +31,7 @@ public class JMeterPerfMonStatTab extends SimpleCustomTab {
 
 	public void fillModel(@NotNull Map<String, Object> model, @NotNull HttpServletRequest request) {
 		model.put("perfmonData", new JMeterPerfMonData(getJMeterRemoteSystemStat(request)));
+		model.put("build", BuildDataExtensionUtil.retrieveBuild(request, myServer));
 	}
 
 	private File getJMeterRemoteSystemStat(@NotNull HttpServletRequest request) {
