@@ -53,10 +53,9 @@
 }
 
 #filters {
-  position: relative;
-  padding: 5px;
+  padding: 20px 0;
   vertical-align: top;
-  border: 1px solid;
+  color: #888888;
 }
 
 #filterTitle {

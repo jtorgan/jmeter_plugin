@@ -32,6 +32,9 @@
             <div id="legendHint">
                 All values are % of available on ${perfmonData.hostName}.
             </div>
+            <div id="filters">
+                <forms:checkbox name="zoom" checked="true" /><label for="zoom">Zoom to selected</label>
+            </div>
         </td>
     </tr>
 </table>
@@ -44,7 +47,7 @@
     <c:set var="urlPath">/repository/downloadAll/${build.buildTypeExternalId}/${build.buildId}:id/artifacts.zip?showAll=true</c:set>
 
     <div id="jmeterLogMarker">JMeter test results for <span id="jmeterTimePeriod"></span></div>
-    <div style="overflow: hidden">
+    <div style="overflow: hidden; max-height: 300px;">
         <div id="jmeterLogContainer"></div>
     </div>
 </div>

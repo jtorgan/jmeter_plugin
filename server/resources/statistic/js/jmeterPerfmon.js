@@ -14,9 +14,39 @@ BS.Perfmon = {
 //        disks: "#EDC240",
         memory: "#AFD8F8"
     },
+    settings: {
+        series: {
+//            stack: true,
+//            lines: { show: true, fill: true, steps: false},
+            lines: { show: true },
+            points: { show: true, radius: 2 }
+        },
+        crosshair: {
+            mode: "x"
+        },
+        grid: {
+            hoverable: true,
+            clickable: true
+        },
+        xaxis: {
+            mode: 'time',
+            tickFormatter: function (val) {
+                return BS.Perfmon.Util.formatTime(val);
+            }
+        },
+        yaxis: {
+            min: 0,
+            max: 100,
+            tickFormatter: function (val) {
+                return val + "%";
+            }
+        },
+        selection: {
+            mode: "x"
+        }
+    },
 
-    init: function (chartElem, legendElem, chartData, logFile) {
-        JMeterLog.init(logFile);
+    init: function (chartElem, legendElem, chartData) {
 
         chartElem = $j(chartElem);
         legendElem = $j(legendElem);
@@ -53,35 +83,7 @@ BS.Perfmon = {
             height: 400
         });
 
-        this.plot = $j.plot(chartElem, this.chartData, {
-            series: {
-                lines: { show: true },
-                points: { show: true, radius: 2 }
-            },
-            crosshair: {
-                mode: "x"
-            },
-            grid: {
-                hoverable: true,
-                clickable: true
-            },
-            xaxis: {
-                mode: 'time',
-                tickFormatter: function (val) {
-                    return BS.Perfmon.Util.formatTime(val);
-                }
-            },
-            yaxis: {
-                min: 0,
-                max: 100,
-                tickFormatter: function (val) {
-                    return val + "%";
-                }
-            },
-            selection: {
-                mode: "x"
-            }
-        });
+        this.plot = $j.plot(chartElem, this.chartData, this.settings);
     },
 
     initTooltip: function (chartElem) {
@@ -187,7 +189,7 @@ BS.Perfmon = {
 //                data.push(allData[1]);
 //            }
             if ($j("#show-memory").is(":checked")) {
-                data.push(allData[2]);
+                data.push(allData[1]);
             }
 
             that.plot.setData(data);
@@ -220,18 +222,16 @@ BS.Perfmon = {
         this.selectionEvent = false;
 
         chartElem.bind("plotselected", function (event, ranges) {
-            that.selectionEvent = true;
+            if (ranges.xaxis) {
+                that.selectionEvent = true;
+                var start = parseInt(ranges.xaxis.from.toFixed());
+                var end = parseInt(ranges.xaxis.to.toFixed());
 
-            var start = parseInt(ranges.xaxis.from.toFixed());
-            var end = parseInt(ranges.xaxis.to.toFixed());
-
-//          todo:  use findNearbyItem ?? or retain current selection options
-//            var selection = that.plot.getSelection();
-//            selection.xaxis.from = start;
-//            selection.xaxis.to = end;
-//            that.plot.setSelection(selection);
-
-            that.showLog(start, end, true);
+                that.zoomIn(this, start, end);
+                that.showLog(start, end, true);
+            } else {
+                that.clear();
+            }
         });
 
         chartElem.bind("plotclick", function (event, pos, item) {
@@ -241,6 +241,7 @@ BS.Perfmon = {
                 that.showLog(start, end, false);
             } else if (!item && !that.selectionEvent){
                 that.clear();
+                that.zoomOut(this);
             }
             that.selectionEvent = false;
         });
@@ -260,8 +261,34 @@ BS.Perfmon = {
         var plot = this.plot;
         plot.clearSelection();
         plot.isSelected = false;
-
         JMeterLog.hide();
+    },
+
+    zoomOut: function(placeHolder) {
+//      todo: bug when data is empty
+        var data = this.plot.getData();
+        if (data.length != 0) {
+            this.plot = $j.plot(placeHolder, data,
+                    $j.extend(true, {}, this.settings));
+        }
+    },
+
+    zoomIn: function(placeHolder, from, to) {
+        if ($j("#zoom").attr("checked")) {
+            this.plot = $j.plot(placeHolder, this.plot.getData(),
+                    $j.extend(true, {}, this.settings, {
+                        xaxis: { min: from, max: to }
+                    }));
+        }
+    },
+
+    nearbyPointTMP : function(mouseX, mouseY, seriesFilter) {
+//          todo:  use findNearbyItem ?? or retain current selection options
+        var selection = that.plot.getSelection();
+        var near = this.plot.findNearbyItem(mouseX, mouseY, seriesFilter);
+//            selection.xaxis.from = start;
+//            selection.xaxis.to = end;
+//            that.plot.setSelection(selection);
     }
 };
 
