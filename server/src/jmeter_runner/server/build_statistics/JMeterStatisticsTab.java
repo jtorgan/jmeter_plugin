@@ -1,4 +1,4 @@
-package jmeter_runner.server.statistics;
+package jmeter_runner.server.build_statistics;
 
 import jetbrains.buildServer.serverSide.ProjectManager;
 import jetbrains.buildServer.serverSide.SBuildRunnerDescriptor;

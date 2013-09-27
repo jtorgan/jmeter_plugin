@@ -64,7 +64,7 @@ public class JMeterStatisticsProcessor {
 
 
 	/**
-	 * Logs aggregate values for statistics graphs using service messages.
+	 * Logs aggregate values for build_statistics graphs using service messages.
 	 * @throws RunBuildException
 	 */
 	public void logStatistics(@NotNull JMeterBuildLogger logger) throws RunBuildException {

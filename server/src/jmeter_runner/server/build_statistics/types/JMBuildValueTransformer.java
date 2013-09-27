@@ -1,4 +1,4 @@
-package jmeter_runner.server.statistics.composite;
+package jmeter_runner.server.build_statistics.types;
 
 import jetbrains.buildServer.artifacts.RevisionRule;
 import jetbrains.buildServer.serverSide.SBuild;

@@ -36,7 +36,7 @@ JMeterLog = {
             success: function(data) {
                 $j(data).find("a").each(function() {
                     var href = $j(this).attr("href");
-                    if (href.contains(".jtl")) {
+                    if (href.indexOf(".jtl") > -1) {
                         url = href;
                     }
                 });

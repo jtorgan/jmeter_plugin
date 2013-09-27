@@ -1,4 +1,4 @@
-package jmeter_runner.server.statistics;
+package jmeter_runner.server.build_statistics;
 
 import com.intellij.util.containers.SortedList;
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessage;
@@ -16,9 +16,9 @@ import jetbrains.buildServer.serverSide.statistics.build.BuildFinishAware;
 import jetbrains.buildServer.serverSide.statistics.build.StorageValueProvider;
 import jmeter_runner.common.JMeterPluginConstants;
 import jmeter_runner.common.JMeterStatisticsMetrics;
-import jmeter_runner.server.statistics.composite.JMCompositeVT;
-import jmeter_runner.server.statistics.composite.JMResponseCodeCVT;
-import jmeter_runner.server.statistics.composite.JMSamplerCVT;
+import jmeter_runner.server.build_statistics.types.JMCompositeVT;
+import jmeter_runner.server.build_statistics.types.JMResponseCodeCVT;
+import jmeter_runner.server.build_statistics.types.JMSamplerCVT;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.ParseException;

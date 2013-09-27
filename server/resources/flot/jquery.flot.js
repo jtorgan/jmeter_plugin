@@ -77,7 +77,7 @@
                     tickSize: null, // number or [number, "unit"]
                     minTickSize: null, // number or [number, "unit"]
                     monthNames: null, // list of names of months
-                    timeformat: null, // format string to use
+                    timeformat: null, // getMetricType string to use
                     twelveHourClock: false // 12 or 24 time in time mode
                 },
                 yaxis: {
@@ -1240,7 +1240,7 @@
                 formatter = function (v, axis) {
                     var d = new Date(v);
 
-                    // first check global format
+                    // first check global getMetricType
                     if (opts.timeformat != null)
                         return $.plot.formatDate(d, opts.timeformat, opts.monthNames);
                     
