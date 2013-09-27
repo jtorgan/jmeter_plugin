@@ -6,8 +6,6 @@ import jmeter_runner.server.build_perfmon.Series;
 import org.jetbrains.annotations.NotNull;
 
 public class SystemGraphs extends Graph {
-	public static final Graph CPU = new SystemGraphs("CPU", "%");
-	public static final Graph Disks = new SystemGraphs("Disks", "ops");
 
 	public SystemGraphs(String title, String format) {
 		super(title.toLowerCase(), title, format, 3);
@@ -33,10 +31,10 @@ public class SystemGraphs extends Graph {
 
 	public static Graph valueOf(String metricTitle) {
 		if (metricTitle.indexOf("cpu") != -1) {
-			return CPU;
+			return new SystemGraphs("CPU", "%");
 		}
 		if (metricTitle.indexOf("disks") != -1) {
-			return Disks;
+			return new SystemGraphs("Disks", "ops");
 		}
 		return null;
 	}

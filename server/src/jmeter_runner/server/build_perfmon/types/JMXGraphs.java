@@ -7,8 +7,6 @@ import org.jetbrains.annotations.NotNull;
 
 
 public class JMXGraphs extends Graph {
-	public static final Graph JMX_GC = new JMXGraphs("jmx_gc","JMX: garbage collection", "ms");
-	public static final Graph JMX_CLASS_COUNT = new JMXGraphs("jmx_class_count", "JMX: class count", "");
 
 	public JMXGraphs(String id, String title, String format) {
 		super(id, title, format, 1);
@@ -37,10 +35,10 @@ public class JMXGraphs extends Graph {
 
 	public static Graph valueOf(String params) {
 		if (params != null && params.indexOf("gc-time") != -1) {
-			return JMX_GC;
+			return new JMXGraphs("jmx_gc","JMX: garbage collection", "ms");
 		}
 		if (params != null && params.indexOf("class-count") != -1) {
-			return JMX_CLASS_COUNT;
+			return new JMXGraphs("jmx_class_count", "JMX: class count", "");
 		}
 		return null;
 	}

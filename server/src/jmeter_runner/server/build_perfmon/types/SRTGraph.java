@@ -5,7 +5,6 @@ import jmeter_runner.server.build_perfmon.Graph;
 import jmeter_runner.server.build_perfmon.Series;
 
 public class SRTGraph extends Graph {
-	public static final Graph SERVER_RESPONSE_TIME = new SRTGraph();
 
 	public SRTGraph() {
 		super("srt", "Server Response Times", "ms", 5);

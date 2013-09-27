@@ -3,6 +3,7 @@ package jmeter_runner.server.build_perfmon;
 import jetbrains.buildServer.controllers.BuildDataExtensionUtil;
 import jetbrains.buildServer.serverSide.SBuild;
 import jetbrains.buildServer.serverSide.SBuildServer;
+import jetbrains.buildServer.serverSide.SBuildType;
 import jetbrains.buildServer.web.openapi.PagePlaces;
 import jetbrains.buildServer.web.openapi.PlaceId;
 import jetbrains.buildServer.web.openapi.SimpleCustomTab;
@@ -37,7 +38,6 @@ public class JMeterStatTab extends SimpleCustomTab {
 	}
 
 	public void fillModel(@NotNull Map<String, Object> model, @NotNull HttpServletRequest request) {
-		setArtifactFiles(request);
 		Collection<Graph> data = new ArrayList<Graph>();
 		if (logArtifact != null) {
 			data = new ResultsDataProvider(logArtifact).getData();
@@ -47,11 +47,17 @@ public class JMeterStatTab extends SimpleCustomTab {
 			data.addAll(p1.getData());
 			model.put("hostName", p1.getHostName());
 		}
+		SBuild build = BuildDataExtensionUtil.retrieveBuild(request, myServer);
+		if (build != null) {
+			setState(data, build.getBuildType());
+		}
 		model.put("metrics", data);
-		model.put("build", BuildDataExtensionUtil.retrieveBuild(request, myServer));
+		model.put("build", build);
 	}
 
 	private void setArtifactFiles(@NotNull HttpServletRequest request) {
+		perfmonArtifact = null;
+		logArtifact = null;
 		final SBuild build = BuildDataExtensionUtil.retrieveBuild(request, myServer);
 		if (build != null) {
 			for (File artifact : build.getArtifactsDirectory().listFiles()) {
@@ -63,6 +69,13 @@ public class JMeterStatTab extends SimpleCustomTab {
 					logArtifact = artifact;
 				}
 			}
+		}
+	}
+
+	private void setState(Collection<Graph> graphs, SBuildType buildType) {
+		for (Graph graph : graphs) {
+			String state = buildType.getParameters().get(graph.getId());
+			graph.setState(state == null ? "shown" : state);
 		}
 	}
 

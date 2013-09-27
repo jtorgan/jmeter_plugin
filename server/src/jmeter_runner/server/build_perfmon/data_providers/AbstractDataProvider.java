@@ -9,11 +9,11 @@ import java.io.*;
 import java.util.*;
 
 public abstract class AbstractDataProvider {
-	protected Set<Graph> metrics;
+	protected Map<String, Graph> metrics;
 	protected File file;
 
 	public AbstractDataProvider(File file) {
-		this.metrics = new HashSet<Graph>();
+		this.metrics = new HashMap<String, Graph>();
 		this.file = file;
 	}
 
@@ -65,7 +65,7 @@ public abstract class AbstractDataProvider {
 				return o2.getOrderNumber() - o1.getOrderNumber();
 			}
 		});
-		sortedMetricDescriptors.addAll(metrics);
+		sortedMetricDescriptors.addAll(metrics.values());
 		return sortedMetricDescriptors;
 	}
 }

@@ -1,5 +1,7 @@
 package jmeter_runner.server.build_perfmon;
 
+import jmeter_runner.server.build_perfmon.state.JMeterGraphStateParameter;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,6 +12,8 @@ public abstract class Graph {
 	protected final String myFormat;
 	protected final int myOrderNumber;
 
+	protected String state;
+
 	protected Map<String, Series> mySeries;
 	protected long max = Long.MAX_VALUE;
 
@@ -19,6 +23,8 @@ public abstract class Graph {
 		this.myFormat = format;
 		this.myOrderNumber = orderNumber;
 		this.mySeries = new HashMap<String, Series>();
+
+		JMeterGraphStateParameter.registerGraph(this);
 	}
 
 	public String getId() {
@@ -37,6 +43,12 @@ public abstract class Graph {
 		return myOrderNumber;
 	}
 
+	public void setState(String state) {
+		this.state = state;
+	}
+	public String getState() {
+		return state;
+	}
 	public abstract void addValue(long timestamp, long value, String label);
 
 	public Collection<String> getKeys() {

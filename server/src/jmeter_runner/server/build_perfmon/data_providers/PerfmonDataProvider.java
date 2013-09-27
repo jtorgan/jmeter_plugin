@@ -33,19 +33,30 @@ public class PerfmonDataProvider extends AbstractDataProvider {
 
 		Graph metric = getMetricID(labelValues[1], labelValues.length > 2 ? labelValues[labelValues.length - 1] : "");
 		metric.addValue(timeStamp, Math.round(value / 1000), label);
-		if (!metrics.contains(metric)) {
-			metrics.add(metric);
-		}
 	}
 
 	private Graph getMetricID(@NotNull String label, String params) {
+		Graph tmp;
 		if (label.contains("memory") || params.contains("memory")) {
-			return MemoryGraph.MEMORY_BYTES;
+			tmp = metrics.get("memory");
+			if (tmp == null) {
+				tmp = new MemoryGraph();
+				metrics.put("memory", tmp);
+			}
+		} else if (label.equals("jmx")) {
+			tmp = metrics.get(params);
+			if (tmp == null) {
+				tmp = JMXGraphs.valueOf(params);
+				metrics.put(params, tmp);
+			}
+		} else {
+			tmp = metrics.get(label);
+			if (tmp == null) {
+				tmp = SystemGraphs.valueOf(label);
+				metrics.put(label, tmp);
+			}
 		}
-		if (label.equals("jmx")) {
-			return JMXGraphs.valueOf(params);
-		}
-		return SystemGraphs.valueOf(label);
+		return tmp;
 	}
 
 }

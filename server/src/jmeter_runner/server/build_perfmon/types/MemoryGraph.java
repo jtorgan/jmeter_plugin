@@ -6,8 +6,6 @@ import jmeter_runner.server.build_perfmon.Series;
 import org.jetbrains.annotations.NotNull;
 
 public class MemoryGraph extends Graph {
-	public static final Graph MEMORY_BYTES = new MemoryGraph();
-
 
 	public MemoryGraph() {
 		super("memory", "Memory", "bytes", 2);

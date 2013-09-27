@@ -2,29 +2,6 @@ if (!window.$j) {
     window.$j = window.jQuery;
 }
 
-$j(document).ready(function () {
-    $j('.collapse').click(function (event) {
-        event.preventDefault();
-        var isHidden = $j(this).text().indexOf("Show") != -1;
-        var id = $j(this).attr('name');
-        if (isHidden) {
-            $j('#' + id).show();
-            $j(this).text("[Hide]");
-        } else {
-            $j('#' + id).hide();
-            $j(this).text("[Show]");
-        }
-
-    });
-    $j('.expandAll').click(function (event) {
-        event.preventDefault();
-        $j('.collapsible').each( function() {
-            $j(this).closest('table').find('a').text("[Hide]");
-            $j(this).show();
-        });
-    });
-});
-
 BS.JMeterPerfmon = {
     subPlots: {},
 
@@ -39,7 +16,6 @@ BS.JMeterPerfmon = {
         this.initClick(plotID);
     },
 
-// ready!
     initPlot: function (plotID, data, max, format, isBytesFormat, startColor) {
         var chartElem = $j("#chart" + plotID);
 
@@ -301,21 +277,59 @@ BS.JMeterPerfmon = {
             this.subPlots[key].plot.clearSelection();
             this.subPlots[key].plot.isSelected = false;
         }
-    },
-
-// sync hover
-    initSyncCrosshair: function(plotID) {
-        var chartElem = $j("#chart" + plotID);
-        var that = this;
-        chartElem.bind("plothover",function (event, pos/*, item*/) {
-            for (var key in that.subPlots) {
-                that.subPlots[key].plot.setCrosshair(pos);
-            }
-        }).bind("mouseout", function () {
-                    for (var key in that.subPlots) {
-                        that.subPlots[key].plot.clearCrosshair();
-                    }
-                });
     }
 
+}
+
+
+// graph states
+var stateShown = "shown";
+var stateHidden = "hidden";
+
+$j(document).ready(function () {
+    var buildTypeId = $j("input[name=buildTypeId]").val().trim();
+
+    $j('.collapse').click(function (event) {
+        event.preventDefault();
+        var newState = $j(this).text().indexOf("Show") != -1 ? stateShown : stateHidden;
+        var graphID = $j(this).attr('name');
+        setUIState(newState, graphID);
+        if (newState == stateShown) {
+            $j('#' + graphID).parent().css("padding-bottom", "20px");
+        }
+        sendState(buildTypeId, newState, graphID);
+    });
+
+    $j('.expandAll').click(function (event) {
+        event.preventDefault();
+        $j('.collapsible').each( function() {
+            $j(this).closest('table').find('a').text("[Hide]");
+            $j(this).show();
+        });
+        sendState(buildTypeId, stateShown, "");
+    });
+});
+
+function setUIState(state, id) {
+    if (state.indexOf(stateShown) != -1) {
+        $j('#' + id).show();
+        $j("a[name=" + id + "]").text("[Hide]");
+    } else if (state.indexOf(stateHidden) != -1) {
+        $j('#' + id).parent().css("padding-bottom", "0");
+        $j('#' + id).hide();
+        $j("a[name=" + id + "]").text("[Show]");
+    }
+}
+
+
+function sendState(buildTypeId, newState, graphID) {
+    BS.ajaxRequest("/app/jmeter/**", {
+        method: "post",
+        parameters: 'buildTypeId=' + buildTypeId + '&state=' + newState + '&graphId=' + graphID,
+        onComplete: function(transport) {
+            if (transport.responseXML) {
+                alert(transport.responseXML);
+            }
+        }
+    });
 }

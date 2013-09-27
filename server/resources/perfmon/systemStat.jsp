@@ -1,7 +1,3 @@
-<%@ page import="jmeter_runner.server.build_perfmon.MetricGraph" %>
-<%@ page import="java.util.List" %>
-<%@ page import="java.util.Map" %>
-<%@ page import="java.util.HashMap" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="bs" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="forms" tagdir="/WEB-INF/tags/forms" %>
@@ -32,20 +28,21 @@
     </div>
 
     <div>
-        <c:forEach items="${metrics}" var="metric">
+        <input type="hidden" name="buildTypeId" value="${build.buildType.externalId}"/>
 
+        <c:forEach items="${metrics}" var="metric">
             <table style="width: 100%">
                 <tr>
                     <td>
                         <div class="chart_title" style="text-align: center; border-top: 1px solid #f4f4f4; padding: 5px 0">
                             <strong>${metric.title}</strong>
-                            <a class="collapse" name="${metric.id}">[Hide]</a>
+                            <a class="collapse" name="${metric.id}"></a>
                         </div>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <div id="${metric.id}" style="display: table-row; margin-bottom: 10px;" class="collapsible">
+                        <div id="${metric.id}" style="display: table-row;" class="collapsible">
                             <div style="float: left">
                                 <div id="chart${metric.id}" class="chart"></div>
                             </div>
@@ -61,6 +58,7 @@
 
             <script type="text/javascript">
                 (function() {
+                    setUIState("${metric.state}", "${metric.id}");
                     var data = {
                         <c:forEach items="${metric.series}" var="item" varStatus="loop">
                         '${item.label}': ${item.values} ${not loop.last ? ',' : ''}

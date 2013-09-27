@@ -10,8 +10,8 @@ public class ResultsDataProvider extends AbstractDataProvider {
 
 	public ResultsDataProvider(File file) {
 		super(file);
-		metrics.add(RPSGraph.REQUESTS_PER_SECOND);
-		metrics.add(SRTGraph.SERVER_RESPONSE_TIME);
+		metrics.put("rps", new RPSGraph());
+		metrics.put("srt", new SRTGraph());
 	}
 
 	@Override
@@ -20,7 +20,7 @@ public class ResultsDataProvider extends AbstractDataProvider {
 		long elapsedTime = Long.parseLong(itemValues[1]);
 		String label = itemValues[2].trim();
 
-		for(Graph graph : metrics) {
+		for(Graph graph : metrics.values()) {
 			graph.addValue(startTime, elapsedTime, label);
 		}
 	}

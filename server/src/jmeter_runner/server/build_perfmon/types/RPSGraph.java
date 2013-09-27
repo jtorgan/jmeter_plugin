@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Set;
 
 public class RPSGraph extends Graph {
-	public static final Graph REQUESTS_PER_SECOND = new RPSGraph();
 
 	private Set<Long> timestamps;
 
