@@ -60,13 +60,16 @@ public class JMeterStatTab extends SimpleCustomTab {
 		logArtifact = null;
 		final SBuild build = BuildDataExtensionUtil.retrieveBuild(request, myServer);
 		if (build != null) {
-			for (File artifact : build.getArtifactsDirectory().listFiles()) {
-				String absPath = artifact.getAbsolutePath();
-				if (absPath.contains("perfmon"))  {
-					perfmonArtifact = artifact;
-				}
-				if (absPath.contains(".jtl"))  {
-					logArtifact = artifact;
+			File[] artifacts = build.getArtifactsDirectory().listFiles();
+			if (artifacts != null) {
+				for (File artifact : artifacts) {
+					String absPath = artifact.getAbsolutePath();
+					if (absPath.contains("perfmon"))  {
+						perfmonArtifact = artifact;
+					}
+					if (absPath.contains(".jtl"))  {
+						logArtifact = artifact;
+					}
 				}
 			}
 		}

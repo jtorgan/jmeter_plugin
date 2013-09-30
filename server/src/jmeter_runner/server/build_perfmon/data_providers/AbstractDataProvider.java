@@ -12,7 +12,7 @@ public abstract class AbstractDataProvider {
 	protected Map<String, Graph> metrics;
 	protected File file;
 
-	public AbstractDataProvider(File file) {
+	public AbstractDataProvider(@NotNull File file) {
 		this.metrics = new HashMap<String, Graph>();
 		this.file = file;
 	}
