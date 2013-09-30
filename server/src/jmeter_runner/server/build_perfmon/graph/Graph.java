@@ -1,6 +1,4 @@
-package jmeter_runner.server.build_perfmon;
-
-import jmeter_runner.server.build_perfmon.state.JMeterGraphStateParameter;
+package jmeter_runner.server.build_perfmon.graph;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -24,7 +22,7 @@ public abstract class Graph {
 		this.myOrderNumber = orderNumber;
 		this.mySeries = new HashMap<String, Series>();
 
-		JMeterGraphStateParameter.registerGraph(this);
+		GraphStates.registerGraph(this);
 	}
 
 	public String getId() {

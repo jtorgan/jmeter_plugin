@@ -2,7 +2,7 @@ package jmeter_runner.server.build_perfmon.data_providers;
 
 import com.intellij.util.containers.SortedList;
 import jetbrains.buildServer.log.Loggers;
-import jmeter_runner.server.build_perfmon.Graph;
+import jmeter_runner.server.build_perfmon.graph.Graph;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;

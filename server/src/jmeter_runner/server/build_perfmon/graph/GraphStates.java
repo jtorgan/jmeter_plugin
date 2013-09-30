@@ -1,25 +1,24 @@
-package jmeter_runner.server.build_perfmon.state;
+package jmeter_runner.server.build_perfmon.graph;
 
 import jetbrains.buildServer.serverSide.ControlDescription;
 import jetbrains.buildServer.serverSide.Parameter;
-import jmeter_runner.server.build_perfmon.Graph;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class JMeterGraphStateParameter implements Parameter {
-	public static Map<String, JMeterGraphStateParameter> states = new HashMap<String, JMeterGraphStateParameter>();
+public class GraphStates implements Parameter {
+	public static Map<String, GraphStates> states = new HashMap<String, GraphStates>();
 
 	public static void registerGraph(Graph graph) {
-		states.put(graph.getId(), new JMeterGraphStateParameter(graph.getId(), "shown"));
+		states.put(graph.getId(), new GraphStates(graph.getId(), "shown"));
 	}
 
 	private final String name;
 	private String value;
 
-	public JMeterGraphStateParameter(String name, String value) {
+	public GraphStates(String name, String value) {
 		this.name = name;
 		this.value = value;
 	}

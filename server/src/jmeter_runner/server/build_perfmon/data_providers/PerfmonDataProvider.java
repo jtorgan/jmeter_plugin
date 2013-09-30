@@ -1,6 +1,6 @@
 package jmeter_runner.server.build_perfmon.data_providers;
 
-import jmeter_runner.server.build_perfmon.Graph;
+import jmeter_runner.server.build_perfmon.graph.Graph;
 import jmeter_runner.server.build_perfmon.types.JMXGraphs;
 import jmeter_runner.server.build_perfmon.types.MemoryGraph;
 import jmeter_runner.server.build_perfmon.types.SystemGraphs;

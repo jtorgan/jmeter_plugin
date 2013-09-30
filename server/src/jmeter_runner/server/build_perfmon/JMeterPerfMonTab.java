@@ -10,6 +10,7 @@ import jetbrains.buildServer.web.openapi.SimpleCustomTab;
 import jmeter_runner.common.JMeterPluginConstants;
 import jmeter_runner.server.build_perfmon.data_providers.PerfmonDataProvider;
 import jmeter_runner.server.build_perfmon.data_providers.ResultsDataProvider;
+import jmeter_runner.server.build_perfmon.graph.Graph;
 import org.jetbrains.annotations.NotNull;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,13 +20,13 @@ import java.util.Collection;
 import java.util.Map;
 
 
-public class JMeterStatTab extends SimpleCustomTab {
+public class JMeterPerfMonTab extends SimpleCustomTab {
 	private File perfmonArtifact;
 	private File logArtifact;
 
 	protected final SBuildServer myServer;
 
-	public JMeterStatTab(@NotNull PagePlaces pagePlaces, @NotNull final SBuildServer server) {
+	public JMeterPerfMonTab(@NotNull PagePlaces pagePlaces, @NotNull final SBuildServer server) {
 		super(pagePlaces, PlaceId.BUILD_RESULTS_TAB, "jmeter", JMeterPluginConstants.PERFMON_STATISTIC_TAB_JSP, "JMeterPerfMon");
 		myServer = server;
 		register();

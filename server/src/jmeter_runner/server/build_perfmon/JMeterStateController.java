@@ -1,10 +1,11 @@
-package jmeter_runner.server.build_perfmon.state;
+package jmeter_runner.server.build_perfmon;
 
 import jetbrains.buildServer.controllers.BaseController;
 import jetbrains.buildServer.serverSide.SBuildServer;
 import jetbrains.buildServer.serverSide.SBuildType;
 import jetbrains.buildServer.util.StringUtil;
 import jetbrains.buildServer.web.openapi.WebControllerManager;
+import jmeter_runner.server.build_perfmon.graph.GraphStates;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.web.servlet.ModelAndView;
@@ -28,10 +29,10 @@ public class JMeterStateController extends BaseController {
 		SBuildType buildType = myServer.getProjectManager().findBuildTypeByExternalId(buildTypeId);
 		if (buildType != null) {
 			if (!StringUtil.isEmpty(graphID)) {
-				buildType.addParameter(new JMeterGraphStateParameter(graphID, state));
+				buildType.addParameter(new GraphStates(graphID, state));
 			}
 			else {
-				for (JMeterGraphStateParameter graphState : JMeterGraphStateParameter.states.values()) {
+				for (GraphStates graphState : GraphStates.states.values()) {
 					graphState.setValue(state);
 					buildType.addParameter(graphState);
 				}

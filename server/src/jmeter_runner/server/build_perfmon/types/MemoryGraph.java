@@ -1,8 +1,8 @@
 package jmeter_runner.server.build_perfmon.types;
 
-import jmeter_runner.server.build_perfmon.BaseSeries;
-import jmeter_runner.server.build_perfmon.Graph;
-import jmeter_runner.server.build_perfmon.Series;
+import jmeter_runner.server.build_perfmon.graph.BaseSeries;
+import jmeter_runner.server.build_perfmon.graph.Graph;
+import jmeter_runner.server.build_perfmon.graph.Series;
 import org.jetbrains.annotations.NotNull;
 
 public class MemoryGraph extends Graph {

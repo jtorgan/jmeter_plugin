@@ -3,7 +3,7 @@
 <%@ taglib prefix="forms" tagdir="/WEB-INF/tags/forms" %>
 
 <%--@elvariable id="hostName" type="java.lang.String"--%>
-<%--@elvariable id="metrics" type="java.util.Collection<jmeter_runner.server.build_perfmon.Graph>"--%>
+<%--@elvariable id="metrics" type="java.util.Collection<jmeter_runner.server.build_perfmon.graph.Graph>"--%>
 
 <%--@elvariable id="build" type="jetbrains.buildServer.serverSide.SBuild>"--%>
 <jsp:useBean id="teamcityPluginResourcesPath" type="java.lang.String" scope="request"/>

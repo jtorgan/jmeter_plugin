@@ -11,7 +11,7 @@
     <bean id="jmeterRunType" class="jmeter_runner.server.JMeterRunType"/>
     <bean id="jmeterProblemType" class="jmeter_runner.server.JMeterPerformanceProblemTypeProvider"/>
 
-    <bean id="jmeterGraphsState" class="jmeter_runner.server.build_perfmon.state.JMeterStateController"/>
+    <bean id="jmeterGraphsState" class="jmeter_runner.server.build_perfmon.JMeterStateController"/>
 
 
     <bean id="jmeterStatisticGraphs" class="jmeter_runner.server.build_statistics.JMeterStatisticsTab" init-method="register">
@@ -29,7 +29,7 @@
     </bean>
 
 
-    <bean id="jmeter" class="jmeter_runner.server.build_perfmon.JMeterStatTab" init-method="register">
+    <bean id="jmeter" class="jmeter_runner.server.build_perfmon.JMeterPerfMonTab" init-method="register">
         <constructor-arg index="0" ref="webControllerManager"/>
         <constructor-arg index="1" ref="buildServer"/>
     </bean>

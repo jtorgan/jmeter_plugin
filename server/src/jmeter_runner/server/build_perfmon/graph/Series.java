@@ -1,4 +1,4 @@
-package jmeter_runner.server.build_perfmon;
+package jmeter_runner.server.build_perfmon.graph;
 
 import com.intellij.util.containers.SortedList;
 import org.jetbrains.annotations.NotNull;
