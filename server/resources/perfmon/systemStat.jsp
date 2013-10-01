@@ -9,17 +9,27 @@
 <jsp:useBean id="teamcityPluginResourcesPath" type="java.lang.String" scope="request"/>
 
 <!-- JIT Library File -->
-<bs:linkScript>${teamcityPluginResourcesPath}flot/excanvas.js</bs:linkScript>
-<bs:linkScript>${teamcityPluginResourcesPath}flot/jquery.flot.js</bs:linkScript>
-<bs:linkScript>${teamcityPluginResourcesPath}flot/jquery.flot.stack.js</bs:linkScript>
-<bs:linkScript>${teamcityPluginResourcesPath}flot/jquery.flot.crosshair.js</bs:linkScript>
-<bs:linkScript>${teamcityPluginResourcesPath}flot/jquery.flot.selection.js</bs:linkScript>
+<script type="text/javascript" src=">${teamcityPluginResourcesPath}flot/excanvas.js"/>
+<script type="text/javascript" src=">${teamcityPluginResourcesPath}flot/jquery.flot.js"/>
+<script type="text/javascript" src=">${teamcityPluginResourcesPath}flot/jquery.flot.stack.js"/>
+<script type="text/javascript" src=">${teamcityPluginResourcesPath}flot/jquery.flot.crosshair.js"/>
+<script type="text/javascript" src=">${teamcityPluginResourcesPath}flot/jquery.flot.selection.js"/>
 
-<bs:linkScript>${teamcityPluginResourcesPath}perfmon/js/jmeter.format.js</bs:linkScript>
-<bs:linkScript>${teamcityPluginResourcesPath}perfmon/js/jmeter.plots.js</bs:linkScript>
-<bs:linkScript>${teamcityPluginResourcesPath}perfmon/js/jmeter.log.js</bs:linkScript>
+<%--<bs:linkScript>${teamcityPluginResourcesPath}flot/excanvas.js</bs:linkScript>--%>
+<%--<bs:linkScript>${teamcityPluginResourcesPath}flot/jquery.flot.js</bs:linkScript>--%>
+<%--<bs:linkScript>${teamcityPluginResourcesPath}flot/jquery.flot.stack.js</bs:linkScript>--%>
+<%--<bs:linkScript>${teamcityPluginResourcesPath}flot/jquery.flot.crosshair.js</bs:linkScript>--%>
+<%--<bs:linkScript>${teamcityPluginResourcesPath}flot/jquery.flot.selection.js</bs:linkScript>--%>
+<script type="text/javascript" src=">${teamcityPluginResourcesPath}perfmon/js/jmeter.format.js"/>
+<script type="text/javascript" src=">${teamcityPluginResourcesPath}perfmon/js/jmeter.plots.js"/>
+<script type="text/javascript" src=">${teamcityPluginResourcesPath}perfmon/js/jmeter.log.js"/>
 
-<bs:linkCSS>${teamcityPluginResourcesPath}perfmon/css/jmeter.styles.css</bs:linkCSS>
+<%--<bs:linkScript>${teamcityPluginResourcesPath}perfmon/js/jmeter.format.js</bs:linkScript>--%>
+<%--<bs:linkScript>${teamcityPluginResourcesPath}perfmon/js/jmeter.plots.js</bs:linkScript>--%>
+<%--<bs:linkScript>${teamcityPluginResourcesPath}perfmon/js/jmeter.log.js</bs:linkScript>--%>
+
+<%--<bs:linkCSS>${teamcityPluginResourcesPath}perfmon/css/jmeter.styles.css</bs:linkCSS>--%>
+<link type="text/css" href="${teamcityPluginResourcesPath}perfmon/css/jmeter.styles.css" rel="stylesheet"/>
 
 <div id="jmeterPerfmon">
     <div class="legendHint" style="display: block">
