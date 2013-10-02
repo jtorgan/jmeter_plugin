@@ -6,6 +6,7 @@ import jetbrains.buildServer.serverSide.SBuildServer;
 import jetbrains.buildServer.serverSide.SBuildType;
 import jetbrains.buildServer.web.openapi.PagePlaces;
 import jetbrains.buildServer.web.openapi.PlaceId;
+import jetbrains.buildServer.web.openapi.PluginDescriptor;
 import jetbrains.buildServer.web.openapi.SimpleCustomTab;
 import jmeter_runner.common.JMeterPluginConstants;
 import jmeter_runner.server.build_perfmon.data_providers.PerfmonDataProvider;
@@ -26,9 +27,22 @@ public class JMeterPerfMonTab extends SimpleCustomTab {
 
 	protected final SBuildServer myServer;
 
-	public JMeterPerfMonTab(@NotNull PagePlaces pagePlaces, @NotNull final SBuildServer server) {
+	public JMeterPerfMonTab(@NotNull PagePlaces pagePlaces, @NotNull final SBuildServer server, @NotNull PluginDescriptor descriptor) {
 		super(pagePlaces, PlaceId.BUILD_RESULTS_TAB, "jmeter", JMeterPluginConstants.PERFMON_STATISTIC_TAB_JSP, "JMeterPerfMon");
 		myServer = server;
+
+		addJsFile(descriptor.getPluginResourcesPath("flot/excanvas.js"));
+		addJsFile(descriptor.getPluginResourcesPath("flot/jquery.flot.js"));
+		addJsFile(descriptor.getPluginResourcesPath("flot/jquery.flot.stack.js"));
+		addJsFile(descriptor.getPluginResourcesPath("flot/jquery.flot.crosshair.js"));
+		addJsFile(descriptor.getPluginResourcesPath("flot/jquery.flot.selection.js"));
+
+		addJsFile(descriptor.getPluginResourcesPath("perfmon/js/jmeter.format.js"));
+		addJsFile(descriptor.getPluginResourcesPath("perfmon/js/jmeter.plots.js"));
+		addJsFile(descriptor.getPluginResourcesPath("perfmon/js/jmeter.log.js"));
+
+		addCssFile(descriptor.getPluginResourcesPath("perfmon/css/jmeter.styles.css"));
+
 		register();
 	}
 
