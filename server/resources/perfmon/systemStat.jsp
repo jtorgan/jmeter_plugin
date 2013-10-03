@@ -9,14 +9,14 @@
 <jsp:useBean id="teamcityPluginResourcesPath" type="java.lang.String" scope="request"/>
 
 <!-- JIT Library File -->
-<script type="text/javascript" src=">${teamcityPluginResourcesPath}flot/excanvas.js"></script>
-<script type="text/javascript" src=">${teamcityPluginResourcesPath}flot/jquery.flot.js"></script>
-<script type="text/javascript" src=">${teamcityPluginResourcesPath}flot/jquery.flot.stack.js"></script>
-<script type="text/javascript" src=">${teamcityPluginResourcesPath}flot/jquery.flot.crosshair.js"></script>
-<script type="text/javascript" src=">${teamcityPluginResourcesPath}flot/jquery.flot.selection.js"></script>
-<script type="text/javascript" src=">${teamcityPluginResourcesPath}perfmon/js/jmeter.format.js"></script>
-<script type="text/javascript" src=">${teamcityPluginResourcesPath}perfmon/js/jmeter.plots.js"></script>
-<script type="text/javascript" src=">${teamcityPluginResourcesPath}perfmon/js/jmeter.log.js"></script>
+<script type="text/javascript" src="${teamcityPluginResourcesPath}flot/excanvas.js"></script>
+<script type="text/javascript" src="${teamcityPluginResourcesPath}flot/jquery.flot.js"></script>
+<script type="text/javascript" src="${teamcityPluginResourcesPath}flot/jquery.flot.stack.js"></script>
+<script type="text/javascript" src="${teamcityPluginResourcesPath}flot/jquery.flot.crosshair.js"></script>
+<script type="text/javascript" src="${teamcityPluginResourcesPath}flot/jquery.flot.selection.js"></script>
+<script type="text/javascript" src="${teamcityPluginResourcesPath}perfmon/js/jmeter.format.js"></script>
+<script type="text/javascript" src="${teamcityPluginResourcesPath}perfmon/js/jmeter.plots.js"></script>
+<script type="text/javascript" src="${teamcityPluginResourcesPath}perfmon/js/jmeter.log.js"></script>
 
 <link type="text/css" href="${teamcityPluginResourcesPath}perfmon/css/jmeter.styles.css" rel="stylesheet"/>
 
