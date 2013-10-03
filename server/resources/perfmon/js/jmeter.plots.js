@@ -286,6 +286,30 @@ BS.JMeterPerfmon = {
 var stateShown = "shown";
 var stateHidden = "hidden";
 
+function setUIState(state, id) {
+    if (state.indexOf(stateShown) != -1) {
+        $j('#' + id).show();
+        $j("a[name=" + id + "]").text("[Hide]");
+    } else if (state.indexOf(stateHidden) != -1) {
+        $j('#' + id).parent().css("padding-bottom", "0");
+        $j('#' + id).hide();
+        $j("a[name=" + id + "]").text("[Show]");
+    }
+}
+
+
+function sendState(buildTypeId, newState, graphID) {
+    BS.ajaxRequest("/app/jmeter/**", {
+        method: "post",
+        parameters: 'buildTypeId=' + buildTypeId + '&state=' + newState + '&graphId=' + graphID,
+        onComplete: function(transport) {
+            if (transport.responseXML) {
+                alert(transport.responseXML);
+            }
+        }
+    });
+}
+
 $j(document).ready(function () {
     var buildTypeId = $j("input[name=buildTypeId]").val().trim();
 
@@ -310,26 +334,3 @@ $j(document).ready(function () {
     });
 });
 
-function setUIState(state, id) {
-    if (state.indexOf(stateShown) != -1) {
-        $j('#' + id).show();
-        $j("a[name=" + id + "]").text("[Hide]");
-    } else if (state.indexOf(stateHidden) != -1) {
-        $j('#' + id).parent().css("padding-bottom", "0");
-        $j('#' + id).hide();
-        $j("a[name=" + id + "]").text("[Show]");
-    }
-}
-
-
-function sendState(buildTypeId, newState, graphID) {
-    BS.ajaxRequest("/app/jmeter/**", {
-        method: "post",
-        parameters: 'buildTypeId=' + buildTypeId + '&state=' + newState + '&graphId=' + graphID,
-        onComplete: function(transport) {
-            if (transport.responseXML) {
-                alert(transport.responseXML);
-            }
-        }
-    });
-}

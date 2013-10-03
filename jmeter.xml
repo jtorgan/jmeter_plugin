@@ -58,7 +58,9 @@
         <include name="**/?*.config"/>
     </patternset>
 
-    <patternset id="compiler.resources.jsp">
+    <patternset id="jmeter.compiler.resources">
+        <include name="**/?*.js"/>
+        <include name="**/?*.css"/>
         <include name="**/?*.jsp"/>
     </patternset>
 
@@ -328,7 +330,7 @@
         </copy>
         <copy todir="${jmeter_server.output.dir}/buildServerResources">
             <fileset dir="${module.jmeter_server.basedir}/server/resources">
-                <patternset refid="compiler.resources.jsp"/>
+                <patternset refid="jmeter.compiler.resources"/>
                 <type type="file"/>
             </fileset>
         </copy>
