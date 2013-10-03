@@ -41,7 +41,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <div id="${metric.id}" style="display: table-row;" class="collapsible">
+                        <div id="${metric.id}" class="collapsible">
                             <div style="float: left">
                                 <div id="chart${metric.id}" class="chart"></div>
                             </div>

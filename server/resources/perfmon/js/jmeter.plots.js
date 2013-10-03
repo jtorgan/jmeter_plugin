@@ -25,10 +25,10 @@ BS.JMeterPerfmon = {
             chartData.push({ data: data[key], label: key, color: ++i, lines: {order: 1}});
         }
 
-        chartElem.css({
-            width: 900,
-            height: 200
-        });
+//        chartElem.css({
+//            width: 900,
+//            height: 250
+//        });
 
         var stacked =  false;//plotID.indexOf("memory") != -1 || plotID.indexOf("cpu") != -1 || plotID.indexOf("pool") != -1;
 
@@ -281,10 +281,36 @@ BS.JMeterPerfmon = {
 
 }
 
-
 // graph states
 var stateShown = "shown";
 var stateHidden = "hidden";
+
+
+$j(document).ready(function () {
+    var buildTypeId = $j("input[name=buildTypeId]").val().trim();
+
+
+    $j('.collapse').unbind('click').bind('click', function (event) {
+        event.stopPropagation();
+        var newState = $j(this).text().indexOf("Show") != -1 ? stateShown : stateHidden;
+        var graphID = $j(this).attr('name');
+        setUIState(newState, graphID);
+        if (newState == stateShown) {
+            $j('#' + graphID).parent().css("padding-bottom", "20px");
+        }
+        sendState(buildTypeId, newState, graphID);
+    });
+
+    $j('.expandAll').unbind('click').bind('click', function (event) {
+        event.stopPropagation();
+        $j('.collapsible').each( function() {
+            $j(this).closest('table').find('a').text("[Hide]");
+            $j(this).show();
+        });
+        sendState(buildTypeId, stateShown, "");
+    });
+});
+
 
 function setUIState(state, id) {
     if (state.indexOf(stateShown) != -1) {
@@ -310,27 +336,5 @@ function sendState(buildTypeId, newState, graphID) {
     });
 }
 
-$j(document).ready(function () {
-    var buildTypeId = $j("input[name=buildTypeId]").val().trim();
 
-    $j('.collapse').click(function (event) {
-        event.preventDefault();
-        var newState = $j(this).text().indexOf("Show") != -1 ? stateShown : stateHidden;
-        var graphID = $j(this).attr('name');
-        setUIState(newState, graphID);
-        if (newState == stateShown) {
-            $j('#' + graphID).parent().css("padding-bottom", "20px");
-        }
-        sendState(buildTypeId, newState, graphID);
-    });
-
-    $j('.expandAll').click(function (event) {
-        event.preventDefault();
-        $j('.collapsible').each( function() {
-            $j(this).closest('table').find('a').text("[Hide]");
-            $j(this).show();
-        });
-        sendState(buildTypeId, stateShown, "");
-    });
-});
 
