@@ -15,7 +15,7 @@ public class ResultsDataProvider extends AbstractDataProvider {
 	}
 
 	@Override
-	public void processLine(String[] itemValues) {
+	public void processLine(String... itemValues) {
 		long startTime = Long.parseLong(itemValues[0]);
 		long elapsedTime = Long.parseLong(itemValues[1]);
 		String label = itemValues[2].trim();

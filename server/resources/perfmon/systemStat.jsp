@@ -4,6 +4,7 @@
 
 <%--@elvariable id="hostName" type="java.lang.String"--%>
 <%--@elvariable id="metrics" type="java.util.Collection<jmeter_runner.server.build_perfmon.graph.Graph>"--%>
+<%--@elvariable id="version" type="java.lang.String"--%>
 
 <%--@elvariable id="build" type="jetbrains.buildServer.serverSide.SBuild>"--%>
 <jsp:useBean id="teamcityPluginResourcesPath" type="java.lang.String" scope="request"/>
@@ -21,6 +22,8 @@
 <link type="text/css" href="${teamcityPluginResourcesPath}perfmon/css/jmeter.styles.css" rel="stylesheet"/>
 
 <div id="jmeterPerfmon">
+    <input type="hidden" value="${version}"/>
+
     <div class="legendHint" style="display: block">
         System statistics for tested application. Monitored host: ${hostName}
         <a class="expandAll">[Show all]</a>

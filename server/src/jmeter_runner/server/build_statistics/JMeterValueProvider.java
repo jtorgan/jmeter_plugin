@@ -1,14 +1,13 @@
 package jmeter_runner.server.build_statistics;
 
-import com.intellij.util.containers.SortedList;
+
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessage;
-import jetbrains.buildServer.serverSide.BaseParameter;
+import jetbrains.buildServer.serverSide.CustomDataStorage;
 import jetbrains.buildServer.serverSide.SBuild;
 import jetbrains.buildServer.serverSide.SBuildServer;
 import jetbrains.buildServer.serverSide.SBuildType;
 import jetbrains.buildServer.serverSide.buildLog.BuildLog;
 import jetbrains.buildServer.serverSide.buildLog.LogMessage;
-import jetbrains.buildServer.serverSide.statistics.BuildValueProvider;
 import jetbrains.buildServer.serverSide.statistics.ValueProvider;
 import jetbrains.buildServer.serverSide.statistics.ValueProviderRegistry;
 import jetbrains.buildServer.serverSide.statistics.build.BuildDataStorage;
@@ -16,25 +15,23 @@ import jetbrains.buildServer.serverSide.statistics.build.BuildFinishAware;
 import jetbrains.buildServer.serverSide.statistics.build.StorageValueProvider;
 import jmeter_runner.common.JMeterPluginConstants;
 import jmeter_runner.common.JMeterStatisticsMetrics;
+import jmeter_runner.server.build_statistics.types.GraphType;
 import jmeter_runner.server.build_statistics.types.JMCompositeVT;
-import jmeter_runner.server.build_statistics.types.JMResponseCodeCVT;
-import jmeter_runner.server.build_statistics.types.JMSamplerCVT;
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.*;
 
-
 public class JMeterValueProvider extends StorageValueProvider implements BuildFinishAware {
-	private final ValueProviderRegistry registry;
-	private final SBuildServer server;
+	private final ValueProviderRegistry myRegistry;
+	private final SBuildServer myServer;
 
-	public JMeterValueProvider(final BuildDataStorage storage, final ValueProviderRegistry valueProviderRegistry,
-	                           final SBuildServer server, String key) {
-		super(storage, key);
-		this.registry = valueProviderRegistry;
-		this.server = server;
-		valueProviderRegistry.registerValueProvider(this);
+	public JMeterValueProvider(final BuildDataStorage storage, final ValueProviderRegistry valueProviderRegistry, final SBuildServer server) {
+		super(storage, "jmeterValueProvider");
+		this.myRegistry = valueProviderRegistry;
+		this.myServer = server;
+		myRegistry.registerValueProvider(this);
 	}
 
 	@Override
@@ -45,64 +42,44 @@ public class JMeterValueProvider extends StorageValueProvider implements BuildFi
 			Set<String> samplers = new HashSet<String>();
 			Set<String> codes = new HashSet<String>();
 
+			String externalId = build.getBuildTypeExternalId();
+			long buildId = build.getBuildId();
+
 			for (ServiceMessage serviceMessage : serviceMessages) {
 				final Map<String, String> args = serviceMessage.getAttributes();
-				String metric = args.get(JMeterPluginConstants.SM_KEY_METRIC);
-				String series = args.get(JMeterPluginConstants.SM_KEY_SERIES);
+				String metricValue = args.get(JMeterPluginConstants.SM_KEY_METRIC);
+				String seriesValue = args.get(JMeterPluginConstants.SM_KEY_SERIES);
 				String value = args.get(JMeterPluginConstants.SM_KEY_VALUE);
 
-				boolean isResponseCode = metric.equals(JMeterStatisticsMetrics.RESPONSE_CODE.getKey());
-				JMCompositeVT provider = updateOrCreateValueProvider(isResponseCode ? metric : series, JMCompositeVT.class);
-				if (provider != null) {
-					provider.publishValue(isResponseCode ? series : metric, build, value);
-				}
+				StringBuilder key = new StringBuilder().append(externalId).append('_').append(metricValue).append('_').append(seriesValue);
+				myStorage.publishValue(key.toString(), buildId, new BigDecimal(value));
 
-				metrics.add(metric);
-				if (isResponseCode) {
-					codes.add(series);
+				metrics.add(metricValue);
+				if (metricValue.equals(JMeterStatisticsMetrics.RESPONSE_CODE.getKey())) {
+					codes.add(seriesValue);
 				} else {
-					samplers.add(series);
+					samplers.add(seriesValue);
 				}
 			}
-
 			SBuildType buildType = build.getBuildType();
 			if (buildType != null) {
-				saveBuildParameters(buildType, JMeterPluginConstants.METRIC_BUILD_TYPE_PARAMETER, metrics);
-				saveBuildParameters(buildType, JMeterPluginConstants.SAMPLER_BUILD_TYPE_PARAMETER, samplers);
-				saveBuildParameters(buildType, JMeterPluginConstants.CODE_BUILD_TYPE_PARAMETER, codes);
-				buildType.persist();
+				CustomDataStorage storage = buildType.getCustomDataStorage(JMeterPluginConstants.STORAGE_ID_JMETER);
+				updateCustomStorage(storage, JMeterPluginConstants.STORAGE_KEY_METRIC, metrics);
+				updateCustomStorage(storage, JMeterPluginConstants.STORAGE_KEY_SAMPLE, samplers);
+				updateCustomStorage(storage, JMeterPluginConstants.STORAGE_KEY_CODE, codes);
+				storage.flush();
 			}
 		}
 
-	}
-
-	public List<ValueProvider> getGraphs(final SBuildType buildType) {
-		List<ValueProvider> valueProviders = new SortedList<ValueProvider>(new Comparator<ValueProvider>() {
-			@Override
-			public int compare(ValueProvider o1, ValueProvider o2) {
-				return o1.getKey().compareTo(o2.getKey());
-			}
-		});
-
-		Map<String, String> params = buildType.getParameters();
-		String p = params.get(JMeterPluginConstants.SAMPLER_BUILD_TYPE_PARAMETER);
-		if (p != null) {
-			String[] samplers = p.split(",");
-			for(String sampler : samplers) {
-				valueProviders.add(updateOrCreateValueProvider(sampler, BuildValueProvider.class));
-			}
-		}
-		valueProviders.add(updateOrCreateValueProvider(JMeterStatisticsMetrics.RESPONSE_CODE.getKey(), BuildValueProvider.class));
-		return valueProviders;
 	}
 
 	private List<ServiceMessage> getJMeterServiceMessages(BuildLog log) {
 		List<ServiceMessage> serviceMessages = new ArrayList<ServiceMessage>();
 		for (Iterator<LogMessage> iterator = log.getMessagesIterator(); iterator.hasNext();) {
 			try {
-				ServiceMessage msg = ServiceMessage.parse(iterator.next().getText());
-				if (msg != null && msg.getMessageName().equals(JMeterPluginConstants.SM_NAME)) {
-					serviceMessages.add(msg);
+				String message = iterator.next().getText();
+				if (message.indexOf(JMeterPluginConstants.SM_NAME) > -1) {
+					serviceMessages.add(ServiceMessage.parse(message));
 				}
 			} catch (ParseException e) {
 			}
@@ -110,39 +87,77 @@ public class JMeterValueProvider extends StorageValueProvider implements BuildFi
 		return serviceMessages;
 	}
 
-	private synchronized void saveBuildParameters(@NotNull SBuildType buildType, final String key, Set<String> values) {
-		String parametersValues = buildType.getParameters().get(key);
+	private void updateCustomStorage(@NotNull CustomDataStorage storage, final String key, Set<String> values) {
+		String parametersValues = storage.getValue(key);
 		if (parametersValues != null) {
 			Collections.addAll(values, parametersValues.split(","));
 		}
-
 		StringBuilder builder = new StringBuilder();
 		for (String value : values) {
-			builder.append(value + ',');
+			builder.append(value).append(',');
 		}
-		buildType.addParameter(new BaseParameter(key, builder.toString(), null) {
-			@NotNull
-			@Override
-			protected String getCompareValue() {
-				return getValue();
-			}
-		});
+		storage.putValue(key, builder.toString());
 	}
 
-	private synchronized <T extends ValueProvider> T updateOrCreateValueProvider(@NotNull final String key, Class<T> providerClass) {
-		T result = null;
-		ValueProvider valueProvider = registry.getValueProvider(key.replaceAll("\\s", ""));
+	public Collection<ValueProvider> getValues(@NotNull SBuildType buildType) {
+		//todo: remove call method after migration
+		migrate(buildType);
 
-		if (providerClass.isInstance(valueProvider)) {
-			result = providerClass.cast(valueProvider);
-		} else if (valueProvider == null) {
+		Collection<ValueProvider> result = new ArrayList<ValueProvider>();
+		CustomDataStorage storage = buildType.getCustomDataStorage(JMeterPluginConstants.STORAGE_ID_JMETER);
 
-			valueProvider = key.equals(JMeterStatisticsMetrics.RESPONSE_CODE.getKey())
-					? new JMResponseCodeCVT(myStorage, registry, server)
-					: new JMSamplerCVT(myStorage, registry, server, key);
-			valueProvider = registry.registerorFindValueProvider(valueProvider);
-			result = (T) valueProvider;
+		final String codes = storage.getValue(JMeterPluginConstants.STORAGE_KEY_CODE);
+		if (codes != null) {
+			result.add(updateOrCreateValueProvider(JMeterStatisticsMetrics.RESPONSE_CODE.getKey()));
+		}
+
+		String sampleValues = storage.getValue(JMeterPluginConstants.STORAGE_KEY_SAMPLE);
+		if (sampleValues != null) {
+			String[] samplers = sampleValues.split(",");
+			for(String sampler : samplers) {
+				result.add(updateOrCreateValueProvider(sampler));
+			}
 		}
 		return result;
+	}
+
+	private synchronized ValueProvider updateOrCreateValueProvider(@NotNull String key) {
+		ValueProvider valueProvider = myRegistry.getValueProvider(key.replaceAll("\\s", ""));
+		if (valueProvider == null) {
+			GraphType type;
+			String title;
+			if (key.indexOf("ResponseCode") > -1) {
+				type = GraphType.RESPONSE_CODE_COMPOSITE;
+				title = JMeterStatisticsMetrics.RESPONSE_CODE.getTitle();
+			} else {
+				type = GraphType.SAMPLE_COMPOSITE;
+				title = key;
+			}
+			valueProvider = new JMCompositeVT(myStorage, myRegistry, myServer, key.replaceAll("\\s", ""), title, type);
+			valueProvider = myRegistry.registerorFindValueProvider(valueProvider);
+		}
+		return valueProvider;
+	}
+
+//	todo: remove method after migration
+	public void migrate(@NotNull SBuildType buildType) {
+		CustomDataStorage storage = buildType.getCustomDataStorage(JMeterPluginConstants.STORAGE_ID_JMETER);
+		Map<String, String> values = storage.getValues();
+		if (values == null || values.isEmpty()) {
+			Map<String, String> params = buildType.getParameters();
+
+			String metrics = params.get(JMeterPluginConstants.METRIC_BUILD_TYPE_PARAMETER);
+			metrics.replace(JMeterStatisticsMetrics.RESPONSE_CODE.getKey() + ",", ",");
+
+			storage.putValue(JMeterPluginConstants.STORAGE_KEY_METRIC, metrics);
+			storage.putValue(JMeterPluginConstants.STORAGE_KEY_SAMPLE, params.get(JMeterPluginConstants.SAMPLER_BUILD_TYPE_PARAMETER));
+			storage.putValue(JMeterPluginConstants.STORAGE_KEY_CODE, params.get(JMeterPluginConstants.CODE_BUILD_TYPE_PARAMETER));
+			storage.flush();
+
+			buildType.removeBuildParameter(JMeterPluginConstants.METRIC_BUILD_TYPE_PARAMETER);
+			buildType.removeBuildParameter(JMeterPluginConstants.SAMPLER_BUILD_TYPE_PARAMETER);
+			buildType.removeBuildParameter(JMeterPluginConstants.CODE_BUILD_TYPE_PARAMETER);
+			buildType.persist();
+		}
 	}
 }

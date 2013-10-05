@@ -30,17 +30,19 @@ public interface JMeterPluginConstants {
 	String STATISTIC_TAB_JSP = "statistic/avgMetricStat.jsp";
 	String PERFMON_STATISTIC_TAB_JSP = "perfmon/systemStat.jsp";
 
-//	statistic's constants
+	//	build problem type
+	String BAD_PERFORMANCE_PROBLEM_TYPE = "Performance worsened";
+	String SERVER_ERROR_PROBLEM_TYPE = "Server error";
+
+	//	statistic's constants
+//	todo: remove parameter constants after migration
 	String METRIC_BUILD_TYPE_PARAMETER = "Metric";
 	String CODE_BUILD_TYPE_PARAMETER = "Code";
 	String SAMPLER_BUILD_TYPE_PARAMETER = "Sampler";
 
-	String INTEGER_FORMAT = "integer";
-	String DURATION_FORMAT = "duration";
+	String STORAGE_ID_JMETER = "teamcity.jmeter.statistic";
+	String STORAGE_KEY_CODE = "Code";
+	String STORAGE_KEY_SAMPLE = "Sample";
+	String STORAGE_KEY_METRIC = "Metric";
 
-	String BASE_VALUE_PROVIDER = "JMeterValueProvider";
-
-//	build problem type
-	String BAD_PERFORMANCE_PROBLEM_TYPE = "Performance worsened";
-	String SERVER_ERROR_PROBLEM_TYPE = "Server error";
 }

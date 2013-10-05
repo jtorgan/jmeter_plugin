@@ -56,7 +56,7 @@ public abstract class AbstractDataProvider {
 		return (values[0].matches("\\d+") && values[1].matches("\\d+"));
 	}
 
-	public abstract void processLine(String[] values);
+	public abstract void processLine(String... values);
 
 	public Collection<Graph> getSortedGraphs() {
 		List<Graph> sortedMetricDescriptors = new SortedList<Graph>(new Comparator<Graph>() {

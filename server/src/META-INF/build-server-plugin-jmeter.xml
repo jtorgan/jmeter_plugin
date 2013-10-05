@@ -11,26 +11,24 @@
     <bean id="jmeterRunType" class="jmeter_runner.server.JMeterRunType"/>
     <bean id="jmeterProblemType" class="jmeter_runner.server.JMeterPerformanceProblemTypeProvider"/>
 
-    <bean id="jmeterGraphsState" class="jmeter_runner.server.build_perfmon.JMeterStateController"/>
-
-
-    <bean id="jmeterStatisticGraphs" class="jmeter_runner.server.build_statistics.JMeterStatisticsTab" init-method="register">
-        <constructor-arg index="0" ref="webControllerManager"/>
-        <constructor-arg index="1" ref="projectManager"/>
-        <constructor-arg index="2" ref="valueProviderRegistry"/>
-    </bean>
-
-    <bean id="jmeterBuildStatistics" class="jmeter_runner.server.build_statistics.JMeterValueProvider">
-        <constructor-arg index="0" ref="BuildDataStorage"/>
-        <constructor-arg index="1" ref="valueProviderRegistry"/>
-        <constructor-arg index="2" ref="buildServer"/>
-        <!-- JMeterPluginConstants.BASE_VALUE_PROVIDER -->
-        <constructor-arg index="3" value="JMeterValueProvider"/>
-    </bean>
-
-
-    <bean id="jmeter" class="jmeter_runner.server.build_perfmon.JMeterPerfMonTab">
+    <!--jmeter performance monitoring-->
+    <bean id="jmeterPerfMonStateController" class="jmeter_runner.server.build_perfmon.JMeterStateController"/>
+    <bean id="jMeterPerfMonTab" class="jmeter_runner.server.build_perfmon.JMeterPerfMonTab">
         <constructor-arg index="0" ref="webControllerManager"/>
         <constructor-arg index="1" ref="buildServer"/>
     </bean>
+
+    <!--jmeter average statistic by builds-->
+    <bean id="jmeterStatisticsProvider" class="jmeter_runner.server.build_statistics.JMeterValueProvider">
+        <constructor-arg index="0" ref="BuildDataStorage"/>
+        <constructor-arg index="1" ref="valueProviderRegistry"/>
+        <constructor-arg index="2" ref="buildServer"/>
+    </bean>
+    <bean id="jmeterStatisticTab" class="jmeter_runner.server.build_statistics.JMeterStatisticsTab" init-method="register">
+        <constructor-arg index="0" ref="webControllerManager"/>
+        <constructor-arg index="1" ref="projectManager"/>
+        <constructor-arg index="2" ref="valueProviderRegistry"/>
+        <constructor-arg index="3" ref="jmeterStatisticsProvider"/>
+    </bean>
+
 </beans>

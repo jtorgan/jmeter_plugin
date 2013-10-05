@@ -1,6 +1,7 @@
 package jmeter_runner.server.build_perfmon;
 
 import jetbrains.buildServer.controllers.BuildDataExtensionUtil;
+import jetbrains.buildServer.serverSide.CustomDataStorage;
 import jetbrains.buildServer.serverSide.SBuild;
 import jetbrains.buildServer.serverSide.SBuildServer;
 import jetbrains.buildServer.serverSide.SBuildType;
@@ -24,6 +25,7 @@ import java.util.Map;
 public class JMeterPerfMonTab extends SimpleCustomTab {
 	private File perfmonArtifact;
 	private File logArtifact;
+	private String version;
 
 	protected final SBuildServer myServer;
 
@@ -42,7 +44,7 @@ public class JMeterPerfMonTab extends SimpleCustomTab {
 		addJsFile(descriptor.getPluginResourcesPath("perfmon/js/jmeter.log.js"));
 
 		addCssFile(descriptor.getPluginResourcesPath("perfmon/css/jmeter.styles.css"));
-
+		version = descriptor.getPluginVersion();
 		register();
 	}
 
@@ -68,6 +70,7 @@ public class JMeterPerfMonTab extends SimpleCustomTab {
 		}
 		model.put("metrics", data);
 		model.put("build", build);
+		model.put("version", version);
 	}
 
 	private void setArtifactFiles(@NotNull HttpServletRequest request) {
@@ -91,8 +94,9 @@ public class JMeterPerfMonTab extends SimpleCustomTab {
 	}
 
 	private void setState(Collection<Graph> graphs, SBuildType buildType) {
+		CustomDataStorage stateStorage = buildType.getCustomDataStorage("teamcity.jmeter.graph.states");
 		for (Graph graph : graphs) {
-			String state = buildType.getParameters().get(graph.getId());
+			String state = stateStorage.getValue(graph.getId());
 			graph.setState(state == null ? "shown" : state);
 		}
 	}

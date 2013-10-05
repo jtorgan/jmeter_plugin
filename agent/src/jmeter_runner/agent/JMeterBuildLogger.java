@@ -29,7 +29,9 @@ public class JMeterBuildLogger {
 	}
 
 	protected String createJMeterServiceMessage(final String metricName, final long value,final String series) {
-		return "##teamcity[" + JMeterPluginConstants.SM_NAME + " " + JMeterPluginConstants.SM_KEY_METRIC + "='"  + metricName + "' "
-				+ JMeterPluginConstants.SM_KEY_VALUE + "='" + value + "' " + JMeterPluginConstants.SM_KEY_SERIES + "='" + series + "']";
+		return  new StringBuilder("##teamcity[").append(JMeterPluginConstants.SM_NAME).append(" ")
+				.append(JMeterPluginConstants.SM_KEY_METRIC).append("='").append(metricName).append("' ")
+				.append(JMeterPluginConstants.SM_KEY_VALUE).append("='").append(value).append("' ")
+				.append(JMeterPluginConstants.SM_KEY_SERIES).append("='").append(series).append("']").toString();
 	}
 }

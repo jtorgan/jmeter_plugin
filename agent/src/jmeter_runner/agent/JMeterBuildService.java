@@ -43,17 +43,14 @@ public class JMeterBuildService extends BuildServiceAdapter {
 
 	@NotNull
 	private String getJMeterExecutable(String path) throws RunBuildException {
-		StringBuilder builder = new StringBuilder();
 		BuildAgentSystemInfo agentSystemInfo = getAgentConfiguration().getSystemInfo();
 		if (path == null || path.isEmpty()) {
 			throw new RunBuildException("JMeter home path is not specified!");
 		}
-		builder.append(workingDir);
-		builder.append(path);
-		builder.append(File.separator);
-		builder.append("bin");
-		builder.append(File.separator);
-		builder.append(JMeterPluginConstants.JMETER_CMD);
+		StringBuilder builder = new StringBuilder(workingDir)
+										.append(path).append(File.separator)
+										.append("bin").append(File.separator)
+										.append(JMeterPluginConstants.JMETER_CMD);
 		if (agentSystemInfo.isWindows()) {
 			builder.append(".bat");
 		} else if (agentSystemInfo.isUnix() || agentSystemInfo.isMac()) {

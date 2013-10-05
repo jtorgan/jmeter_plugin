@@ -1,5 +1,6 @@
 package jmeter_runner.server.build_statistics.types;
 
+import jetbrains.buildServer.serverSide.CustomDataStorage;
 import jetbrains.buildServer.serverSide.SBuild;
 import jetbrains.buildServer.serverSide.SBuildServer;
 import jetbrains.buildServer.serverSide.SBuildType;
@@ -7,77 +8,80 @@ import jetbrains.buildServer.serverSide.statistics.BuildValueProvider;
 import jetbrains.buildServer.serverSide.statistics.ChartSettings;
 import jetbrains.buildServer.serverSide.statistics.ValueProviderRegistry;
 import jetbrains.buildServer.serverSide.statistics.build.*;
+import jmeter_runner.common.JMeterPluginConstants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
-public abstract class JMCompositeVT extends CompositeVTB {
-	protected List<ValueType> myModel;
+public class JMCompositeVT extends CompositeVTB {
+	private Map<String, String> mySubTitles;
+	private String myTitle;
 
-	public JMCompositeVT(BuildDataStorage buildDataStorage, ValueProviderRegistry valueProviderRegistry, SBuildServer server, String key, String format) {
-		super(buildDataStorage, valueProviderRegistry, server, key, format);
-		this.myModel = new ArrayList<ValueType>();
-	}
+	private String myBuildTypeId;
+	private GraphType myType;
 
-	protected abstract String[] getSubKeysFromBuildParameters(SBuildType buildType);
-	protected abstract ValueType createValueType(String simpleKey, String externalID);
-
-	@Override
-	public String getSeriesName(final String subKey, final int i) {
-		final ValueType vt = myModel.get(i);
-		return vt.myTitle == null ? subKey : vt.myTitle;
+	public JMCompositeVT(BuildDataStorage buildDataStorage, ValueProviderRegistry valueProviderRegistry, SBuildServer server, String key, String title, GraphType graphType) {
+		super(buildDataStorage, valueProviderRegistry, server, key.replaceAll("\\s", ""));
+		myType = graphType;
+		myTitle = title;
+		mySubTitles = new HashMap<String, String>();
 	}
 
 	@Override
 	public String[] getSubKeys() {
-		String[] result = new String[myModel.size()];
-		for (int i = 0; i < myModel.size(); i++) {
-			ValueType vt = myModel.get(i);
-			result[i] = vt.myKey;
-		}
-		return result;
+		String[] keys = new String[mySubTitles.size()];
+		return mySubTitles.keySet().toArray(keys);
 	}
 
+	@Override
+	public String getSeriesName(String subKey, int idx) {
+		return mySubTitles.get(subKey);
+	}
+
+	@NotNull
+	@Override
+	public String getDescription(ChartSettings chartSettings) {
+		return myTitle;
+	}
+
+	@Nullable
+	@Override
+	public String getValueFormat() {
+		return myType.format;
+	}
 
 	@Override
 	@NotNull
 	public List<BuildValue> getDataSet(@NotNull final ChartSettings _chartSettings) {
 		if (_chartSettings instanceof BuildChartSettings) {
-			BuildChartSettings settings = (BuildChartSettings) _chartSettings;
-			fillModel(myServer.getProjectManager().findBuildTypeByExternalId(settings.getBuildTypeId()));
-
-			List<BuildValue> buildValues = super.getDataSet(_chartSettings);
-			//TODO: what if we would like to delete some reference data in future
-//			buildValues = StatisticUtils.setReferencePastTrend(buildValues);
-			return buildValues;
+			updateKeys(((BuildChartSettings) _chartSettings).getBuildTypeId());
+			return super.getDataSet(_chartSettings);
 		}
 		return Collections.emptyList();
 	}
 
-	public void publishValue(final String key, final SBuild build, final String value)  {
-		ValueType valueType = createValueType(key, build.getBuildTypeExternalId());
-		valueType.myBuildTypeId = build.getBuildTypeExternalId();
-		if (!myModel.contains(valueType)) {
-			myModel.add(valueType);
+	private void updateKeys(@NotNull String buildTypeId) {
+		if (!buildTypeId.equals(myBuildTypeId)) {
+			mySubTitles.clear();
+			myBuildTypeId = buildTypeId;
+			SBuildType buildType = myServer.getProjectManager().findBuildTypeByExternalId(myBuildTypeId);
+			if (buildType != null) {
+				CustomDataStorage storage = buildType.getCustomDataStorage(JMeterPluginConstants.STORAGE_ID_JMETER);
+				String keys = storage.getValue(myType.storageKey);
+				if (keys != null) {
+					for (String key : keys.split(",")) {
+						mySubTitles.put(buildTypeId + '_' + myType.getSubKey(key, myTitle), myType.getSubTitle(key));
+					}
+				}
+			}
 		}
-		myStorage.publishValue(valueType.myKey, build.getBuildId(), BigDecimal.valueOf(Long.valueOf(value)));
 	}
 
-
-	private void fillModel(SBuildType buildType) {
-		myModel.clear();
-		for(String key : getSubKeysFromBuildParameters(buildType)) {
-			myModel.add(createValueType(key, buildType.getExternalId()));
-		}
-	}
 
 	@Override
 	protected BuildValueProvider createValueProviderForSubkey(final String subKey) {
+
 		return new BuildValueTypeBase(myServer, myStorage, myValueProviderRegistry, subKey) {
 			@NotNull
 			public String getDescription(final ChartSettings chartSettings) {
@@ -89,34 +93,20 @@ public abstract class JMCompositeVT extends CompositeVTB {
 				List<BuildValue> values = myStorage.getDataSet(getKey(), (BuildChartSettings)chartSettings, getValueProcessor());
 				for (ListIterator<BuildValue> it = values.listIterator(); it.hasNext();) {
 					BuildValue value = it.next();
-					// clear data with removed builds, removed artifacts and null values
-					if (value.getBuildNumber() == null || value.getValue() == null)
+					SBuild build = myServer.findBuildInstanceById(value.getBuildId());
+					// clear data with removed builds or null values
+					if (value.getBuildNumber() == null || value.getValue() == null || build == null) {
 						it.remove();
+					}
 				}
 				return values;
 			}
-
 
 			@Nullable
 			protected BuildValueTransformer getValueProcessor() {
 				return new JMBuildValueTransformer(myServer);
 			}
-
 		};
-	}
-
-	protected class ValueType {
-		String myKey;
-		String myTitle;
-		String myBuildTypeId;
-
-		@Override
-		public boolean equals(Object obj) {
-			if (obj instanceof ValueType) {
-				return ((ValueType) obj).myKey.equals(myKey);
-			}
-			return false;
-		}
 	}
 
 }

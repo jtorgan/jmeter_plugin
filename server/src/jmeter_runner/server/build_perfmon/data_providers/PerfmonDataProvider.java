@@ -21,7 +21,7 @@ public class PerfmonDataProvider extends AbstractDataProvider {
 	}
 
 	@Override
-	public void processLine(String[] itemValues) {
+	public void processLine(String... itemValues) {
 		long timeStamp = Long.parseLong(itemValues[0]);
 		long value = Long.parseLong(itemValues[1]);
 		String label = itemValues[2].toLowerCase();

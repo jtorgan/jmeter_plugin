@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentMap;
 
 
 public class JMBuildValueTransformer extends BuildValueTransformer {
-	private final ConcurrentMap<Long, String> correctedBuildNumbers = new ConcurrentHashMap<Long, String>();
+	private static final ConcurrentMap<Long, String> BUILD_ID_TO_ARTIFACT_NUMBER = new ConcurrentHashMap<Long, String>();
 	private SBuildServer myServer;
 
 	public JMBuildValueTransformer(SBuildServer server) {
@@ -23,7 +23,7 @@ public class JMBuildValueTransformer extends BuildValueTransformer {
 	@Override
 	public void process(@NotNull BuildValue buildValue) {
 		long buildId = buildValue.getBuildId();
-		if (!correctedBuildNumbers.containsKey(buildId) ) {
+		if (!BUILD_ID_TO_ARTIFACT_NUMBER.containsKey(buildId) ) {
 			//extract artifact dependency build number for actual buildId
 			SBuild build = myServer.findBuildInstanceById(buildId);
 			if (build != null) {
@@ -34,7 +34,7 @@ public class JMBuildValueTransformer extends BuildValueTransformer {
 
 						SBuild artDepBuild = myServer.findBuildInstanceById(artDepBuildId);
 						if (artDepBuild != null) {
-							correctedBuildNumbers.put(buildId, artDepBuild.getBuildNumber());
+							BUILD_ID_TO_ARTIFACT_NUMBER.put(buildId, artDepBuild.getBuildNumber());
 						}
 						else {
 							buildValue.setBuildNumber(null);
@@ -47,6 +47,6 @@ public class JMBuildValueTransformer extends BuildValueTransformer {
 				return;
 			}
 		}
-		buildValue.setBuildNumber(correctedBuildNumbers.get(buildId));
+		buildValue.setBuildNumber(BUILD_ID_TO_ARTIFACT_NUMBER.get(buildId));
 	}
 }

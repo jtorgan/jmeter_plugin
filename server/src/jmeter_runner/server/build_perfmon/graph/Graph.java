@@ -21,8 +21,6 @@ public abstract class Graph {
 		this.myFormat = format;
 		this.myOrderNumber = orderNumber;
 		this.mySeries = new HashMap<String, Series>();
-
-		GraphStates.registerGraph(this);
 	}
 
 	public String getId() {

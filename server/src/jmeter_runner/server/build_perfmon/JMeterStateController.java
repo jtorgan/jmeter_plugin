@@ -1,17 +1,18 @@
 package jmeter_runner.server.build_perfmon;
 
 import jetbrains.buildServer.controllers.BaseController;
+import jetbrains.buildServer.serverSide.CustomDataStorage;
 import jetbrains.buildServer.serverSide.SBuildServer;
 import jetbrains.buildServer.serverSide.SBuildType;
 import jetbrains.buildServer.util.StringUtil;
 import jetbrains.buildServer.web.openapi.WebControllerManager;
-import jmeter_runner.server.build_perfmon.graph.GraphStates;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 public class JMeterStateController extends BaseController {
 
@@ -28,18 +29,20 @@ public class JMeterStateController extends BaseController {
 		String state = request.getParameter("state");
 		SBuildType buildType = myServer.getProjectManager().findBuildTypeByExternalId(buildTypeId);
 		if (buildType != null) {
+			CustomDataStorage stateStorage = buildType.getCustomDataStorage("teamcity.jmeter.graph.states");
 			if (!StringUtil.isEmpty(graphID)) {
-				buildType.addParameter(new GraphStates(graphID, state));
+				stateStorage.putValue(graphID, state);
 			}
 			else {
-				for (GraphStates graphState : GraphStates.states.values()) {
-					graphState.setValue(state);
-					buildType.addParameter(graphState);
+				Map<String, String> states = stateStorage.getValues();
+				if (states != null) {
+					for (String key : states.keySet()) {
+						stateStorage.putValue(key, state);
+					}
 				}
 			}
-			buildType.persist();
+			stateStorage.flush();
 		}
 		return null;
 	}
-
 }
