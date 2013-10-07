@@ -34,6 +34,10 @@ public class JMeterValueProvider extends StorageValueProvider implements BuildFi
 		myRegistry.registerValueProvider(this);
 	}
 
+	/**
+	 * publish statistic data to build data storage
+	 * @param build
+	 */
 	@Override
 	public void buildFinished(SBuild build) {
 		List<ServiceMessage> serviceMessages = getJMeterServiceMessages(build.getBuildLog());
@@ -73,6 +77,11 @@ public class JMeterValueProvider extends StorageValueProvider implements BuildFi
 
 	}
 
+	/**
+	 * parses log, returns collection of service messages provided by jmeter agent
+	 * @param log
+	 * @return
+	 */
 	private List<ServiceMessage> getJMeterServiceMessages(BuildLog log) {
 		List<ServiceMessage> serviceMessages = new ArrayList<ServiceMessage>();
 		for (Iterator<LogMessage> iterator = log.getMessagesIterator(); iterator.hasNext();) {
@@ -87,6 +96,12 @@ public class JMeterValueProvider extends StorageValueProvider implements BuildFi
 		return serviceMessages;
 	}
 
+	/**
+	 * updates jmeter custom storage of build configuration
+	 * @param storage
+	 * @param key
+	 * @param values
+	 */
 	private void updateCustomStorage(@NotNull CustomDataStorage storage, final String key, Set<String> values) {
 		String parametersValues = storage.getValue(key);
 		if (parametersValues != null) {
@@ -99,10 +114,12 @@ public class JMeterValueProvider extends StorageValueProvider implements BuildFi
 		storage.putValue(key, builder.toString());
 	}
 
+	/**
+	 * returns collection of value providers(graphs)
+	 * @param buildType
+	 * @return
+	 */
 	public Collection<ValueProvider> getValues(@NotNull SBuildType buildType) {
-		//todo: remove call method after migration
-		migrate(buildType);
-
 		Collection<ValueProvider> result = new ArrayList<ValueProvider>();
 		CustomDataStorage storage = buildType.getCustomDataStorage(JMeterPluginConstants.STORAGE_ID_JMETER);
 
@@ -139,25 +156,4 @@ public class JMeterValueProvider extends StorageValueProvider implements BuildFi
 		return valueProvider;
 	}
 
-//	todo: remove method after migration
-	public void migrate(@NotNull SBuildType buildType) {
-		CustomDataStorage storage = buildType.getCustomDataStorage(JMeterPluginConstants.STORAGE_ID_JMETER);
-		Map<String, String> values = storage.getValues();
-		if (values == null || values.isEmpty()) {
-			Map<String, String> params = buildType.getParameters();
-
-			String metrics = params.get(JMeterPluginConstants.METRIC_BUILD_TYPE_PARAMETER);
-			metrics.replace(JMeterStatisticsMetrics.RESPONSE_CODE.getKey() + ",", ",");
-
-			storage.putValue(JMeterPluginConstants.STORAGE_KEY_METRIC, metrics);
-			storage.putValue(JMeterPluginConstants.STORAGE_KEY_SAMPLE, params.get(JMeterPluginConstants.SAMPLER_BUILD_TYPE_PARAMETER));
-			storage.putValue(JMeterPluginConstants.STORAGE_KEY_CODE, params.get(JMeterPluginConstants.CODE_BUILD_TYPE_PARAMETER));
-			storage.flush();
-
-			buildType.removeBuildParameter(JMeterPluginConstants.METRIC_BUILD_TYPE_PARAMETER);
-			buildType.removeBuildParameter(JMeterPluginConstants.SAMPLER_BUILD_TYPE_PARAMETER);
-			buildType.removeBuildParameter(JMeterPluginConstants.CODE_BUILD_TYPE_PARAMETER);
-			buildType.persist();
-		}
-	}
 }

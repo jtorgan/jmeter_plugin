@@ -6,6 +6,9 @@ import jmeter_runner.server.build_perfmon.types.SRTGraph;
 
 import java.io.File;
 
+/**
+ * Data provider for "Requests per second" and "Server response time" graphs
+ */
 public class ResultsDataProvider extends AbstractDataProvider {
 
 	public ResultsDataProvider(File file) {

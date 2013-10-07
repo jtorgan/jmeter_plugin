@@ -35,14 +35,8 @@ public interface JMeterPluginConstants {
 	String SERVER_ERROR_PROBLEM_TYPE = "Server error";
 
 	//	statistic's constants
-//	todo: remove parameter constants after migration
-	String METRIC_BUILD_TYPE_PARAMETER = "Metric";
-	String CODE_BUILD_TYPE_PARAMETER = "Code";
-	String SAMPLER_BUILD_TYPE_PARAMETER = "Sampler";
-
 	String STORAGE_ID_JMETER = "teamcity.jmeter.statistic";
 	String STORAGE_KEY_CODE = "Code";
 	String STORAGE_KEY_SAMPLE = "Sample";
 	String STORAGE_KEY_METRIC = "Metric";
-
 }

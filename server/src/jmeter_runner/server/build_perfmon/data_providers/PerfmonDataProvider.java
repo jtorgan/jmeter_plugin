@@ -8,7 +8,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
-
+/**
+ * Data provider for all performance monitoring graphs (cpu, memory, disks, jmx metrics)
+ */
 public class PerfmonDataProvider extends AbstractDataProvider {
 	private String hostName;
 

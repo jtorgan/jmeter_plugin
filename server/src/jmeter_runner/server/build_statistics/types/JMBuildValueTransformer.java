@@ -20,6 +20,10 @@ public class JMBuildValueTransformer extends BuildValueTransformer {
 		myServer = server;
 	}
 
+	/**
+	 * Change x-axis values, from jmeter test build number to artifact build number(tested application)
+	 * @param buildValue
+	 */
 	@Override
 	public void process(@NotNull BuildValue buildValue) {
 		long buildId = buildValue.getBuildId();

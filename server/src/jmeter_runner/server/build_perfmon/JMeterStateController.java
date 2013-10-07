@@ -21,6 +21,13 @@ public class JMeterStateController extends BaseController {
 		manager.registerController("/app/jmeter/**", this);
 	}
 
+	/**
+	 * Saves graph states (show/hidden)
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
 	@Nullable
 	@Override
 	protected ModelAndView doHandle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) throws Exception {

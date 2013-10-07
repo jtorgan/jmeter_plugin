@@ -8,6 +8,10 @@ import org.jetbrains.annotations.NotNull;
 import java.io.*;
 import java.util.*;
 
+/**
+ * Presents base for data providers
+ * include logic to read data file, and some other common methods
+ */
 public abstract class AbstractDataProvider {
 	protected Map<String, Graph> metrics;
 	protected File file;
@@ -56,8 +60,18 @@ public abstract class AbstractDataProvider {
 		return (values[0].matches("\\d+") && values[1].matches("\\d+"));
 	}
 
+	/**
+	 * process string line
+	 * it is necessary to determine the type of metrics, retrieve and process the value
+	 * there is
+	 * @param values
+	 */
 	public abstract void processLine(String... values);
 
+	/**
+	 * sorts graphs by order number
+	 * @return
+	 */
 	public Collection<Graph> getSortedGraphs() {
 		List<Graph> sortedMetricDescriptors = new SortedList<Graph>(new Comparator<Graph>() {
 			@Override

@@ -2,6 +2,9 @@ package jmeter_runner.server.build_statistics.types;
 
 import jmeter_runner.common.JMeterStatisticsMetrics;
 
+/**
+ * Contains graph types (contains subkey global name, data format, methods to construct subKeys, titles)
+ */
 public enum GraphType {
 	SAMPLE_COMPOSITE("Metric", "duration") {
 		@Override

@@ -21,7 +21,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-
+/**
+ * JMeter performance monitoring tab, locates on the build page
+ */
 public class JMeterPerfMonTab extends SimpleCustomTab {
 	private File perfmonArtifact;
 	private File logArtifact;
@@ -44,7 +46,7 @@ public class JMeterPerfMonTab extends SimpleCustomTab {
 		addJsFile(descriptor.getPluginResourcesPath("perfmon/js/jmeter.log.js"));
 
 		addCssFile(descriptor.getPluginResourcesPath("perfmon/css/jmeter.styles.css"));
-		version = descriptor.getPluginVersion();
+		version = descriptor.getPluginVersion(); //temporary
 		register();
 	}
 
@@ -70,9 +72,13 @@ public class JMeterPerfMonTab extends SimpleCustomTab {
 		}
 		model.put("metrics", data);
 		model.put("build", build);
-		model.put("version", version);
+		model.put("version", version);  //temporary
 	}
 
+	/**
+	 * Set file names for jmeter results log, performance monitoring log (retrieve from build artifacts)
+	 * @param request
+	 */
 	private void setArtifactFiles(@NotNull HttpServletRequest request) {
 		perfmonArtifact = null;
 		logArtifact = null;
@@ -93,6 +99,11 @@ public class JMeterPerfMonTab extends SimpleCustomTab {
 		}
 	}
 
+	/**
+	 * retrieve and set graph state (hidden/shown)
+	 * @param graphs
+	 * @param buildType
+	 */
 	private void setState(Collection<Graph> graphs, SBuildType buildType) {
 		CustomDataStorage stateStorage = buildType.getCustomDataStorage("teamcity.jmeter.graph.states");
 		for (Graph graph : graphs) {

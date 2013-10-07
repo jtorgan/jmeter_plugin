@@ -14,6 +14,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+/**
+ * Composite value type for jmeter graphs
+ */
 public class JMCompositeVT extends CompositeVTB {
 	private Map<String, String> mySubTitles;
 	private String myTitle;

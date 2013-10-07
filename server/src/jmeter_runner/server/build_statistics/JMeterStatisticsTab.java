@@ -15,6 +15,9 @@ import org.jetbrains.annotations.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
+/**
+ * JMeter Statistic tab, locates on the build type page
+ */
 public class JMeterStatisticsTab extends BuildTypeTab {
 	private ValueProviderRegistry myRegistry;
 	private ProjectManager myProjectManager;
@@ -29,6 +32,11 @@ public class JMeterStatisticsTab extends BuildTypeTab {
 		addCssFile("/css/buildGraph.css");
 	}
 
+	/**
+	 * check whether build configuration has jmeter runner
+	 * @param request
+	 * @return
+	 */
 	@Override
 	public boolean isAvailable(@NotNull final HttpServletRequest request) {
 		SBuildType buildType = getBuildType(request);

@@ -5,6 +5,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+/**
+ * Presents api for performance series
+ */
 public abstract class Series {
 	protected final String myLabel;
 	protected Map<Long, Long> myValues;

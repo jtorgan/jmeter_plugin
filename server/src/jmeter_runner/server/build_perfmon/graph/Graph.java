@@ -4,6 +4,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Presents api for performance metrics (perfmon graphs)
+ */
 public abstract class Graph {
 	protected final String myId;
 	protected final String myTitle;
