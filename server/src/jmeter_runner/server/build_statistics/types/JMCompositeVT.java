@@ -74,7 +74,7 @@ public class JMCompositeVT extends CompositeVTB {
 				String keys = storage.getValue(myType.storageKey);
 				if (keys != null) {
 					for (String key : keys.split(",")) {
-						mySubTitles.put(buildTypeId + '_' + myType.getSubKey(key, myTitle), myType.getSubTitle(key));
+						mySubTitles.put(new StringBuilder(buildTypeId).append('_').append(myType.getSubKey(key, myTitle)).toString(), myType.getSubTitle(key));
 					}
 				}
 			}
@@ -94,6 +94,7 @@ public class JMCompositeVT extends CompositeVTB {
 			@NotNull
 			public List<BuildValue> getDataSet(@NotNull final ChartSettings chartSettings) {
 				List<BuildValue> values = myStorage.getDataSet(getKey(), (BuildChartSettings)chartSettings, getValueProcessor());
+
 				for (ListIterator<BuildValue> it = values.listIterator(); it.hasNext();) {
 					BuildValue value = it.next();
 					SBuild build = myServer.findBuildInstanceById(value.getBuildId());
@@ -103,6 +104,7 @@ public class JMCompositeVT extends CompositeVTB {
 					}
 				}
 				return values;
+
 			}
 
 			@Nullable

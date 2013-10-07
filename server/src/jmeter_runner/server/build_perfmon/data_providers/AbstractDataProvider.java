@@ -38,15 +38,15 @@ public abstract class AbstractDataProvider {
 				}
 			}
 		} catch (FileNotFoundException e) {
-			Loggers.STATS.error("JMeter plugin error. File " + file.getAbsolutePath() + " not found!", e);
+			Loggers.STATS.error(new StringBuilder("JMeter plugin error. File ").append(file.getAbsolutePath()).append(" not found!").toString(), e);
 		} catch (IOException e) {
-			Loggers.STATS.error("JMeter plugin error. Error reading file " + file.getAbsolutePath(), e);
+			Loggers.STATS.error(new StringBuilder("JMeter plugin error. Error reading file ").append(file.getAbsolutePath()).toString(), e);
 		} finally {
 			if (reader != null) {
 				try {
 					reader.close();
 				} catch (IOException e) {
-					Loggers.STATS.error("JMeter plugin error. Error closing file " + file.getAbsolutePath(), e);
+					Loggers.STATS.error(new StringBuilder("JMeter plugin error. Error closing file ").append(file.getAbsolutePath()).toString(), e);
 				}
 			}
 		}
@@ -54,7 +54,7 @@ public abstract class AbstractDataProvider {
 
 	private boolean checkItem(String[] values) {
 		if (values.length < 3) {
-			Loggers.STATS.error("JMeter plugin error. \nItem getMetricType: timestamp, elapsed, label, ... \n Found: " + values);
+			Loggers.STATS.error(new StringBuilder("JMeter plugin error. \nItem getMetricType: timestamp, elapsed, label, ... \n Found: ").append(values).toString());
 			return false;
 		}
 		return (values[0].matches("\\d+") && values[1].matches("\\d+"));

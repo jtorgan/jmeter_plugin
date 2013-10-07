@@ -27,7 +27,7 @@ public class MemoryGraph extends Graph {
 		label = label.replace(parts[0], ""); // delete host value
 		if (parts.length >= 3) {
 			String[] paramsValue = parts[2].split(":");
-			return parts[1].toLowerCase() + " " + paramsValue[paramsValue.length - 1];
+			return new StringBuilder(parts[1].toLowerCase()).append(" ").append(paramsValue[paramsValue.length - 1]).toString();
 		}
 		return label;
 	}

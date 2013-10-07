@@ -9,7 +9,7 @@ public enum GraphType {
 	SAMPLE_COMPOSITE("Metric", "duration") {
 		@Override
 		protected String getSubKey(String subKey, String title) {
-			return subKey+ '_' + title;
+			return new StringBuilder(subKey).append('_').append(title).toString();
 		}
 
 		@Override
@@ -20,7 +20,7 @@ public enum GraphType {
 	RESPONSE_CODE_COMPOSITE("Code", "integer") {
 		@Override
 		protected String getSubKey(String value, String title) {
-			return JMeterStatisticsMetrics.RESPONSE_CODE.getKey() + '_' + value;
+			return new StringBuilder(JMeterStatisticsMetrics.RESPONSE_CODE.getKey()).append('_').append(value).toString();
 		}
 
 		@Override
