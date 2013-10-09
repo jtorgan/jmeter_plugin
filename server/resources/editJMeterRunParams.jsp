@@ -6,15 +6,42 @@
 
 <jsp:useBean id="propertiesBean" scope="request" type="jetbrains.buildServer.controllers.BasePropertiesBean"/>
 
-<l:settingsGroup title="Project Settings">
+<l:settingsGroup title="JMeter settings">
     <tr>
-        <th><label for="jmeter.home">JMeter home: <l:star/></label></th>
+        <th><label for="jmeter.exec">JMeter executable:<l:star/></label></th>
         <td>
-            <props:textProperty name="jmeter.home" className="longField"/>
-            <span class="error" id="error_jmeter.home"></span>
-            <span class="smallNote">Enter path to JMeter home directory.</span>
+            <props:textProperty name="jmeter.exec" className="longField"/>
+            <bs:vcsTree fieldId="jmeter.exec"/>
+            <span class="error" id="error_jmeter.exec"></span>
+            <span class="smallNote">Enter path to JMeter executable.</span>
         </td>
     </tr>
+    <tr>
+        <th><label for="jmeter.remote.mode">Run on remote</label></th>
+        <td>
+            <props:checkboxProperty name="jmeter.remote.mode" checked="false"/>
+
+            <table id="jmeter.remote_params">
+                <tr>
+                    <td style="padding: 2px !important;"><label for="jmeter.remote.host">host:</label></td>
+                    <td style="padding: 2px !important;"><props:textProperty name="jmeter.remote.host" className="longField"/></td>
+                </tr>
+                <tr>
+                    <td style="padding: 2px !important;"><label for="jmeter.remote.login">login:</label></td>
+                    <td style="padding: 2px !important;"><props:textProperty name="jmeter.remote.login" className="longField"/></td>
+                </tr>
+                <tr>
+                    <td style="padding: 2px !important;"><label for="jmeter.remote.password">password:</label></td>
+                    <td style="padding: 2px !important;"><props:textProperty name="jmeter.remote.password" className="longField"/></td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</l:settingsGroup>
+
+
+
+<l:settingsGroup title="Test Plan Settings">
     <tr>
         <th><label for="jmeter.testPlan">Path to JMeter test plan: <l:star/></label></th>
         <td>
@@ -31,7 +58,6 @@
             <bs:vcsTree fieldId="jmeter.referenceData"/>
         </td>
     </tr>
-    <forms:workingDirectory/>
 
     <tr>
         <th><label>Aggregate metrics:</label></th>

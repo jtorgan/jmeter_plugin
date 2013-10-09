@@ -9,5 +9,6 @@
     <!-- declare all beans you like Spring Dependency Injection to create -->
     <!-- see http://static.springsource.org/spring/docs/3.0.x/spring-framework-reference/html/beans.html -->
 
-    <bean id="jmeterRunnerBuildServiceFactory" class="jmeter_runner.agent.JMeterBuildServiceFactory"/>
+    <bean id="jmeterBuildRunner" class="jmeter_runner.agent.JMeterBuildRunner"/>
+
 </beans>

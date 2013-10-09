@@ -7,8 +7,13 @@ public interface JMeterPluginConstants {
 	String RUNNER_DISPLAY_NAME = "JMeter";
 	String RUNNER_DESCRIPTION = "JMeter Test Runner";
 
-//	Parameters for the runner
-	String PARAMS_EXECUTABLE = "jmeter.home";
+	//	Parameters for the runner
+	String PARAMS_EXECUTABLE = "jmeter.exec";
+	String PARAMS_REMOTE_MODE = "jmeter.remote.mode";
+	String PARAMS_REMOTE_HOST = "jmeter.remote.host";
+	String PARAMS_REMOTE_LOGIN = "jmeter.remote.login";
+	String PARAMS_REMOTE_PASSWORD = "jmeter.remote.password";
+
 	String PARAMS_TEST_PATH = "jmeter.testPlan";
 	String PARAMS_METRIC_MAX = "jmeter.max";
 	String PARAMS_METRIC_MIN = "jmeter.min";
@@ -17,6 +22,12 @@ public interface JMeterPluginConstants {
 	String PARAMS_VARIATION = "jmeter.variation";
 	String PARAMS_REFERENCE_DATA = "jmeter.referenceData";
 	String PARAMS_CMD_ARGUMENTS = "jmeter.args";
+
+	//	file names
+	String JMETER_RUN_RESULT_FILE = "results.jtl";
+	String PERFMON_RUN_RESULT_FILE = "perfmon.csv";
+	String JMETER_LOG_FILE = "jmeter.log";
+
 
 	//	Service Messages constants
 	String SM_NAME = "buildJMeterStatistic";

@@ -1,4 +1,8 @@
 .idea/workspace.xml
+.idea/codeStyleSettings.xml
+.idea/runConfigurations/Tomcat.xml
+.idea/modules.xml
+
 out
 tests
 
@@ -19,3 +23,4 @@ temp/
 _tmp/
 .classpath
 .project
+
