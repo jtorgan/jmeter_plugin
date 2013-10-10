@@ -19,7 +19,7 @@
                              plugin.version="${plugin.version}">
         <agent-additional-files>
             <fileset dir="${basedir}/lib/ssh/" id="agent-additional-files">
-                <include name="jsch-0.1.50.jar"/>
+                <include name="/lib/jsch-0.1.50.jar"/>
             </fileset>
         </agent-additional-files>
     </package.teamcity.plugin>
