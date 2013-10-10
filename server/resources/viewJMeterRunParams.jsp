@@ -7,8 +7,12 @@
 <l:settingsGroup title="Project Settings">
     <forms:workingDirectory/>
     <div class="parameter">
-        JMeter home:
-        <strong>${propertiesBean.properties['jmeter.home']}</strong>
+        JMeter executable:
+        <strong>${propertiesBean.properties['jmeter.exec']}</strong>
+    </div>
+    <div class="parameter">
+        JMeter runs on remote host:
+        <strong>${propertiesBean.properties['jmeter.remote.host']}</strong>
     </div>
     <div class="parameter">
         Path to JMeter test plan:

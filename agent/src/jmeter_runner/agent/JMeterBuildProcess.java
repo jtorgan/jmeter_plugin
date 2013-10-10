@@ -61,7 +61,7 @@ public class JMeterBuildProcess extends SyncBuildProcess {
 	private void sendData(Session session) throws RunBuildException {
 		ChannelSftp channel = null;
 		try {
-			myLogger.logMessage("send test data to folder '", DATA_PREFIX, "' to remote host", myRunParameters.get(JMeterPluginConstants.PARAMS_REMOTE_HOST));
+			myLogger.logMessage("send test data to folder '", DATA_PREFIX, "' to remote host ", myRunParameters.get(JMeterPluginConstants.PARAMS_REMOTE_HOST));
 
 			channel = (ChannelSftp) session.openChannel("sftp");
 			channel.connect();
@@ -152,10 +152,11 @@ public class JMeterBuildProcess extends SyncBuildProcess {
 		String variation = myRunParameters.get(JMeterPluginConstants.PARAMS_VARIATION);
 
 		JMeterStatisticsProcessor processor = new JMeterStatisticsProcessor();
-
+		myLogger.logMessage("count aggregations ...");
 		processor.countAggregations(getAbsoluteFilePath(JMeterPluginConstants.JMETER_RUN_RESULT_FILE));
 		processor.logStatistics(myLogger);
 		if (referenceDataPath != null)  {
+			myLogger.logMessage("check reference data ...");
 			processor.checkBuildSuccess(myLogger, getAbsoluteFilePath(referenceDataPath), variation != null ? Double.parseDouble(variation) : 0.05);
 		}
 	}
