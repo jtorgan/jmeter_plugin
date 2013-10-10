@@ -91,6 +91,10 @@
         <fileset dir="${path.variable.teamcitydistribution}/webapps/ROOT/WEB-INF/lib" includes="*.jar" />
     </path>
 
+    <path id="library.ssh.classpath">
+        <pathelement location="${basedir}/lib/ssh/jsch-0.1.50.jar"/>
+    </path>
+
     <path id="library.tomcat.classpath">
         <pathelement location="${path.variable.teamcitydistribution}/lib/servlet-api.jar"/>
     </path>
@@ -192,6 +196,7 @@
         <path refid="library.teamcity_open_api_agent.classpath"/>
         <path refid="library.teamcity_open_api_common.classpath"/>
         <path refid="library.teamcity_third-party_common.classpath"/>
+        <path refid="library.ssh.classpath"/>
         <!--<path refid="library.classpath"/>-->
 
         <pathelement location="${jmeter_common.output.dir}"/>
@@ -202,10 +207,12 @@
     <path id="jmeter_agent.runtime.module.classpath">
         <pathelement location="${jmeter_agent.output.dir}"/>
         <pathelement location="${jmeter_agent.testoutput.dir}"/>
+
         <path refid="library.teamcity_open_api_agent.classpath"/>
         <path refid="library.teamcity_open_api_common.classpath"/>
         <path refid="library.teamcity_third-party_common.classpath"/>
         <path refid="jmeter_common.runtime.module.classpath"/>
+        <path refid="library.ssh.classpath"/>
     </path>
 
 
