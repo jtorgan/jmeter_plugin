@@ -196,7 +196,6 @@
 
         <pathelement location="${jmeter_common.output.dir}"/>
         <pathelement location="${jmeter_common.testoutput.dir}"/>
-        <pathelement location="lib/ssh/jsch-0.1.50.jar"/>
 
     </path>
 
@@ -207,7 +206,6 @@
         <path refid="library.teamcity_open_api_common.classpath"/>
         <path refid="library.teamcity_third-party_common.classpath"/>
         <path refid="jmeter_common.runtime.module.classpath"/>
-        <pathelement location="lib/ssh/jsch-0.1.50.jar"/>
     </path>
 
 
