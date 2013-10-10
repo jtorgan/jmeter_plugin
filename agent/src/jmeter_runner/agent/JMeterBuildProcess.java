@@ -67,11 +67,14 @@ public class JMeterBuildProcess extends SyncBuildProcess {
 			channel.connect();
 			channel.mkdir(DATA_PREFIX);
 
-			File dataDir = new File(getAbsoluteFilePath(myRunParameters.get(JMeterPluginConstants.PARAMS_TEST_PATH))).getParentFile();
-			if (dataDir != null && dataDir.getAbsolutePath() != null && dataDir.isDirectory()) {
-				for (File f : dataDir.listFiles()) {
-					myLogger.logMessage("save data ", f.getAbsolutePath());
-					channel.put(f.getAbsolutePath(), DATA_PREFIX);
+			File testDir = new File(getAbsoluteFilePath(myRunParameters.get(JMeterPluginConstants.PARAMS_TEST_PATH))).getParentFile();
+			if (testDir != null && testDir.getAbsolutePath() != null && testDir.isDirectory()) {
+				File[] testFiles = testDir.listFiles();
+				if (testFiles != null) {
+					for (File f : testFiles) {
+						myLogger.logMessage("save data ", f.getAbsolutePath());
+						channel.put(f.getAbsolutePath(), DATA_PREFIX);
+					}
 				}
 			}
 		} catch (JSchException e) {
@@ -165,7 +168,7 @@ public class JMeterBuildProcess extends SyncBuildProcess {
 		String testPlanName = DATA_PREFIX + new File(myRunParameters.get(JMeterPluginConstants.PARAMS_TEST_PATH)).getName();
 		StringBuilder builder = new StringBuilder(myRunParameters.get(JMeterPluginConstants.PARAMS_EXECUTABLE))
 				.append(" -n -t ").append(testPlanName)
-				.append(" -l ").append("results.jtl ")
+				.append(" -l").append("results.jtl ")
 				.append(myRunParameters.get(JMeterPluginConstants.PARAMS_CMD_ARGUMENTS));
 		return builder.toString();
 	}

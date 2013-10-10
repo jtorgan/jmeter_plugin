@@ -7,11 +7,14 @@ import jmeter_runner.server.build_perfmon.types.SystemGraphs;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.regex.Pattern;
 
 /**
  * Data provider for all performance monitoring graphs (cpu, memory, disks, jmx metrics)
  */
 public class PerfmonDataProvider extends AbstractDataProvider {
+	private static final Pattern space_pattern = Pattern.compile(" ");
+
 	private String hostName;
 
 	public PerfmonDataProvider(File file) {
@@ -28,7 +31,7 @@ public class PerfmonDataProvider extends AbstractDataProvider {
 		long value = Long.parseLong(itemValues[1]);
 		String label = itemValues[2].toLowerCase();
 
-		String[] labelValues = label.split(" ");
+		String[] labelValues = space_pattern.split(label);
 		if (this.hostName == null) {
 			this.hostName = labelValues[0];
 		}

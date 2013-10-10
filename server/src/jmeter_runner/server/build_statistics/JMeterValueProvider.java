@@ -22,8 +22,11 @@ import org.jetbrains.annotations.NotNull;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class JMeterValueProvider extends StorageValueProvider implements BuildFinishAware {
+	private static final Pattern comma_pattern = Pattern.compile(",");
+
 	private final ValueProviderRegistry myRegistry;
 	private final SBuildServer myServer;
 
@@ -105,7 +108,7 @@ public class JMeterValueProvider extends StorageValueProvider implements BuildFi
 	private void updateCustomStorage(@NotNull CustomDataStorage storage, final String key, Set<String> values) {
 		String parametersValues = storage.getValue(key);
 		if (parametersValues != null) {
-			Collections.addAll(values, parametersValues.split(","));
+			Collections.addAll(values, comma_pattern.split(parametersValues));
 		}
 		StringBuilder builder = new StringBuilder();
 		for (String value : values) {
@@ -130,7 +133,7 @@ public class JMeterValueProvider extends StorageValueProvider implements BuildFi
 
 		String sampleValues = storage.getValue(JMeterPluginConstants.STORAGE_KEY_SAMPLE);
 		if (sampleValues != null) {
-			String[] samplers = sampleValues.split(",");
+			String[] samplers = comma_pattern.split(sampleValues);
 			for(String sampler : samplers) {
 				result.add(updateOrCreateValueProvider(sampler));
 			}
@@ -139,7 +142,8 @@ public class JMeterValueProvider extends StorageValueProvider implements BuildFi
 	}
 
 	private synchronized ValueProvider updateOrCreateValueProvider(@NotNull String key) {
-		ValueProvider valueProvider = myRegistry.getValueProvider(key.replaceAll("\\s", ""));
+		String formattedKey = key.replaceAll("\\s", "");
+		ValueProvider valueProvider = myRegistry.getValueProvider(formattedKey);
 		if (valueProvider == null) {
 			GraphType type;
 			String title;
@@ -150,7 +154,7 @@ public class JMeterValueProvider extends StorageValueProvider implements BuildFi
 				type = GraphType.SAMPLE_COMPOSITE;
 				title = key;
 			}
-			valueProvider = new JMCompositeVT(myStorage, myRegistry, myServer, key.replaceAll("\\s", ""), title, type);
+			valueProvider = new JMCompositeVT(myStorage, myRegistry, myServer, formattedKey, title, type);
 			valueProvider = myRegistry.registerorFindValueProvider(valueProvider);
 		}
 		return valueProvider;

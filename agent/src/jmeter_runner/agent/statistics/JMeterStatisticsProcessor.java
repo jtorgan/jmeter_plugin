@@ -10,10 +10,10 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 public class JMeterStatisticsProcessor {
-
-	private final String DEFAULT_DELIMITER = ",";
+	private static final Pattern comma_pattern = Pattern.compile(",");
 
 	private AggregateReport report;
 
@@ -27,11 +27,11 @@ public class JMeterStatisticsProcessor {
 		try {
 			reader = new BufferedReader(new FileReader(logPath));
 
-			String logLine = null;
+			String logLine;
 			if (reader.ready()) {
 				// extract count of fields and skip first line with result titles
 				logLine = reader.readLine();
-				String[] titles = logLine.split(DEFAULT_DELIMITER);
+				String[] titles = comma_pattern.split(logLine);
 				int countFields = titles.length;
 
 				boolean isNewItem = true;
@@ -39,7 +39,7 @@ public class JMeterStatisticsProcessor {
 
 				while (reader.ready() && !(logLine = reader.readLine()).isEmpty()) {
 					itemStr = isNewItem ? logLine : itemStr + logLine;
-					String[] fieldValues = itemStr.split(DEFAULT_DELIMITER);
+					String[] fieldValues = comma_pattern.split(itemStr);
 					isNewItem = fieldValues.length == countFields;
 					if (isNewItem) {
 						Aggregation.Item item = report.new Item(fieldValues);
@@ -94,9 +94,9 @@ public class JMeterStatisticsProcessor {
 		BufferedReader reader = null;
 		try {
 			reader = new BufferedReader(new FileReader(referenceData));
-			String line = null;
+			String line;
 			while (reader.ready() && !(line = reader.readLine()).isEmpty()) {
-				String[] referenceItem = line.split(DEFAULT_DELIMITER);
+				String[] referenceItem = comma_pattern.split(line);
 				if (referenceItem.length != 3) {
 					logger.logMessage("Wrong reference data format!\n format: <sample_name>, <metric>, <value>. find: " + referenceItem + "\n Available metrics: average, min, max, line90");
 					continue;
