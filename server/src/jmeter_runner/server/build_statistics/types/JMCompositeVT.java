@@ -31,6 +31,10 @@ public class JMCompositeVT extends CompositeVTB {
 		mySubTitles = new HashMap<String, String>();
 	}
 
+	public String getSeriesGenericName() {
+		return "Metric";
+	}
+
 	@Override
 	public String[] getSubKeys() {
 		String[] keys = new String[mySubTitles.size()];
