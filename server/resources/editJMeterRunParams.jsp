@@ -8,7 +8,7 @@
 
 <l:settingsGroup title="JMeter settings">
     <tr>
-        <th><label for="jmeter.exec">JMeter executable:<l:star/></label></th>
+        <th><label for="jmeter.exec">JMeter executable: <l:star/></label></th>
         <td>
             <props:textProperty name="jmeter.exec" className="longField"/>
             <bs:vcsTree fieldId="jmeter.exec"/>
@@ -17,11 +17,10 @@
         </td>
     </tr>
     <tr>
-        <th><label for="jmeter.remote.mode">Run on remote</label></th>
+        <th><label for="jmeter.remote.params">Remote options: <l:star/></label></th>
         <td>
-            <props:checkboxProperty name="jmeter.remote.mode" checked="false"/>
-
-            <table id="jmeter.remote_params">
+            <span class="smallNote">JMeter must be run on the other machine from build agent to get trusted data.</span>
+            <table id="jmeter.remote.params">
                 <tr>
                     <td style="padding: 2px !important;"><label for="jmeter.remote.host">host:</label></td>
                     <td style="padding: 2px !important;"><props:textProperty name="jmeter.remote.host" className="longField"/></td>
@@ -91,7 +90,7 @@
         <th><label for="jmeter.args">Command line arguments:</label></th>
         <td>
             <props:textProperty name="jmeter.args" className="longField" expandable="true"/>
-            <span class="smallNote">If test plan contains parameters from command line, specify the values</span>
+            <span class="smallNote">If test plan contains parameters from command line, specify the values.</span>
         </td>
     </tr>
 </l:settingsGroup>

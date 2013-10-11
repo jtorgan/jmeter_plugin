@@ -9,7 +9,6 @@ public interface JMeterPluginConstants {
 
 	//	Parameters for the runner
 	String PARAMS_EXECUTABLE = "jmeter.exec";
-	String PARAMS_REMOTE_MODE = "jmeter.remote.mode";
 	String PARAMS_REMOTE_HOST = "jmeter.remote.host";
 	String PARAMS_REMOTE_LOGIN = "jmeter.remote.login";
 	String PARAMS_REMOTE_PASSWORD = "jmeter.remote.password";
