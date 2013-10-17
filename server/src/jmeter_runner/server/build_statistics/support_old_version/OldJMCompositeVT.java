@@ -1,4 +1,4 @@
-package jmeter_runner.server.build_statistics.types;
+package jmeter_runner.server.build_statistics.support_old_version;
 
 import jetbrains.buildServer.serverSide.CustomDataStorage;
 import jetbrains.buildServer.serverSide.SBuild;
@@ -8,31 +8,24 @@ import jetbrains.buildServer.serverSide.statistics.BuildValueProvider;
 import jetbrains.buildServer.serverSide.statistics.ChartSettings;
 import jetbrains.buildServer.serverSide.statistics.ValueProviderRegistry;
 import jetbrains.buildServer.serverSide.statistics.build.*;
-import jmeter_runner.common.JMeterPluginConstants;
+import jmeter_runner.server.build_statistics.types.JMeterBuildValueTransformer;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
-/**
- * Composite value type for jmeter graphs
- */
-public class JMCompositeVT extends CompositeVTB {
+public class OldJMCompositeVT extends CompositeVTB {
 	private Map<String, String> mySubTitles;
 	private String myTitle;
 
 	private String myBuildTypeId;
-	private GraphType myType;
+	private OldGraphType myType;
 
-	public JMCompositeVT(BuildDataStorage buildDataStorage, ValueProviderRegistry valueProviderRegistry, SBuildServer server, String key, String title, GraphType graphType) {
+	public OldJMCompositeVT(BuildDataStorage buildDataStorage, ValueProviderRegistry valueProviderRegistry, SBuildServer server, String key, String title, OldGraphType oldGraphType) {
 		super(buildDataStorage, valueProviderRegistry, server, key.replaceAll("\\s", ""));
-		myType = graphType;
+		myType = oldGraphType;
 		myTitle = title;
 		mySubTitles = new HashMap<String, String>();
-	}
-
-	public String getSeriesGenericName() {
-		return "Metric";
 	}
 
 	@Override
@@ -52,7 +45,6 @@ public class JMCompositeVT extends CompositeVTB {
 		return myTitle;
 	}
 
-	@Nullable
 	@Override
 	public String getValueFormat() {
 		return myType.format;
@@ -74,7 +66,7 @@ public class JMCompositeVT extends CompositeVTB {
 			myBuildTypeId = buildTypeId;
 			SBuildType buildType = myServer.getProjectManager().findBuildTypeByExternalId(myBuildTypeId);
 			if (buildType != null) {
-				CustomDataStorage storage = buildType.getCustomDataStorage(JMeterPluginConstants.STORAGE_ID_JMETER);
+				CustomDataStorage storage = buildType.getCustomDataStorage(OldJMeterValueProvider.STORAGE_ID_JMETER);
 				String keys = storage.getValue(myType.storageKey);
 				if (keys != null) {
 					for (String key : keys.split(",")) {
@@ -113,7 +105,7 @@ public class JMCompositeVT extends CompositeVTB {
 
 			@Nullable
 			protected BuildValueTransformer getValueProcessor() {
-				return new JMBuildValueTransformer(myServer);
+				return new JMeterBuildValueTransformer(myServer);
 			}
 		};
 	}

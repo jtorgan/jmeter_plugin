@@ -69,7 +69,7 @@ public abstract class Aggregation {
 
 		Item(String[] values) {
 			if (values == null || values.length < 5) {  //failureMessage may be empty
-				throw new IllegalArgumentException("JMeter result item format: timeStamp,elapsedTime,label,responseCode,responseMessage, ...");
+				throw new IllegalArgumentException("JMeter result item format: timeStamp\telapsedTime\tlabel\tresponseCode\tresponseMessage ...");
 			}
 			this.timeStamp = values[0];
 			this.elapsedTime = Long.valueOf(values[1]);

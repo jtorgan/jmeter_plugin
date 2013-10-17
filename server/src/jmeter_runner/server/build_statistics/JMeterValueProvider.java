@@ -1,7 +1,6 @@
 package jmeter_runner.server.build_statistics;
 
-
-import jetbrains.buildServer.messages.serviceMessages.ServiceMessage;
+import com.intellij.util.containers.SortedList;
 import jetbrains.buildServer.serverSide.CustomDataStorage;
 import jetbrains.buildServer.serverSide.SBuild;
 import jetbrains.buildServer.serverSide.SBuildServer;
@@ -13,99 +12,110 @@ import jetbrains.buildServer.serverSide.statistics.ValueProviderRegistry;
 import jetbrains.buildServer.serverSide.statistics.build.BuildDataStorage;
 import jetbrains.buildServer.serverSide.statistics.build.BuildFinishAware;
 import jetbrains.buildServer.serverSide.statistics.build.StorageValueProvider;
+import jmeter_runner.common.JMeterMessage;
+import jmeter_runner.common.JMeterMessageParser;
 import jmeter_runner.common.JMeterPluginConstants;
 import jmeter_runner.common.JMeterStatisticsMetrics;
-import jmeter_runner.server.build_statistics.types.GraphType;
-import jmeter_runner.server.build_statistics.types.JMCompositeVT;
+import jmeter_runner.server.build_statistics.support_old_version.OldJMeterValueProvider;
+import jmeter_runner.server.build_statistics.types.AggregateCompositeVT;
+import jmeter_runner.server.build_statistics.types.ResponseCodeCompositeVT;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.util.*;
 import java.util.regex.Pattern;
 
 public class JMeterValueProvider extends StorageValueProvider implements BuildFinishAware {
 	private static final Pattern comma_pattern = Pattern.compile(",");
+	private static final Pattern sharp_pattern = Pattern.compile("#");
+	private static final Pattern non_word_pattern = Pattern.compile("\\W");
 
 	private final ValueProviderRegistry myRegistry;
 	private final SBuildServer myServer;
 
 	public JMeterValueProvider(final BuildDataStorage storage, final ValueProviderRegistry valueProviderRegistry, final SBuildServer server) {
-		super(storage, "jmeterValueProvider");
+		super(storage, "jmeterStatisticValueProvider");
 		this.myRegistry = valueProviderRegistry;
 		this.myServer = server;
 		myRegistry.registerValueProvider(this);
 	}
 
-	/**
-	 * publish statistic data to build data storage
-	 * @param build
-	 */
 	@Override
 	public void buildFinished(SBuild build) {
-		List<ServiceMessage> serviceMessages = getJMeterServiceMessages(build.getBuildLog());
+		List<JMeterMessage> serviceMessages = getJMeterServiceMessages(build.getBuildLog());
 		if (!serviceMessages.isEmpty()) {
-			Set<String> metrics = new HashSet<String>();
-			Set<String> samplers = new HashSet<String>();
-			Set<String> codes = new HashSet<String>();
-
-			String externalId = build.getBuildTypeExternalId();
 			long buildId = build.getBuildId();
+			String buildTypeId = build.getBuildTypeExternalId();
 
-			for (ServiceMessage serviceMessage : serviceMessages) {
-				final Map<String, String> args = serviceMessage.getAttributes();
-				String metricValue = args.get(JMeterPluginConstants.SM_KEY_METRIC);
-				String seriesValue = args.get(JMeterPluginConstants.SM_KEY_SERIES);
-				String value = args.get(JMeterPluginConstants.SM_KEY_VALUE);
-
-				StringBuilder key = new StringBuilder().append(externalId).append('_').append(metricValue).append('_').append(seriesValue);
-				myStorage.publishValue(key.toString(), buildId, new BigDecimal(value));
-
-				metrics.add(metricValue);
-				if (metricValue.equals(JMeterStatisticsMetrics.RESPONSE_CODE.getKey())) {
-					codes.add(seriesValue);
-				} else {
-					samplers.add(seriesValue);
-				}
-			}
 			SBuildType buildType = build.getBuildType();
 			if (buildType != null) {
-				CustomDataStorage storage = buildType.getCustomDataStorage(JMeterPluginConstants.STORAGE_ID_JMETER);
-				updateCustomStorage(storage, JMeterPluginConstants.STORAGE_KEY_METRIC, metrics);
-				updateCustomStorage(storage, JMeterPluginConstants.STORAGE_KEY_SAMPLE, samplers);
-				updateCustomStorage(storage, JMeterPluginConstants.STORAGE_KEY_CODE, codes);
-				storage.flush();
+				CustomDataStorage sampleAliasStorage = buildType.getCustomDataStorage(JMeterPluginConstants.STORAGE_ID_SAMPLE_ALIAS);
+				CustomDataStorage sampleOrderStorage = buildType.getCustomDataStorage(JMeterPluginConstants.STORAGE_ID_SAMPLE_ORDER);
+
+				Set<String> metrics = new HashSet<String>();
+				Set<String> codes = new HashSet<String>();
+				Set<String> samples = new HashSet<String>();
+
+				for (JMeterMessage message : serviceMessages) {
+					String metricValue = message.getMetric();
+					String sampleValue = message.getSample();
+					String value = message.getValue();
+
+					String[] sampleParts = sharp_pattern.split(sampleValue);
+					String order = "1000"; // by default - big value for total, or same for all not ordering samples
+					// for ordering samples, example: '1# Login'
+					if (sampleParts.length >= 2) {
+						sampleValue = sampleParts[1].trim();
+						order = sampleParts[0];
+					}
+					String alias = non_word_pattern.matcher(sampleValue).replaceAll("");
+					updateStorageValue(sampleAliasStorage, alias, sampleValue);
+					updateStorageValue(sampleOrderStorage, alias, order);
+
+					myStorage.publishValue(new StringBuilder().append(buildTypeId).append('_').append(metricValue).append('_').append(alias).toString(), buildId, new BigDecimal(value));
+
+					if (metricValue.equals(JMeterStatisticsMetrics.RESPONSE_CODE.getKey())) {
+						codes.add(sampleValue);
+					} else {
+						metrics.add(metricValue);
+						samples.add(alias);
+					}
+				}
+				updateStorageValue(sampleOrderStorage, JMeterStatisticsMetrics.RESPONSE_CODE.getKey(), "0"); // response codes is the first
+
+				CustomDataStorage commonStorage = buildType.getCustomDataStorage(JMeterPluginConstants.STORAGE_ID_COMMON_JMETER);
+				updateStorageValue(commonStorage, JMeterPluginConstants.STORAGE_KEY_METRIC, metrics);
+				updateStorageValue(commonStorage, JMeterPluginConstants.STORAGE_KEY_CODE, codes);
+				updateStorageValue(commonStorage, JMeterPluginConstants.STORAGE_KEY_SAMPLES, samples);
 			}
 		}
-
 	}
 
 	/**
-	 * parses log, returns collection of service messages provided by jmeter agent
+	 * parses build log, returns collection of service messages provided by jmeter agent runner
 	 * @param log
 	 * @return
 	 */
-	private List<ServiceMessage> getJMeterServiceMessages(BuildLog log) {
-		List<ServiceMessage> serviceMessages = new ArrayList<ServiceMessage>();
+	private List<JMeterMessage> getJMeterServiceMessages(@NotNull BuildLog log) {
+		List<JMeterMessage> messages = new ArrayList<JMeterMessage>();
 		for (Iterator<LogMessage> iterator = log.getMessagesIterator(); iterator.hasNext();) {
-			try {
-				String message = iterator.next().getText();
-				if (message.indexOf(JMeterPluginConstants.SM_NAME) > -1) {
-					serviceMessages.add(ServiceMessage.parse(message));
-				}
-			} catch (ParseException e) {
+			JMeterMessage message = JMeterMessageParser.getJMeterMessages(iterator.next().getText().trim());
+			if (message != null) {
+				messages.add(message);
 			}
-		};
-		return serviceMessages;
+		}
+		return messages;
 	}
 
-	/**
-	 * updates jmeter custom storage of build configuration
-	 * @param storage
-	 * @param key
-	 * @param values
-	 */
-	private void updateCustomStorage(@NotNull CustomDataStorage storage, final String key, Set<String> values) {
+	private void updateStorageValue(@NotNull CustomDataStorage storage, @NotNull String key, @NotNull String value) {
+		String oldValue = storage.getValue(key);
+		if (oldValue == null || !value.equals(oldValue)) {
+			storage.putValue(key, value);
+			storage.flush();
+		}
+	}
+
+	private void updateStorageValue(@NotNull CustomDataStorage storage, @NotNull String key, @NotNull Collection<String> values) {
 		String parametersValues = storage.getValue(key);
 		if (parametersValues != null) {
 			Collections.addAll(values, comma_pattern.split(parametersValues));
@@ -115,46 +125,50 @@ public class JMeterValueProvider extends StorageValueProvider implements BuildFi
 			builder.append(value).append(',');
 		}
 		storage.putValue(key, builder.toString());
+		storage.flush();
 	}
 
-	/**
-	 * returns collection of value providers(graphs)
-	 * @param buildType
-	 * @return
-	 */
-	public Collection<ValueProvider> getValues(@NotNull SBuildType buildType) {
-		Collection<ValueProvider> result = new ArrayList<ValueProvider>();
-		CustomDataStorage storage = buildType.getCustomDataStorage(JMeterPluginConstants.STORAGE_ID_JMETER);
+	public Collection<ValueProvider> getValueProviders(@NotNull SBuildType buildType){
 
-		final String codes = storage.getValue(JMeterPluginConstants.STORAGE_KEY_CODE);
-		if (codes != null) {
-			result.add(updateOrCreateValueProvider(JMeterStatisticsMetrics.RESPONSE_CODE.getKey()));
+//		todo: remove isRudimentProvider
+		boolean isRudimentProvider = buildType.getCustomDataStorage(JMeterPluginConstants.STORAGE_ID_COMMON_JMETER).getValue("Sample") != null;
+		if (isRudimentProvider) {
+			OldJMeterValueProvider provider = new OldJMeterValueProvider(myRegistry, myStorage, myServer);
+			return provider.getValues(buildType);
 		}
+//		todo: end
 
-		String sampleValues = storage.getValue(JMeterPluginConstants.STORAGE_KEY_SAMPLE);
-		if (sampleValues != null) {
-			String[] samplers = comma_pattern.split(sampleValues);
-			for(String sampler : samplers) {
-				result.add(updateOrCreateValueProvider(sampler));
+		final CustomDataStorage sampleOrderStorage = buildType.getCustomDataStorage(JMeterPluginConstants.STORAGE_ID_SAMPLE_ORDER);
+		Collection<ValueProvider> result = new SortedList<ValueProvider>(new Comparator<ValueProvider>() {
+			@Override
+			public int compare(ValueProvider o1, ValueProvider o2) {
+				String order1 = sampleOrderStorage.getValue(o1.getKey());
+				String order2 = sampleOrderStorage.getValue(o2.getKey());
+				if (order1 != null && order2 != null) {
+					return Integer.parseInt(order1) - Integer.parseInt(order2);
+				}
+				return 0;
+			}
+		});
+		result.add(updateOrCreateValueProvider(JMeterStatisticsMetrics.RESPONSE_CODE.getKey()));
+
+		String sampleKeys = buildType.getCustomDataStorage(JMeterPluginConstants.STORAGE_ID_COMMON_JMETER).getValue(JMeterPluginConstants.STORAGE_KEY_SAMPLES);
+		if (sampleKeys != null) {
+			for(String sampleKey : comma_pattern.split(sampleKeys)) {
+				result.add(updateOrCreateValueProvider(sampleKey));
 			}
 		}
 		return result;
 	}
 
 	private synchronized ValueProvider updateOrCreateValueProvider(@NotNull String key) {
-		String formattedKey = key.replaceAll("\\s", "");
-		ValueProvider valueProvider = myRegistry.getValueProvider(formattedKey);
+		ValueProvider valueProvider = myRegistry.getValueProvider(key);
 		if (valueProvider == null) {
-			GraphType type;
-			String title;
 			if (key.indexOf("ResponseCode") > -1) {
-				type = GraphType.RESPONSE_CODE_COMPOSITE;
-				title = JMeterStatisticsMetrics.RESPONSE_CODE.getTitle();
+				valueProvider = new ResponseCodeCompositeVT(myStorage, myRegistry, myServer, key);
 			} else {
-				type = GraphType.SAMPLE_COMPOSITE;
-				title = key;
+				valueProvider = new AggregateCompositeVT(myStorage, myRegistry, myServer, key);
 			}
-			valueProvider = new JMCompositeVT(myStorage, myRegistry, myServer, formattedKey, title, type);
 			valueProvider = myRegistry.registerorFindValueProvider(valueProvider);
 		}
 		return valueProvider;

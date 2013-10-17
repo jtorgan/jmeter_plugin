@@ -2,6 +2,7 @@ package jmeter_runner.agent.statistics;
 
 import jetbrains.buildServer.RunBuildException;
 import jmeter_runner.agent.JMeterBuildLogger;
+import jmeter_runner.common.JMeterMessageParser;
 import jmeter_runner.common.JMeterPluginConstants;
 import jmeter_runner.common.JMeterStatisticsMetrics;
 import org.jetbrains.annotations.NotNull;
@@ -10,11 +11,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.regex.Pattern;
 
 public class JMeterStatisticsProcessor {
-	private static final Pattern comma_pattern = Pattern.compile(",");
-
 	private AggregateReport report;
 
 	/**
@@ -31,7 +29,7 @@ public class JMeterStatisticsProcessor {
 			if (reader.ready()) {
 				// extract count of fields and skip first line with result titles
 				logLine = reader.readLine();
-				String[] titles = comma_pattern.split(logLine);
+				String[] titles = JMeterMessageParser.JMETER_DELIMITER_PATTERN.split(logLine);
 				int countFields = titles.length;
 
 				boolean isNewItem = true;
@@ -39,7 +37,7 @@ public class JMeterStatisticsProcessor {
 
 				while (reader.ready() && !(logLine = reader.readLine()).isEmpty()) {
 					itemStr = isNewItem ? logLine : itemStr + logLine;
-					String[] fieldValues = comma_pattern.split(itemStr);
+					String[] fieldValues = JMeterMessageParser.JMETER_DELIMITER_PATTERN.split(itemStr);
 					isNewItem = fieldValues.length == countFields;
 					if (isNewItem) {
 						Aggregation.Item item = report.new Item(fieldValues);
@@ -96,9 +94,9 @@ public class JMeterStatisticsProcessor {
 			reader = new BufferedReader(new FileReader(referenceData));
 			String line;
 			while (reader.ready() && !(line = reader.readLine()).isEmpty()) {
-				String[] referenceItem = comma_pattern.split(line);
+				String[] referenceItem = JMeterMessageParser.JMETER_DELIMITER_PATTERN.split(line);
 				if (referenceItem.length != 3) {
-					logger.logMessage("Wrong reference data format!\n format: <sample_name>, <metric>, <value>. find: " + referenceItem + "\n Available metrics: average, min, max, line90");
+					logger.logMessage("Wrong reference data format!\n format: <sample_name>\t<metric>\t<value>. find: " + referenceItem + "\n Available metrics: average, min, max, line90");
 					continue;
 				}
 				String sampler = referenceItem[0];
@@ -108,7 +106,7 @@ public class JMeterStatisticsProcessor {
 				logger.logMessage(metric.getReferenceKey(), Math.round(referenceValue), sampler);
 				String result = report.checkValue(sampler, metric, referenceValue, variation);
 				if (result != null) {
-					logger.logBuildProblem(metric.getTitle() + "_" + sampler, JMeterPluginConstants.BAD_PERFORMANCE_PROBLEM_TYPE, result);
+					logger.logBuildProblem(metric.getKey() + sampler, JMeterPluginConstants.BAD_PERFORMANCE_PROBLEM_TYPE, result);
 				}
 			}
 		} catch (FileNotFoundException e) {

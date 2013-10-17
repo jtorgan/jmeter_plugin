@@ -18,7 +18,7 @@ JMeterLog = {
             xhr.onload = function (e) {
                 if (this.status == 200) {
                     var lines = this.responseText.split("\n");
-                    that._jmeterLogTitle = lines[0].split(",");
+                    that._jmeterLogTitle = lines[0].split("\t");
                     that._jmeterLog = lines.slice(1);
                 }
             };
@@ -52,7 +52,7 @@ JMeterLog = {
             $j("#jmeterLogContainer").empty();
         }
 
-        var logHolder = $j('<table></table>');
+        var logHolder = $j('<table style="width: auto"></table>');
         this._createTitle(logHolder);
         this._createLogData(from, to, logHolder);
         $j("#jmeterLogContainer").append(logHolder);
@@ -72,7 +72,11 @@ JMeterLog = {
         if (this._jmeterLogTitle) {
             var titleHolder = $j('<tr id="jmeterLogTitle"></tr>');
             this._jmeterLogTitle.each(function(titlePart) {
-                $j(titleHolder).append($j('<th></th>').text(titlePart));
+                var thText = '<th></th>';
+                if (titlePart == "label") {
+                    thText = '<th style="min-width: 150px;"></th>';
+                }
+                $j(titleHolder).append($j(thText).text(titlePart));
             });
             $j(logHolder).append(titleHolder);
         }
@@ -82,7 +86,7 @@ JMeterLog = {
         if (this._jmeterLog) {
             this._jmeterLog.each(function(line) {
                 var itemHolder = $j('<tr></tr>');
-                var items = line.split(",");
+                var items = line.split("\t");
                 if (items[0] >= from && items[0] < to)  {
                     for(var i = 0; i < items.length ; i++) {
                         $j(itemHolder).append($j('<td></td>').text(items[i]));

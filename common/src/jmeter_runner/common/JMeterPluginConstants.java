@@ -1,8 +1,6 @@
 package jmeter_runner.common;
 
 public interface JMeterPluginConstants {
-	String JMETER_CMD = "jmeter";
-
 	String RUNNER_TYPE = "jmeter";
 	String RUNNER_DISPLAY_NAME = "JMeter";
 	String RUNNER_DESCRIPTION = "JMeter Test Runner";
@@ -12,7 +10,6 @@ public interface JMeterPluginConstants {
 	String PARAMS_REMOTE_HOST = "jmeter.remote.host";
 	String PARAMS_REMOTE_LOGIN = "jmeter.remote.login";
 	String PARAMS_REMOTE_PASSWORD = "jmeter.remote.password";
-
 	String PARAMS_TEST_PATH = "jmeter.testPlan";
 	String PARAMS_METRIC_MAX = "jmeter.max";
 	String PARAMS_METRIC_MIN = "jmeter.min";
@@ -27,12 +24,7 @@ public interface JMeterPluginConstants {
 	String PERFMON_RUN_RESULT_FILE = "perfmon.csv";
 	String JMETER_LOG_FILE = "jmeter.log";
 
-
-	//	Service Messages constants
-	String SM_NAME = "buildJMeterStatistic";
-	String SM_KEY_METRIC = "metric";
-	String SM_KEY_VALUE = "value";
-	String SM_KEY_SERIES = "series";
+	String AGGREGATION_TOTAL_NAME = "Total";
 
 	//  jsp files
 	String VIEW_PARAMS_JSP = "viewJMeterRunParams.jsp";
@@ -42,11 +34,12 @@ public interface JMeterPluginConstants {
 
 	//	build problem type
 	String BAD_PERFORMANCE_PROBLEM_TYPE = "Performance worsened";
-	String SERVER_ERROR_PROBLEM_TYPE = "Server error";
 
-	//	statistic's constants
-	String STORAGE_ID_JMETER = "teamcity.jmeter.statistic";
-	String STORAGE_KEY_CODE = "Code";
-	String STORAGE_KEY_SAMPLE = "Sample";
-	String STORAGE_KEY_METRIC = "Metric";
+	//	custom build type storage constants
+	String STORAGE_ID_COMMON_JMETER = "teamcity.jmeter.statistic";
+	String STORAGE_ID_SAMPLE_ALIAS = "teamcity.jmeter.sample.keys";
+	String STORAGE_ID_SAMPLE_ORDER = "teamcity.jmeter.sample.order";
+	String STORAGE_KEY_METRIC = "Metrics";
+	String STORAGE_KEY_SAMPLES = "Samples";
+	String STORAGE_KEY_CODE = "Codes";
 }

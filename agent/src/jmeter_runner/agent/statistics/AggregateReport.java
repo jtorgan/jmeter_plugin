@@ -1,5 +1,6 @@
 package jmeter_runner.agent.statistics;
 
+import jmeter_runner.common.JMeterPluginConstants;
 import jmeter_runner.common.JMeterStatisticsMetrics;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,7 +15,7 @@ public class AggregateReport extends Aggregation {
 	Map<String, Long> codes;
 
 	AggregateReport() {
-		super("total");
+		super(JMeterPluginConstants.AGGREGATION_TOTAL_NAME);
 		samplers = new HashMap<String, AggregateSampler>();
 		codes = new HashMap<String, Long>();
 	}
@@ -46,7 +47,7 @@ public class AggregateReport extends Aggregation {
 		int ind90 = (int) Math.round(allItems.size() * 0.9);
 		return allItems.get(ind90 - 1).elapsedTime;
 	}
-	
+
 	String checkValue(@NotNull String sampler, @NotNull JMeterStatisticsMetrics metric, double referenceValue, double variation) {
 		Aggregation aggregation = samplers.get(sampler);
 		if (aggregation != null)

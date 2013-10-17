@@ -54,7 +54,7 @@ public class JMeterStatisticsTab extends BuildTypeTab {
 	protected void fillModel(@NotNull Map<String, Object> model, @NotNull HttpServletRequest request, @NotNull SBuildType buildType, @Nullable SUser user) {
 		request.setAttribute("buildGraphHelper", new BuildGraphHelper(myRegistry, myProjectManager));
 		if (myValueProvider != null) {
-			model.put("jmeterGraphs", myValueProvider.getValues(buildType));
+			model.put("jmeterGraphs", myValueProvider.getValueProviders(buildType));
 		}
 	}
 }

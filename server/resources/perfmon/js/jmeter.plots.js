@@ -196,7 +196,7 @@ BS.JMeterPerfmon = {
                     y = p1[1] + (p2[1] - p1[1]) * (latestPosition.x - p1[0]) / (p2[0] - p1[0]);
 
                 var label = series.label;
-                legends[label].text(label + " = " + Format.format(y, format, isBytesFormat, (format == Format.percent) ? 2 : 0));
+                $j(legends[label]).parent().find("span").text(" = " + Format.format(y, format, isBytesFormat, (format == Format.percent) ? 2 : 0));
             }
         }
 
@@ -208,7 +208,7 @@ BS.JMeterPerfmon = {
                     var dataset = plot.getData();
                     for (var i = 0; i < dataset.length; ++i) {
                         var label = dataset[i].label.split("=")[0].trim();
-                        legends[label].text(label);
+                        $j(legends[label]).parent().find("span").text("");
                     }
                 });
     },

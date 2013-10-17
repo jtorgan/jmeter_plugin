@@ -2,17 +2,22 @@ package jmeter_runner.server.build_perfmon.data_providers;
 
 import com.intellij.util.containers.SortedList;
 import jetbrains.buildServer.log.Loggers;
+import jmeter_runner.common.JMeterMessageParser;
 import jmeter_runner.server.build_perfmon.graph.Graph;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * Presents base for data providers
  * include logic to read data file, and some other common methods
  */
 public abstract class AbstractDataProvider {
+	//	todo: change to protected variable
+	public static Pattern delimiter = JMeterMessageParser.JMETER_DELIMITER_PATTERN;
+
 	protected Map<String, Graph> metrics;
 	protected File file;
 
@@ -21,6 +26,10 @@ public abstract class AbstractDataProvider {
 		this.file = file;
 	}
 
+	/**
+	 * Reads and parses lines from provided file, returns sorted results
+	 * @return
+	 */
 	@NotNull
 	public Collection<Graph> getData() {
 		readLines();
@@ -32,7 +41,7 @@ public abstract class AbstractDataProvider {
 		try {
 			reader = new BufferedReader(new FileReader(file));
 			while (reader.ready()) {
-				String[] items = reader.readLine().trim().split(",");
+				String[] items = delimiter.split(reader.readLine().trim());
 				if (checkItem(items)) {
 					processLine(items);
 				}
@@ -54,7 +63,7 @@ public abstract class AbstractDataProvider {
 
 	private boolean checkItem(String[] values) {
 		if (values.length < 3) {
-			Loggers.STATS.error(new StringBuilder("JMeter plugin error. \nItem getMetricType: timestamp, elapsed, label, ... \n Found: ").append(values).toString());
+			Loggers.STATS.error(new StringBuilder("JMeter plugin error. \nItem getMetricType: timestamp\telapsed\tlabel \n Found: ").append(values).toString());
 			return false;
 		}
 		return (values[0].matches("\\d+") && values[1].matches("\\d+"));

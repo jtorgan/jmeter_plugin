@@ -1,22 +1,26 @@
 package jmeter_runner.common;
 
-public enum JMeterStatisticsMetrics {
-	AVERAGE("JMeterAverage", "Average time"),
-	MAX("JMeterMax", "Max time"),
-	MIN("JMeterMin", "Min time"),
-	LINE90("JMeter90Line", "90% line"),
+import jetbrains.buildServer.util.StringUtil;
 
-	RESPONSE_CODE("JMeterResponseCode", "Response codes");
+public enum JMeterStatisticsMetrics {
+	AVERAGE("Average", "Average time", "#162EAE"),
+	MAX("Max", "Max time", "#95002B"),
+	MIN("Min", "Min time", "#6A0AAB"),
+	LINE90("90Line", "90% line", "#BFBC30"),
+
+	RESPONSE_CODE("ResponseCode", "Response codes", null);
 
 
 	private String title;
 	private String key;
+	private String color;
 
 	private boolean selected = true;
 
-	JMeterStatisticsMetrics(String key, String title) {
+	JMeterStatisticsMetrics(String key, String title, String color) {
 		this.title = title;
 		this.key = key;
+		this.color = color;
 	}
 
 	public void setIsSelected(boolean selected) {
@@ -33,6 +37,11 @@ public enum JMeterStatisticsMetrics {
 	public String getTitle() {
 		return title;
 	}
+
+	public String getColor() {
+		return color;
+	}
+
 	public String getReferenceTitle() {
 		return "Reference data: " + title;
 	}
@@ -48,10 +57,12 @@ public enum JMeterStatisticsMetrics {
 		return null;
 	}
 	public static String getTitleByKey(String key) {
-		if (key.contains("_reference")) {
-			String[] tmp = key.split("_");
-			return getMetricByKey(tmp[0]).getReferenceTitle();
+		boolean isReferenceMetric = key.indexOf("_reference") != -1;
+		String searchKey = isReferenceMetric ? key.split("_")[0] : key;
+		JMeterStatisticsMetrics metric = getMetricByKey(searchKey);
+		if (metric != null) {
+			return isReferenceMetric ? metric.getReferenceTitle() : metric.getTitle();
 		}
-		return getMetricByKey(key).getTitle();
+		return StringUtil.EMPTY;
 	}
 }

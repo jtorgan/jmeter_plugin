@@ -50,7 +50,10 @@
                             </div>
                             <div id="legend${metric.id}" class="legend">
                                 <c:forEach items="${metric.keys}" var="key">
-                                    <div class="legend_item"><forms:checkbox name="${key}" checked="true" style="display: block; float: right"/><label for="${key}" class="legendLabel">${key}</label></div>
+                                    <div class="legend_item">
+                                        <forms:checkbox name="${key}" checked="true" style="display: block; float: right"/>
+                                        <label for="${key}" class="legendLabel">${key}</label><span></span>
+                                    </div>
                                 </c:forEach>
                             </div>
                         </div>
@@ -63,7 +66,7 @@
                     setUIState("${metric.state}", "${metric.id}");
                     var data = {
                         <c:forEach items="${metric.series}" var="item" varStatus="loop">
-                        '${item.label}': ${item.values} ${not loop.last ? ',' : ''}
+                            "${item.label}": ${item.values} ${not loop.last ? "," : ""}
                         </c:forEach>
                     };
                     BS.JMeterPerfmon.addPlot("${metric.id}", data, ${metric.max}, "${metric.format}", 0);

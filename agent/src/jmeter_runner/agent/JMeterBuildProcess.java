@@ -168,7 +168,7 @@ public class JMeterBuildProcess extends SyncBuildProcess {
 		String testPlanName = DATA_PREFIX + new File(myRunParameters.get(JMeterPluginConstants.PARAMS_TEST_PATH)).getName();
 		StringBuilder builder = new StringBuilder(myRunParameters.get(JMeterPluginConstants.PARAMS_EXECUTABLE))
 				.append(" -n -t ").append(testPlanName)
-				.append(" -l").append("results.jtl ")
+				.append(" -l ").append("results.jtl ")
 				.append(myRunParameters.get(JMeterPluginConstants.PARAMS_CMD_ARGUMENTS));
 		return builder.toString();
 	}

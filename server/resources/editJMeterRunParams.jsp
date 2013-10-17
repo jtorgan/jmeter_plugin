@@ -64,16 +64,16 @@
             <table>
                 <tr>
                     <td>
-                        <props:checkboxProperty name="jmeter.avg" checked="true"/><label for="jmeter.avg">Average</label>
+                        <props:checkboxProperty name="jmeter.avg"/><label for="jmeter.avg">Average</label>
                     </td>
                     <td>
-                        <props:checkboxProperty name="jmeter.min" checked="true"/><label for="jmeter.min">Min</label>
+                        <props:checkboxProperty name="jmeter.min"/><label for="jmeter.min">Min</label>
                     </td>
                     <td>
-                        <props:checkboxProperty name="jmeter.max" checked="true"/><label for="jmeter.max">Max</label>
+                        <props:checkboxProperty name="jmeter.max"/><label for="jmeter.max">Max</label>
                     </td>
                     <td>
-                        <props:checkboxProperty name="jmeter.90line" checked="true"/><label for="jmeter.90line">90% line</label>
+                        <props:checkboxProperty name="jmeter.90line"/><label for="jmeter.90line">90% line</label>
                     </td>
                 </tr>
             </table>

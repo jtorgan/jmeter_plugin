@@ -3,7 +3,7 @@ package jmeter_runner.agent;
 import jetbrains.buildServer.BuildProblemData;
 import jetbrains.buildServer.agent.BuildProgressLogger;
 import jetbrains.buildServer.messages.DefaultMessagesInfo;
-import jmeter_runner.common.JMeterPluginConstants;
+import jmeter_runner.common.JMeterMessageParser;
 import org.jetbrains.annotations.NotNull;
 
 public class JMeterBuildLogger {
@@ -26,19 +26,13 @@ public class JMeterBuildLogger {
 	}
 
 	public void logMessage(final String metricName, final long value, final String series) {
-		String message = createJMeterServiceMessage(metricName, value, series);
+		String message = JMeterMessageParser.createJMeterMessage(metricName, series, value);
 		logger.logMessage(DefaultMessagesInfo.createTextMessage(message));
 	}
 
 	public void logBuildProblem(final String identity, final String type, final String description) {
-		BuildProblemData buildProblem = BuildProblemData.createBuildProblem(identity, type, description);
+		String formattedIdentity = identity.length() > 50 ? identity.substring(0, 50) : identity; // there is a limit for the identity length
+		BuildProblemData buildProblem = BuildProblemData.createBuildProblem(formattedIdentity, type, description);
 		logger.logBuildProblem(buildProblem);
-	}
-
-	protected String createJMeterServiceMessage(final String metricName, final long value,final String series) {
-		return  new StringBuilder("##teamcity[").append(JMeterPluginConstants.SM_NAME).append(" ")
-				.append(JMeterPluginConstants.SM_KEY_METRIC).append("='").append(metricName).append("' ")
-				.append(JMeterPluginConstants.SM_KEY_VALUE).append("='").append(value).append("' ")
-				.append(JMeterPluginConstants.SM_KEY_SERIES).append("='").append(series).append("']").toString();
 	}
 }

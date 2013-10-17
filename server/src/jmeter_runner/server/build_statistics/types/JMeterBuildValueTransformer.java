@@ -12,11 +12,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 
-public class JMBuildValueTransformer extends BuildValueTransformer {
+public class JMeterBuildValueTransformer extends BuildValueTransformer {
 	private static final ConcurrentMap<Long, String> BUILD_ID_TO_ARTIFACT_NUMBER = new ConcurrentHashMap<Long, String>();
 	private SBuildServer myServer;
 
-	public JMBuildValueTransformer(SBuildServer server) {
+	public JMeterBuildValueTransformer(SBuildServer server) {
 		myServer = server;
 	}
 
