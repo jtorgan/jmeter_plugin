@@ -16,7 +16,6 @@ import jmeter_runner.common.JMeterMessage;
 import jmeter_runner.common.JMeterMessageParser;
 import jmeter_runner.common.JMeterPluginConstants;
 import jmeter_runner.common.JMeterStatisticsMetrics;
-import jmeter_runner.server.build_statistics.support_old_version.OldJMeterValueProvider;
 import jmeter_runner.server.build_statistics.types.AggregateCompositeVT;
 import jmeter_runner.server.build_statistics.types.ResponseCodeCompositeVT;
 import org.jetbrains.annotations.NotNull;
@@ -129,15 +128,6 @@ public class JMeterValueProvider extends StorageValueProvider implements BuildFi
 	}
 
 	public Collection<ValueProvider> getValueProviders(@NotNull SBuildType buildType){
-
-//		todo: remove isRudimentProvider
-		boolean isRudimentProvider = buildType.getCustomDataStorage(JMeterPluginConstants.STORAGE_ID_COMMON_JMETER).getValue("Sample") != null;
-		if (isRudimentProvider) {
-			OldJMeterValueProvider provider = new OldJMeterValueProvider(myRegistry, myStorage, myServer);
-			return provider.getValues(buildType);
-		}
-//		todo: end
-
 		final CustomDataStorage sampleOrderStorage = buildType.getCustomDataStorage(JMeterPluginConstants.STORAGE_ID_SAMPLE_ORDER);
 		Collection<ValueProvider> result = new SortedList<ValueProvider>(new Comparator<ValueProvider>() {
 			@Override

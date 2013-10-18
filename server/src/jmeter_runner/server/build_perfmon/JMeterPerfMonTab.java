@@ -9,9 +9,7 @@ import jetbrains.buildServer.web.openapi.PagePlaces;
 import jetbrains.buildServer.web.openapi.PlaceId;
 import jetbrains.buildServer.web.openapi.PluginDescriptor;
 import jetbrains.buildServer.web.openapi.SimpleCustomTab;
-import jmeter_runner.common.JMeterMessageParser;
 import jmeter_runner.common.JMeterPluginConstants;
-import jmeter_runner.server.build_perfmon.data_providers.AbstractDataProvider;
 import jmeter_runner.server.build_perfmon.data_providers.PerfmonDataProvider;
 import jmeter_runner.server.build_perfmon.data_providers.ResultsDataProvider;
 import jmeter_runner.server.build_perfmon.graph.Graph;
@@ -22,7 +20,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * JMeter performance monitoring tab, locates on the build page
@@ -61,8 +58,6 @@ public class JMeterPerfMonTab extends SimpleCustomTab {
 
 	public void fillModel(@NotNull Map<String, Object> model, @NotNull HttpServletRequest request) {
 		Collection<Graph> data = new ArrayList<Graph>();
-		//		todo: remove isRudimentProvider
-		checkAndSetDelimiter_SupportOldVersion(request);
 		if (logArtifact != null) {
 			data = new ResultsDataProvider(logArtifact).getData();
 		}
@@ -114,18 +109,6 @@ public class JMeterPerfMonTab extends SimpleCustomTab {
 		for (Graph graph : graphs) {
 			String state = stateStorage.getValue(graph.getId());
 			graph.setState(state == null ? "shown" : state);
-		}
-	}
-
-	//		todo: remove isRudimentProvider
-	private void checkAndSetDelimiter_SupportOldVersion(@NotNull HttpServletRequest request) {
-		final SBuild build = BuildDataExtensionUtil.retrieveBuild(request, myServer);
-		if (build != null) {
-			SBuildType buildType = build.getBuildType();
-			if (buildType != null) {
-				boolean isRudiment = buildType.getCustomDataStorage(JMeterPluginConstants.STORAGE_ID_COMMON_JMETER).getValue("Sample") != null;
-				AbstractDataProvider.delimiter = isRudiment ? Pattern.compile(",") : JMeterMessageParser.JMETER_DELIMITER_PATTERN;
-			}
 		}
 	}
 

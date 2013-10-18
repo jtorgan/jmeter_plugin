@@ -15,8 +15,7 @@ import java.util.regex.Pattern;
  * include logic to read data file, and some other common methods
  */
 public abstract class AbstractDataProvider {
-	//	todo: change to protected variable
-	public static Pattern delimiter = JMeterMessageParser.JMETER_DELIMITER_PATTERN;
+	protected static Pattern delimiter = JMeterMessageParser.JMETER_DELIMITER_PATTERN;
 
 	protected Map<String, Graph> metrics;
 	protected File file;
