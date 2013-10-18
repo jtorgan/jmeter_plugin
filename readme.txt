@@ -1,10 +1,11 @@
-JMeter plugin
-=============
+JMeter plugin fro TeamCity
+==========================
+
 This is plugin for TeamCity 8.0 that helps to organize simplest performance testing in CI. 
 It has the opportunity to view the results of running performance tests on the charts.
 
 How it works
-------------
+=============
 Plugin uses three main components: TeamCity agent, JMeter, your tested application, - each of them must be located on separate machine. We can't run several components on the same machine, because it can affect on results. 
  
 Typical build configuration has following steps:
@@ -18,21 +19,30 @@ You can configure trigger and snapshot dependency to run jmeter test after each 
 
 
 JMeter runner fields
---------------------
-required:
-	JMeter executable 		 - path to jmeter.sh/jmeter.bath on remote machine with installed JMeter (ex.: ./apache-jmeter-2.9/bin/jmeter.sh);
-	Remote options 			 - host, login, password to access remote machine with JMeter;		
-	Path to JMeter test plan - path to file with JMeter test plan (ex.: test.jmx);
-	Aggregate metrics		 - select metrics to aggregate. 
+====================
+required
+---------
+JMeter executable: 
+	path to jmeter.sh/jmeter.bath on remote machine with installed JMeter (ex.: ./apache-jmeter-2.9/bin/jmeter.sh);
+Remote options: 
+	host, login, password to access remote machine with JMeter;		
+Path to JMeter test plan: 
+	path to file with JMeter test plan (ex.: test.jmx);
+Aggregate metrics: 
+	select metrics to aggregate. 
 
-optionally:
-	Path to reference data 	 - path to reference data, can be empty;
-	Variation				 - value of variation  [0..1] in decimal format; default - 0.05 (5%); not considered, if reference data is empty;
-	Command line arguments	 - if you define variables at the jmeter test file, here is you can set it values (ex.: -Jthreads_number=10 -Jtest_duration_seconds=90 -Jperfmon_results_file=perfmon.csv); 
+optionally
+----------
+Path to reference data:
+	path to reference data, can be empty;
+Variation: 
+	value of variation  [0..1] in decimal format; default - 0.05 (5%); not considered, if reference data is empty;
+Command line arguments:
+	if you define variables at the jmeter test file, here is you can set it values (ex.: -Jthreads_number=10 -Jtest_duration_seconds=90 -Jperfmon_results_file=perfmon.csv); 
 
 	
 JMeter result properties
-------------------------
+========================
 JMeter result file must have next format:
 timeStamp	time	label	responseCode
 1234445455	123	login	200
@@ -47,7 +57,7 @@ jmeter.save.saveservice.print_field_names=true
 
 
 Reference data format
----------------------
+=====================
 format:label	metric	value
 example:login	line90	120
 Delimiter - \t
@@ -56,7 +66,7 @@ Possible values for metrics: min, max, average, line90
 
 
 Using JMeter PerfMon Server Agent 
----------------------------------
+=================================
 If you want use jmeter server agent to monitor some system and jvm statistics, you need:
 - install JMeter Server Agent on machine with tested application;
 - add Perfmon plugin to intalled JMeter;
@@ -72,17 +82,24 @@ To monitor jmx metrics, don't forget add keys to startup script of your applicat
 
 
 JMeter statistic visualization
-------------------------------
-- JMeterStatistic tab
+==============================
+
+JMeterStatistic tab
+-------------------
 After running configuration with jmeter runner, you can see JMeterStatistic tab at the build configuration view page. 
 It contains charts with Response codes and for each samples with aggregated metrics. 
 Сharts contain comparative statistics by builds. In X-axis you can see build number of tested application.
 
-- JMeterPerfMon tab
+JMeterPerfMon tab
+-----------------
 Also, JMeterPerfMon tab will appear at the build page.
 By default, it contains two charts: Server Response Time - show distribution time for each samples; Request Per Seconds - show count of request per second for each samples.
 In case of you used JMeter Server Agent, here is charts with metrics defined in PerfMon listener. Note, all metrics related with memory (system memory, jmx memory, memorypool) will be on the same chart.
 By selecting the point or area at the chart, part of result jmeter log will at the bottom of the page. This part of log will contain all requests in selected period. 
+
+Note: you can number the jmeter samples in format <N#title> (ex: '1# Login to application'); labels in reference data file must have the same names!
+Then all chart at JMeterStatistic will be located in order according to order of samples. 
+
 
 
 Useful links:
