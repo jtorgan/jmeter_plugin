@@ -1,4 +1,4 @@
-JMeter plugin fro TeamCity
+JMeter plugin for TeamCity
 ==========================
 
 This is plugin for TeamCity 8.0 that helps to organize simplest performance testing in CI. 
