@@ -18,11 +18,8 @@ public interface JMeterPluginConstants {
 	String PARAMS_VARIATION = "jmeter.variation";
 	String PARAMS_REFERENCE_DATA = "jmeter.referenceData";
 	String PARAMS_CMD_ARGUMENTS = "jmeter.args";
-
-	//	file names
-	String JMETER_RUN_RESULT_FILE = "results.jtl";
-	String PERFMON_RUN_RESULT_FILE = "perfmon.csv";
-	String JMETER_LOG_FILE = "jmeter.log";
+	String PARAMS_AGGREGATE_FILE = "jmeter.aggregateFile";
+	String PARAMS_PERFMON_FILE = "jmeter.perfmonFile";
 
 	String AGGREGATION_TOTAL_NAME = "Total";
 

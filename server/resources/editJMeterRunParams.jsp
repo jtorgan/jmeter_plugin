@@ -87,6 +87,20 @@
         </td>
     </tr>
     <tr>
+        <th><label for="jmeter.aggregateFile">File name to aggregate results:</label></th>
+        <td>
+            <props:textProperty name="jmeter.aggregateFile" className="longField"/>
+            <span class="smallNote">Default: results.jtl. To customize set of results, define variable at JMeter test plan with a file name of results. Set it value at the 'Command line arguments' and here.</span>
+        </td>
+    </tr>
+    <tr>
+        <th><label for="jmeter.perfmonFile">PerfMon file name:</label></th>
+        <td>
+            <props:textProperty name="jmeter.perfmonFile" className="longField"/>
+            <span class="smallNote">In case of you used JMeter Server Agent, set file name with monitoring results, also, you must define such variable at JMeter test plan.</span>
+        </td>
+    </tr>
+    <tr>
         <th><label for="jmeter.args">Command line arguments:</label></th>
         <td>
             <props:textProperty name="jmeter.args" className="longField" expandable="true"/>

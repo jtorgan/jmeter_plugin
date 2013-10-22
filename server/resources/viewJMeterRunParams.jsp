@@ -33,11 +33,20 @@
             <li>90% line: <strong><props:displayCheckboxValue name="jmeter.90line"/></strong></li>
         </ul>
     </div>
+
     <div class="parameter">
         Variation:
         <strong>${propertiesBean.properties['jmeter.variation']}</strong>
     </div>
-    <div>
+    <div class="parameter">
+        File name to aggregate results:
+        <strong>${propertiesBean.properties['jmeter.aggregateFile']}</strong>
+    </div>
+    <div class="parameter">
+        PerfMon file name:
+        <strong>${propertiesBean.properties['jmeter.perfmonFile']}</strong>
+    </div>
+    <div class="parameter">
         Command line arguments:
         <strong>${propertiesBean.properties['jmeter.args']}</strong>
     </div>

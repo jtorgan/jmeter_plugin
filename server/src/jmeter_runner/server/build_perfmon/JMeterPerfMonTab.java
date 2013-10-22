@@ -91,7 +91,7 @@ public class JMeterPerfMonTab extends SimpleCustomTab {
 					if (absPath.startsWith("perfmon"))  {
 						perfmonArtifact = artifact;
 					}
-					if (absPath.endsWith(JMeterPluginConstants.JMETER_RUN_RESULT_FILE))  {
+					if (absPath.startsWith("results"))  {
 						logArtifact = artifact;
 					}
 				}

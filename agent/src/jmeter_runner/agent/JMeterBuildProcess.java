@@ -22,11 +22,17 @@ public class JMeterBuildProcess extends SyncBuildProcess {
 	private final long TRY_INTERVAL = 500;
 	private final long MAX_TIME_WAIT = 0;
 
+	private final String resultsFile;
+	private final String perfmonFile;
+
 	public JMeterBuildProcess(@NotNull AgentRunningBuild runningBuild, @NotNull BuildRunnerContext context) {
 		super(runningBuild, context);
 		myLogger = new JMeterBuildLogger(runningBuild.getBuildLogger());
 		sshChannel = new JSch();
 		myRunParameters = context.getRunnerParameters();
+
+		resultsFile = myRunParameters.get(JMeterPluginConstants.PARAMS_AGGREGATE_FILE) == null ? "results.jtl" : myRunParameters.get(JMeterPluginConstants.PARAMS_AGGREGATE_FILE);
+		perfmonFile = myRunParameters.get(JMeterPluginConstants.PARAMS_PERFMON_FILE);
 	}
 
 	@Override
@@ -124,13 +130,17 @@ public class JMeterBuildProcess extends SyncBuildProcess {
 
 			channel = (ChannelSftp) session.openChannel("sftp");
 			channel.connect();
-			channel.get(JMeterPluginConstants.JMETER_RUN_RESULT_FILE, getAbsoluteFilePath("results.jtl"));
-			channel.get(JMeterPluginConstants.PERFMON_RUN_RESULT_FILE, getAbsoluteFilePath("perfmon.csv"));
-			channel.get(JMeterPluginConstants.JMETER_LOG_FILE, getAbsoluteFilePath("jmeter.log"));
 
-			channel.rm(JMeterPluginConstants.JMETER_RUN_RESULT_FILE);
-			channel.rm(JMeterPluginConstants.PERFMON_RUN_RESULT_FILE);
-			channel.rm(JMeterPluginConstants.JMETER_LOG_FILE);
+			channel.get(resultsFile, getAbsoluteFilePath(resultsFile));
+			channel.rm(resultsFile);
+
+			if (perfmonFile != null) {
+				channel.get(perfmonFile, getAbsoluteFilePath(perfmonFile));
+				channel.rm(perfmonFile);
+			}
+			channel.get("jmeter.log", getAbsoluteFilePath("jmeter.log"));
+			channel.rm("jmeter.log");
+
 			channel.rm(DATA_PREFIX + "*");
 			channel.rmdir(DATA_PREFIX);
 
@@ -156,7 +166,7 @@ public class JMeterBuildProcess extends SyncBuildProcess {
 
 		JMeterStatisticsProcessor processor = new JMeterStatisticsProcessor();
 		myLogger.logMessage("count aggregations ...");
-		processor.countAggregations(getAbsoluteFilePath(JMeterPluginConstants.JMETER_RUN_RESULT_FILE));
+		processor.countAggregations(getAbsoluteFilePath(resultsFile));
 		processor.logStatistics(myLogger);
 		if (referenceDataPath != null)  {
 			myLogger.logMessage("check reference data ...");
@@ -167,8 +177,8 @@ public class JMeterBuildProcess extends SyncBuildProcess {
 	private String getCommand() {
 		String testPlanName = DATA_PREFIX + new File(myRunParameters.get(JMeterPluginConstants.PARAMS_TEST_PATH)).getName();
 		StringBuilder builder = new StringBuilder(myRunParameters.get(JMeterPluginConstants.PARAMS_EXECUTABLE))
-				.append(" -n -t ").append(testPlanName)
-				.append(" -l ").append("results.jtl ")
+				.append(" -n -t").append(testPlanName)
+				.append(myRunParameters.get(JMeterPluginConstants.PARAMS_AGGREGATE_FILE) == null ? " -l results.jtl " : " ")
 				.append(myRunParameters.get(JMeterPluginConstants.PARAMS_CMD_ARGUMENTS));
 		return builder.toString();
 	}
