@@ -37,7 +37,7 @@ public class PerfmonDataProvider extends AbstractDataProvider {
 		}
 
 		Graph metric = getMetricID(labelValues[1], labelValues.length > 2 ? labelValues[labelValues.length - 1] : "");
-		metric.addValue(timeStamp, Math.round(value / 1000), label);
+		metric.addValue(timeStamp,Math.round(value/1000d), label);
 	}
 
 	private Graph getMetricID(@NotNull String label, String params) {
