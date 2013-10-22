@@ -1,4 +1,4 @@
-JMeter plugin fro TeamCity
+JMeter plugin for TeamCity
 ==========================
 
 This is plugin for TeamCity 8.0 that helps to organize simplest performance testing in CI. 
@@ -31,12 +31,20 @@ Path to JMeter test plan:
 Aggregate metrics: 
 	select metrics to aggregate. 
 
+
 optionally
 ----------
 Path to reference data:
 	path to reference data, can be empty;
 Variation: 
 	value of variation  [0..1] in decimal format; default - 0.05 (5%); not considered, if reference data is empty;
+File name to aggregate results:
+	to customize log with jmeter result, you need to define variable with a file name at test plan; then set it value here and at the Command line arguments; 
+	note: custom file name must start with 'results';
+	by default, all requests will be logged with file name 'results.jtl' 
+PerfMon file name:
+	in case of you use monitoring by JMeterServer Agent, set perfmon file name here;
+	note: file name must start with 'perfmon';
 Command line arguments:
 	if you define variables at the jmeter test file, here is you can set it values (ex.: -Jthreads_number=10 -Jtest_duration_seconds=90 -Jperfmon_results_file=perfmon.csv); 
 
