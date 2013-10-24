@@ -60,7 +60,7 @@ public abstract class Aggregation {
 	 * Data row of jmeter results (default values)
 	 * need only two
 	 */
-	class Item {
+	protected static class Item {
 		final String timeStamp;
 		final long elapsedTime;
 		final String label;

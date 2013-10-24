@@ -40,7 +40,7 @@ public class JMeterStatisticsProcessor {
 					String[] fieldValues = JMeterMessageParser.JMETER_DELIMITER_PATTERN.split(itemStr);
 					isNewItem = fieldValues.length == countFields;
 					if (isNewItem) {
-						Aggregation.Item item = report.new Item(fieldValues);
+						Aggregation.Item item = new Aggregation.Item(fieldValues);
 						report.addItem(item);
 					}
 				}
