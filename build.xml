@@ -17,11 +17,6 @@
                              server.lib.includes="*.jar"
                              plugin.descriptor.file="${basedir}/teamcity-plugin.xml"
                              plugin.version="${plugin.version}">
-        <agent-additional-files>
-            <fileset dir="${basedir}" id="agent-additional-files">
-                <include name="lib/ssh/jsch-0.1.50.jar"/>
-            </fileset>
-        </agent-additional-files>
     </package.teamcity.plugin>
   </target>
 

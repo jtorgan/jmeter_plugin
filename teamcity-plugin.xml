@@ -5,7 +5,7 @@
         <name>jmeter</name>
         <display-name>JMeter</display-name>
         <version>@version@</version>
-        <description>Build Runner for JMeter tests</description>
+        <description>Performance test analysis(JMeter and other tests)</description>
         <!--<vendor>-->
         <!--<name>@Plugin_Vendor@</name>-->
         <!--<url>@Plugin_Vendor_Url@</url>-->
