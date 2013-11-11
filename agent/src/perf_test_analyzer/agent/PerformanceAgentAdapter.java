@@ -45,6 +45,7 @@ public class PerformanceAgentAdapter extends AgentLifeCycleAdapter {
 			AggregationProcessor processor = new AggregationProcessor(myLogger, myProperties);
 			processor.aggregateResults(build.getWorkingDirectory().getAbsolutePath());
             processor.checkReferenceData(build.getCheckoutDirectory().getAbsolutePath());
+			build.addSharedConfigParameter(PluginConstants.PARAMS_AGGREGATE_FILE, myProperties.getAggregateDataFile());
 		}
 	}
 

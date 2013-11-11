@@ -59,6 +59,11 @@ public class PerformanceProperties {
 		return new StringBuilder(workingDir).append(File.separator).append(aggregateFile).toString();
 	}
 
+	@NotNull
+	public String getAggregateDataFile() {
+		return aggregateFile;
+	}
+
 	public List<PerformanceStatisticMetrics> getSelectedMetrics() {
 		PerformanceStatisticMetrics[] values = PerformanceStatisticMetrics.values();
 		if (metrics.length > values.length) {
