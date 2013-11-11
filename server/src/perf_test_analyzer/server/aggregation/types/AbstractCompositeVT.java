@@ -11,6 +11,7 @@ import jetbrains.buildServer.serverSide.statistics.build.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import perf_test_analyzer.common.PluginConstants;
+import perf_test_analyzer.server.aggregation.PerfStatisticBVTransformer;
 
 import java.util.Collections;
 import java.util.List;
@@ -93,7 +94,7 @@ public abstract class AbstractCompositeVT extends CompositeVTB {
 			}
 			@Nullable
 			protected BuildValueTransformer getValueProcessor() {
-				return  null;//new PerfStatisticBVTransformer(myServer);
+				return new PerfStatisticBVTransformer(myServer);
 			}
 		};
 	}
