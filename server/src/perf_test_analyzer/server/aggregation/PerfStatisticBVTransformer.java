@@ -1,8 +1,10 @@
 package perf_test_analyzer.server.aggregation;
 
 import jetbrains.buildServer.artifacts.RevisionRule;
+import jetbrains.buildServer.serverSide.CustomDataStorage;
 import jetbrains.buildServer.serverSide.SBuild;
 import jetbrains.buildServer.serverSide.SBuildServer;
+import jetbrains.buildServer.serverSide.SBuildType;
 import jetbrains.buildServer.serverSide.artifacts.SArtifactDependency;
 import jetbrains.buildServer.serverSide.statistics.build.BuildValue;
 import jetbrains.buildServer.serverSide.statistics.build.BuildValueTransformer;
@@ -52,5 +54,16 @@ public class PerfStatisticBVTransformer extends BuildValueTransformer {
 			}
 		}
 		buildValue.setBuildNumber(buildIDToArtifactNumber.get(buildId));
+	}
+
+
+	public static boolean getState(@NotNull SBuildType buildType) {
+		String value = buildType.getCustomDataStorage("teamcity.perf.analysis.statistic").getValue("useBNTransformer");
+		return value == null ? false : Boolean.parseBoolean(value);
+	}
+
+	public static void updateState(@NotNull SBuildType buildType, String value) {
+		CustomDataStorage storage = buildType.getCustomDataStorage("teamcity.perf.analysis.statistic");
+		storage.putValue("useBNTransformer", value);
 	}
 }

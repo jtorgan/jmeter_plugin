@@ -24,6 +24,8 @@ public abstract class AbstractCompositeVT extends CompositeVTB {
 	protected String[] subKeys;
 	protected String currentBuildTypeID;
 
+	private volatile boolean useBuildValueTransformer = false;
+
 	protected AbstractCompositeVT(BuildDataStorage buildDataStorage, ValueProviderRegistry valueProviderRegistry, SBuildServer server, String key) {
 		super(buildDataStorage, valueProviderRegistry, server, key);
 	}
@@ -67,6 +69,7 @@ public abstract class AbstractCompositeVT extends CompositeVTB {
 				if (value != null) {
 					subKeys = comma_pattern.split(value);
 				}
+				useBuildValueTransformer = PerfStatisticBVTransformer.getState(buildType);
 			}
 		}
 	}
@@ -94,7 +97,7 @@ public abstract class AbstractCompositeVT extends CompositeVTB {
 			}
 			@Nullable
 			protected BuildValueTransformer getValueProcessor() {
-				return new PerfStatisticBVTransformer(myServer);
+				return useBuildValueTransformer ? new PerfStatisticBVTransformer(myServer) : null;
 			}
 		};
 	}

@@ -20,6 +20,8 @@ import java.util.Map;
  * Performance Statistic tab, locates on the build type page
  */
 public class PerfStatisticTab extends BuildTypeTab {
+	private static final String myTabID = "perf_test_analyzer";
+
 	private final PerfStatisticDataProvider myDataProvider;
 	private final ValueProviderRegistry myRegistry;
 	private final ProjectManager myProjectManager;
@@ -27,7 +29,7 @@ public class PerfStatisticTab extends BuildTypeTab {
 
 
 	public PerfStatisticTab(@NotNull WebControllerManager manager,@NotNull ProjectManager projectManager, @NotNull PerfStatisticDataProvider dataProvider, ValueProviderRegistry registry, @NotNull final PluginDescriptor descriptor) {
-		super("perf_test_analyzer", "PerformanceStatistics", manager, projectManager, descriptor.getPluginResourcesPath("statistics/aggregationStatistic.jsp"));
+		super(myTabID, "PerformanceStatistics", manager, projectManager, descriptor.getPluginResourcesPath("statistics/aggregationStatistic.jsp"));
 		myDataProvider = dataProvider;
 		myRegistry = registry;
 		myProjectManager = projectManager;
@@ -56,6 +58,15 @@ public class PerfStatisticTab extends BuildTypeTab {
 	@Override
 	protected void fillModel(@NotNull Map<String, Object> model, @NotNull HttpServletRequest request, @NotNull SBuildType buildType, @Nullable SUser user) {
 		request.setAttribute("buildGraphHelper", new BuildGraphHelper(myRegistry, myProjectManager));
+
+		String useDepArtifactBN = request.getParameter("useDepArtifactBN");
+		if (useDepArtifactBN != null) {
+			PerfStatisticBVTransformer.updateState(buildType, useDepArtifactBN);
+		}
+
+		model.put("useDepArtifactBN", PerfStatisticBVTransformer.getState(buildType));
+		model.put("tabID", myTabID);
+		model.put("buildTypeId", buildType.getExternalId());
 		model.put("performanceGraphs", myDataProvider.getValueProviders(buildType));
 	}
 }
