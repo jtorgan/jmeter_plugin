@@ -3,6 +3,7 @@ if (!window.$j) {
 }
 
 BS.PerfTestAnalyzer = {
+    isShowLog: true,
     subPlots: {},
 
     addPlot: function(plotID, data, max, xformat, yformat, startColor, startTime, endTime) {
@@ -244,21 +245,22 @@ BS.PerfTestAnalyzer = {
     },
 
     showLog: function(plotID, start, end, moreDetails) {
-        this.clearAllSelection();
+        if (this.isShowLog) {
+            this.clearAllSelection();
 
-        var plot = this.subPlots[plotID].plot;
-        plot.isSelected = true;
-        plot.setSelection({ xaxis: { from: start, to: end }}, true);
+            var plot = this.subPlots[plotID].plot;
+            plot.isSelected = true;
+            plot.setSelection({ xaxis: { from: start, to: end }}, true);
 
-        var period = Format.formatTime(start, moreDetails) + '(' + start + ') - ' + Format.formatTime(end, moreDetails) + '(' + end + ') : ';
-        $j("#jmeterTimePeriod").text(period);
+            var period = Format.formatTime(start, moreDetails) + '(' + start + ') - ' + Format.formatTime(end, moreDetails) + '(' + end + ') : ';
+            $j("#jmeterTimePeriod").text(period);
 
-        BS.Util.show($j("#loadingLog"));
-        setTimeout(function() {
-            PerfTestLog.show(start, end);
-            BS.Util.hide($j("#loadingLog"));
-        }, 0);
-
+            BS.Util.show($j("#loadingLog"));
+            setTimeout(function() {
+                PerfTestLog.show(start, end);
+                BS.Util.hide($j("#loadingLog"));
+            }, 0);
+        }
     },
 
     clear: function(plotID) {
@@ -333,7 +335,21 @@ function setUIState(state, id) {
 function sendState(buildTypeId, newState, graphID) {
     BS.ajaxRequest("/app/performance_test_analyzer/**", {
         method: "post",
-        parameters: 'buildTypeId=' + buildTypeId + '&state=' + newState + '&graphId=' + graphID,
+        parameters: 'reqType=change_state&buildTypeId=' + buildTypeId + '&state=' + newState + '&graphId=' + graphID,
+        onComplete: function(transport) {
+            if (transport.responseXML) {
+                alert(transport.responseXML);
+            }
+        }
+    });
+}
+
+function setLogView(buildTypeId, isShowLog) {
+    BS.PerfTestAnalyzer.isShowLog = isShowLog;
+
+    BS.ajaxRequest("/app/performance_test_analyzer/**", {
+        method: "post",
+        parameters: 'reqType=log_view&buildTypeId=' + buildTypeId + '&showLog=' + isShowLog,
         onComplete: function(transport) {
             if (transport.responseXML) {
                 alert(transport.responseXML);

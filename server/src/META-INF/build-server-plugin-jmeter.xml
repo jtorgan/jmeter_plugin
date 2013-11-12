@@ -33,7 +33,7 @@
 
 
     <!-- performance monitoring-->
-    <bean id="jmeterPerfMonStateController" class="perf_test_analyzer.server.monitoring.PerfMonitoringStateController"/>
+    <bean id="jmeterPerfMonStateController" class="perf_test_analyzer.server.monitoring.PerfMonitoringController"/>
 
     <bean id="jMeterPerfMonTab" class="perf_test_analyzer.server.monitoring.PerfMonitoringTab">
         <constructor-arg index="0" ref="webControllerManager"/>

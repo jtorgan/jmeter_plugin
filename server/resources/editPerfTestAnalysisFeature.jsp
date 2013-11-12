@@ -161,6 +161,10 @@
         </td>
       </tr>
       <tr>
+        <td style="padding-left: 0 !important; padding-right: 2px !important;"><label for="perfTest.mon.interval">interval:</label></td>
+        <td style="padding-left: 0 !important; padding-right: 2px !important;"><props:textProperty name="perfTest.mon.interval"/></td>
+      </tr>
+      <tr>
         <td style="padding-left: 0 !important; padding-right: 2px !important;"><label for="perfTest.mon.clock.delay">clock delay:</label></td>
         <td style="padding-left: 0 !important; padding-right: 2px !important;"><props:textProperty name="perfTest.mon.clock.delay"/></td>
       </tr>

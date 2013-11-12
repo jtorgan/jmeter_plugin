@@ -70,11 +70,11 @@ public class PerfMonitoringTab extends SimpleCustomTab {
 		SBuild build = BuildDataExtensionUtil.retrieveBuild(request, myServer);
 		if (build != null) {
 			setState(data, build.getBuildType());
+			model.put("isShowLogAtBottom", getLogViewMode(build.getBuildType()));
 		}
 		model.put("metrics", data);
 		model.put("build", build);
 		model.put("logFile", perfResultLog.getName());
-
 		model.put("version", version);  //temporary
 
 	}
@@ -84,6 +84,8 @@ public class PerfMonitoringTab extends SimpleCustomTab {
 	 * @param request
 	 */
 	private void setArtifactFiles(@NotNull HttpServletRequest request) {
+		perfMonitoringLog = null;
+		perfResultLog = null;
 		final SBuild build = BuildDataExtensionUtil.retrieveBuild(request, myServer);
 		if (build != null) {
 			File[] artifacts = build.getArtifactsDirectory().listFiles();
@@ -116,4 +118,8 @@ public class PerfMonitoringTab extends SimpleCustomTab {
 		}
 	}
 
+	private boolean getLogViewMode(SBuildType buildType) {
+		String logView = buildType.getCustomDataStorage("teamcity.perf.analysis.mon").getValue("logView");
+		return logView != null ? Boolean.parseBoolean(logView) : true;
+	}
 }
