@@ -40,6 +40,9 @@ public final class AggregateReport extends Aggregation {
 		for (AggregateSampler sampler : samplers.values())  {
 			allItems.addAll(sampler.items);
 		}
+		if (allItems.isEmpty()) {
+			return 0;
+		}
 		Collections.sort(allItems, new Comparator<Item>() {
 			@Override
 			public int compare(Item o1, Item o2) {

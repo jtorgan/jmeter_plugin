@@ -30,6 +30,9 @@ public final class AggregateSampler extends Aggregation {
 	}
 
 	protected double get90line() {
+		if (items.isEmpty()) {
+			return 0;
+		}
 		int ind90 = (int) Math.round(items.size() * 0.9);
 		return items.get(ind90 - 1).responseTime;
 	}

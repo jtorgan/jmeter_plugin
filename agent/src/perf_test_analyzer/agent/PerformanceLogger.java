@@ -8,10 +8,8 @@ import perf_test_analyzer.common.PerformanceMessageParser;
 
 
 public class PerformanceLogger {
-	public static final String AGENT_BLOCK = "agent";
-	public static final String AGGREGATION_ACTIVITY_NAME = "Aggregation";
-	public static final String REFERENCE_CHECK_ACTIVITY_NAME = "Check reference data";
-	public static final String MONITORING_ACTIVITY_NAME = "Remote monitoring";
+	public static final String AGGREGATION_ACTIVITY_NAME = "Aggregate results";
+	public static final String CHECK_REFERENCE_ACTIVITY_NAME = "Check reference values";
 
 	private final BuildProgressLogger logger;
 
@@ -43,10 +41,10 @@ public class PerformanceLogger {
 	}
 
 	public void activityStarted(String activityName) {
-		logger.activityStarted(activityName, AGENT_BLOCK);
+		logger.activityStarted(activityName, DefaultMessagesInfo.BLOCK_TYPE_MODULE);
 	}
 
 	public void activityFinished(String activityName) {
-		logger.activityFinished(activityName, AGENT_BLOCK);
+		logger.activityFinished(activityName, DefaultMessagesInfo.BLOCK_TYPE_MODULE);
 	}
 }

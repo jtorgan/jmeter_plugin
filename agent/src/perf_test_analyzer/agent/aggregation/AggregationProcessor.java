@@ -112,7 +112,6 @@ public final class AggregationProcessor {
 				}
 			}
         }
-        myLogger.activityFinished(PerformanceLogger.AGGREGATION_ACTIVITY_NAME);
     }
 
 	private void addFailed(String label, String logLine) {
@@ -131,7 +130,7 @@ public final class AggregationProcessor {
         if(!myProperties.isCheckReferenceData()) {
             return;
         }
-        myLogger.activityFinished(PerformanceLogger.REFERENCE_CHECK_ACTIVITY_NAME);
+        myLogger.activityStarted(PerformanceLogger.CHECK_REFERENCE_ACTIVITY_NAME);
 
         String referenceData = myProperties.getReferenceDataFile(checkoutDir);
         double variation = myProperties.getVariation();
@@ -169,7 +168,7 @@ public final class AggregationProcessor {
 				}
 			}
         }
-        myLogger.activityFinished(PerformanceLogger.REFERENCE_CHECK_ACTIVITY_NAME);
+        myLogger.activityFinished(PerformanceLogger.CHECK_REFERENCE_ACTIVITY_NAME);
     }
 
 }
