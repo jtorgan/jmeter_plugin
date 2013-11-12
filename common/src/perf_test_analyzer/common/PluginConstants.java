@@ -22,6 +22,7 @@ public class PluginConstants {
 	public static final String PARAMS_BUILD_STEP_TO_ANALYZE = "perfTest.buildStep";
 	public static final String PARAMS_REMOTE_PERF_MON_HOST = "perfTest.mon.host";
 	public static final String PARAMS_REMOTE_PERF_MON_PORT = "perfTest.mon.port";
+	public static final String PARAMS_REMOTE_INTERVAL = "perfTest.mon.interval";
 	public static final String PARAMS_REMOTE_CLOCK_DELAY = "perfTest.mon.clock.delay";
 
 	public static final String AGGREGATION_TOTAL_NAME = "Total";

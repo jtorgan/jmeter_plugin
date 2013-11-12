@@ -14,6 +14,7 @@ import java.util.Collection;
 public class PerformanceAgentAdapter extends AgentLifeCycleAdapter {
 	private PerformanceProperties myProperties;
 	private PerformanceLogger myLogger;
+	private RemoteMonitoring myRemoteMonitoring;
 
 	public PerformanceAgentAdapter(@NotNull final EventDispatcher<AgentLifeCycleListener> agentDispatcher) {
 		agentDispatcher.addListener(this);
@@ -57,7 +58,8 @@ public class PerformanceAgentAdapter extends AgentLifeCycleAdapter {
 		final Collection<AgentBuildFeature> features = runner.getBuild().getBuildFeaturesOfType(PluginConstants.FEATURE_TYPE);
 		if (!features.isEmpty() && checkBuildRunnerForMonitoring(runner.getName())) {
 			final String resultFile = new StringBuilder(runner.getWorkingDirectory().getAbsolutePath()).append(File.separator).append(PluginConstants.MONITORING_RESULT_FILE).toString();
-			RemoteMonitoring.start(myProperties.getRemoteMonitoringHost(), myProperties.getRemoteMonitoringPort(), myProperties.getRemoteClockDelay(), resultFile);
+			myRemoteMonitoring = new RemoteMonitoring(myProperties, resultFile);
+			myRemoteMonitoring.start();
 		}
 	}
 
@@ -67,8 +69,8 @@ public class PerformanceAgentAdapter extends AgentLifeCycleAdapter {
 	 */
 	public void runnerFinished(@NotNull final BuildRunnerContext runner, @NotNull final BuildFinishedStatus status) {
 		final Collection<AgentBuildFeature> features = runner.getBuild().getBuildFeaturesOfType(PluginConstants.FEATURE_TYPE);
-		if (!features.isEmpty() && checkBuildRunnerForMonitoring(runner.getName())) {
-			RemoteMonitoring.stop();
+		if (!features.isEmpty() && checkBuildRunnerForMonitoring(runner.getName()) && myRemoteMonitoring != null) {
+			myRemoteMonitoring.stop();
 		}
 	}
 

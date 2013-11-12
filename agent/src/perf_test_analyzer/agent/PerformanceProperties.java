@@ -1,6 +1,7 @@
 package perf_test_analyzer.agent;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import perf_test_analyzer.common.PerformanceStatisticMetrics;
 import perf_test_analyzer.common.PluginConstants;
 
@@ -27,6 +28,7 @@ public class PerformanceProperties {
 	private final String remotePerfMonBuildStep;
 	private final String remotePerfMonHost;
 	private final int remotePerfMonPort;
+	private final String remoteInterval;
 	private final long remoteSystemClockDelay;
 
 
@@ -47,6 +49,7 @@ public class PerformanceProperties {
 		remotePerfMonBuildStep = params.get(PluginConstants.PARAMS_BUILD_STEP_TO_ANALYZE);
 		remotePerfMonHost = params.get(PluginConstants.PARAMS_REMOTE_PERF_MON_HOST);
 		remotePerfMonPort = params.get(PluginConstants.PARAMS_REMOTE_PERF_MON_PORT) == null ? 4444 : Integer.parseInt(params.get(PluginConstants.PARAMS_REMOTE_PERF_MON_PORT));
+		remoteInterval = params.get(PluginConstants.PARAMS_REMOTE_INTERVAL);
 		remoteSystemClockDelay = params.get(PluginConstants.PARAMS_REMOTE_CLOCK_DELAY) == null ? 0 : Long.parseLong(params.get(PluginConstants.PARAMS_REMOTE_CLOCK_DELAY));
 	}
 
@@ -58,12 +61,10 @@ public class PerformanceProperties {
 		}
 		return new StringBuilder(workingDir).append(File.separator).append(aggregateFile).toString();
 	}
-
 	@NotNull
 	public String getAggregateDataFile() {
 		return aggregateFile;
 	}
-
 	public List<PerformanceStatisticMetrics> getSelectedMetrics() {
 		PerformanceStatisticMetrics[] values = PerformanceStatisticMetrics.values();
 		if (metrics.length > values.length) {
@@ -77,11 +78,9 @@ public class PerformanceProperties {
 		metricList.add(PerformanceStatisticMetrics.RESPONSE_CODE); // constant; help indicate test and server errors, bugs
 		return metricList;
 	}
-
 	public boolean isIncludeHTTPCodes() {
 		return includeHTTPCodes;
 	}
-
 	public boolean isCheckAssert() {
 		return checkAssert;
 	}
@@ -91,12 +90,10 @@ public class PerformanceProperties {
 	public boolean isCheckReferenceData() {
 		return checkReference;
 	}
-
 	@NotNull
 	public String getReferenceDataFile(@NotNull final String checkoutDir) {
 		return new StringBuilder(checkoutDir).append(File.separator).append(referenceData).toString();
 	}
-
 	public double getVariation() {
 		return variation != null ? Double.parseDouble(variation) : 0.05;
 	}
@@ -105,21 +102,21 @@ public class PerformanceProperties {
     public boolean isRunMonitoring() {
 		return isRunRemotePerfMon;
 	}
-
 	@NotNull
 	public String getBuildStepToMonitor() {
 		return remotePerfMonBuildStep;
 	}
-
 	@NotNull
 	public String getRemoteMonitoringHost() {
 		return remotePerfMonHost == null ? "localhost" : remotePerfMonHost;
 	}
-
 	public int getRemoteMonitoringPort() {
 		return remotePerfMonPort;
 	}
-
+	@Nullable
+	public String getRemoteInterval() {
+		return remoteInterval;
+	}
 	public long getRemoteClockDelay() {
 		return remoteSystemClockDelay;
 	}
