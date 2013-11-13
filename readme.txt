@@ -1,7 +1,8 @@
 Performance tests analysis plugin for TeamCity
 ==============================================
 This is plugin for TeamCity 8.0 that helps to organize simplest performance testing in CI. 
-It has the opportunity to aggregate results from file, calculate metrics, compare results with reference values, monitor remote machine with tested application. 
+It has the opportunity to aggregate results from file, calculate metrics, 
+compare results with reference values, monitor remote machine with tested application. 
 Additionally, it allows view the all results of performance tests at the charts.
 
 How it works
@@ -40,11 +41,13 @@ allows to monitor some system and jvm statistics on remote machine with tested a
 -------------------------------------------
 Build step to analyze: *
 	name of build step with start tests when monitoring will be perform. 
-	Note: plugin uses Server Agent(http://jmeter-plugins.org/wiki/PerfMonAgent/) to collect metric values on remote. So, agent must be runned at the remote machine before build step begins.	
+	Note: plugin uses Server Agent(http://jmeter-plugins.org/wiki/PerfMonAgent/) to collect metric values on remote.
+	So, agent must be runned at the remote machine before build step begins.	
 Remote options: 
-	host, port - settings for access to running agent;
-	interval - in seconds, to collect metrics from agent;
-	clock delay - if tests will be performed from another machine(non-BuildAgent), set system clock delay between build agent and test machine to sync time of monitoring.
+	host, port  - settings for access to running agent;
+	interval    - in seconds, to collect metrics from agent;
+	clock delay - if tests will be performed from another machine(non-BuildAgent), set system clock delay between 
+		      build agent and test machine to sync time of monitoring.
 
 Monitored parameters, supported by plugin:
 - CPU system/user/all/iowait (all in percent)
@@ -108,26 +111,29 @@ Statistic visualization
 
 Performance Statistic tab
 -------------------------
-After running configuration with Performance Test Analysis feature, you can see Performance Statistic tab at the build configuration view page. 
-It contains charts with Response codes(if selected) and for each label with aggregated metrics. 
+After running configuration with Performance Test Analysis feature, you can see Performance Statistic tab at the build 
+configuration view page. It contains charts with Response codes(if selected) and for each label with aggregated metrics. 
 Сharts contain comparative statistics by builds. 
 
 X-Axis settings has 2 option:
 origin - x-axis constanis original build numbers;
-artifact dependency - x-axis contains build numbers of tested application, numbers will be extracted from artifact dependencies, so you must configure the corresponding dependency from tested application.
+artifact dependency - x-axis contains build numbers of tested application, numbers will be extracted from artifact 
+dependencies, so you must configure the corresponding dependency from tested application.
 
 RemotePerfMon tab
 -----------------
 Also, RemotePerfMon tab will appear at the build page.
-By default, it contains two charts: Server Response Time - show distribution time for each type of test raw (label); Request Per Seconds - show count of raws per second for each label.
-In case of you used Remote monitoring, here is charts with system metrics and jmx metrics. Note, all metrics related with memory (system memory, jmx memory, memorypool) will be on the same chart.
+By default, it contains two charts: Server Response Time - show distribution time for each type of test raw (label); 
+Request Per Seconds - show count of raws per second for each label. In case of you used Remote monitoring, here is 
+charts with system metrics and jmx metrics. Note, all metrics related with memory (system memory, jmx memory, memorypool) 
+will be on the same chart.
 
 Gray area in the charts indicates the warm-up period. 
-If you set "Show log at the bottom of the page", by selecting the point or area at the chart, part of result log will be appear at the bottom of the page. 
-This part of log will contain all requests in selected period. 
+If you set "Show log at the bottom of the page", by selecting the point or area at the chart, part of result log will 
+be appear at the bottom of the page. This part of log will contain all requests in selected period. 
 
-Note: you can number the labels in format <N#title> (ex: '1# Login to application'); labels in reference data file must have the same names!
-Then all chart at Performance Statistic will be located in order according to order of labels. 
+Note: you can number the labels in format <N#title> (ex: '1# Login to application'); labels in reference data file must 
+have the same names! Then all chart at Performance Statistic will be located in order according to order of labels. 
 
 
 Useful links:
