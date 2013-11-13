@@ -1,9 +1,9 @@
 Performance tests analysis plugin for TeamCity
 ==============================================
 This is plugin for TeamCity 8.0 that helps to organize simplest performance testing in CI. 
-It has the opportunity to aggregate results from file, calculate metrics, 
+It has the opportunity to aggregate results from a file, calculate metrics, 
 compare results with reference values, monitor remote machine with tested application. 
-Additionally, it allows view the all results of performance tests at the charts.
+Additionally, it allows view all results of performance tests at charts.
 
 How it works
 ==============
@@ -41,13 +41,12 @@ allows to monitor some system and jvm statistics on remote machine with tested a
 -------------------------------------------
 Build step to analyze: *
 	name of build step with start tests when monitoring will be perform. 
-	Note: plugin uses Server Agent(http://jmeter-plugins.org/wiki/PerfMonAgent/) to collect metric values on remote.
-	So, agent must be runned at the remote machine before build step begins.	
-Remote options: 
-	host, port  - settings for access to running agent;
-	interval    - in seconds, to collect metrics from agent;
-	clock delay - if tests will be performed from another machine(non-BuildAgent), set system clock delay between 
-		      build agent and test machine to sync time of monitoring.
+	Note: plugin uses Server Agent(http://jmeter-plugins.org/wiki/PerfMonAgent/) to collect metric values on remote. So, agent must be runned at the remote machine before build step begins.	
+
+Remote options: *
+	host *, port * - settings for access to running agent;
+	interval         - in seconds, to collect metrics from agent;
+	clock delay   - if tests will be performed from another machine(non-BuildAgent), set system clock delay between build agent and test machine to sync time of monitoring.
 
 Monitored parameters, supported by plugin:
 - CPU system/user/all/iowait (all in percent)
