@@ -79,14 +79,14 @@ start	spend	method
 1383822067829	5	foo222
 1383822067835	77	foo111
 
-timeStamp	elapsed	label	responseCode	success	responseMessage	threadName	dataType
-1383843124555	153	1#Login	200	true	OK	Thread Group 1-1	text
-1383843126523	12	1#Login	200	true	OK	Thread Group 1-3	text
-1383843124713	3391	2#Open page	200	true	OK	Thread Group 1-1	text
-1383843128268	215	3#Search query	200	true	OK	Thread Group 1-4	text
-1383843128269	224	3#Search query	200	true	OK	Thread Group 1-2	text
-1383843128540	1457	2#Open page	200	true	OK	Thread Group 1-5	text
-1383843128270	2138	3#Search query	404	false	Not found!	Thread Group 1-3	text
+timeStamp	elapsed	label	responseCode	success	responseMessage	thread	dataType
+1383843124555	153	1#Login	200	true	OK	Thread 1-1	text
+1383843126523	12	1#Login	200	true	OK	Thread 1-3	text
+1383843124713	3391	2#Open page	200	true	OK	Thread 1-1	text
+1383843128268	215	3#Search query	200	true	OK	Thread 1-4	text
+1383843128269	224	3#Search query	200	true	OK	Thread 1-2	text
+1383843128540	1457	2#Open page	200	true	OK	Thread 1-5	text
+1383843128270	2138	3#Search query	404	false	Not found!	Thread 1-3	text
 
 
 
