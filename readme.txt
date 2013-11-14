@@ -108,7 +108,7 @@ line90
 Statistic visualization
 ========================
 
-Performance Statistic tab
+PerformanceStatistic tab
 -------------------------
 After running configuration with Performance Test Analysis feature, you can see Performance Statistic tab at the build 
 configuration view page. It contains charts with Response codes(if selected) and for each label with aggregated metrics. 
