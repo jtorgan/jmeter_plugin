@@ -96,7 +96,7 @@ format:label	metric	value
 example:1#Login	line90	120
 
 Delimiter - \t
-All labels must be matched to corresponding sample labels in jmeter test file. 
+All labels must be matched to corresponding item labels in raw test file. 
 Possible values for metrics: 
 min 
 max 
