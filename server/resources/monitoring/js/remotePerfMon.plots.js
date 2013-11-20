@@ -6,18 +6,14 @@ BS.PerfTestAnalyzer = {
     isShowLog: true,
     subPlots: {},
 
-    addPlot: function(plotID, data, max, xformat, yformat, startColor, startTime, endTime) {
-        var isBytesFormat = yformat == 'byte';
-        var correctedFormat = Format.getFormatByMax(max, yformat);
-
-        this.initPlot(plotID, data, max,xformat,correctedFormat, isBytesFormat, startColor, startTime, endTime);
-        this.initLegend(plotID);
-        this.initTooltip(plotID, correctedFormat, isBytesFormat);
-        this.initLegendCrosshair(plotID, correctedFormat, isBytesFormat);
-        this.initClick(plotID);
+    addPlot: function(plotID, data, max, xformat, yformat, startColor, startTime, endTime, isDraw) {
+        this.initPlot(plotID, data, max,xformat, Format.getFormatByMax(max, yformat), yformat == 'byte', startColor, startTime, endTime, isDraw);
+        if (isDraw) {
+            this.initPlotSettings(plotID);
+        }
     },
 
-    initPlot: function (plotID, data, max, xformat, yformat, isBytesFormat, startColor, startTime, endTime) {
+    initPlot: function (plotID, data, max, xformat, yformat, isBytesFormat, startColor, startTime, endTime, isDraw) {
         var chartElem = $j("#chart" + plotID);
 
         var chartData = [];
@@ -25,7 +21,6 @@ BS.PerfTestAnalyzer = {
         for (var key in data) {
             chartData.push({ data: data[key], label: key, color: ++i, lines: {order: 1}});
         }
-
 
         var stacked =  false;//plotID.indexOf("memory") != -1 || plotID.indexOf("cpu") != -1 || plotID.indexOf("pool") != -1;
 
@@ -73,10 +68,21 @@ BS.PerfTestAnalyzer = {
         this.subPlots[plotID] = {
             dataset: chartData,
             settings: settings,
-            plot: $j.plot(chartElem, chartData, settings),
+            plot: $j.plot(chartElem, isDraw ? chartData : [], settings),
             selected: false,
-            zoom: false
+            zoom: false,
+            utils: {
+                isByteFormat: isBytesFormat,
+                yFormat: yformat
+            }
         };
+    },
+
+    initPlotSettings: function (plotID) {
+        this.initLegend(plotID);
+        this.initTooltip(plotID);
+        this.initLegendCrosshair(plotID);
+        this.initClick(plotID);
     },
 
     initLegend: function(plotID) {
@@ -126,7 +132,10 @@ BS.PerfTestAnalyzer = {
         });
     },
 
-    initTooltip: function (plotID, format, isBytesFormat) {
+    initTooltip: function (plotID) {
+        var format = this.subPlots[plotID].utils.yFormat;
+        var isBytesFormat = this.subPlots[plotID].utils.isByteFormat;
+
         var chartElem = $j("#chart" + plotID);
         function showTooltip(x, y, contents) {
             $j('<div id="tooltip">' + contents + '</div>').css({
@@ -160,14 +169,17 @@ BS.PerfTestAnalyzer = {
         });
     },
 
-    initLegendCrosshair: function(plotID, format, isBytesFormat) {
+    initLegendCrosshair: function(plotID) {
+        var plot = this.subPlots[plotID].plot;
+        var format = this.subPlots[plotID].utils.yFormat;
+        var isBytesFormat = this.subPlots[plotID].utils.isByteFormat;
+
         var legends = {};
         $j("#legend" + plotID).find("label").each(function() {
             var label = $j(this).text().trim();
             legends[label] = $j(this);
         });
 
-        var plot = this.subPlots[plotID].plot;
         var updateLegendTimeout = null;
         var latestPosition = null;
 
@@ -302,11 +314,19 @@ $j(document).ready(function () {
         event.stopPropagation();
         var newState = $j(this).text().indexOf("Show") != -1 ? stateShown : stateHidden;
         var graphID = $j(this).attr('name');
-        setUIState(newState, graphID);
         if (newState == stateShown) {
-            $j('#' + graphID).parent().css("padding-bottom", "20px");
+            var graph = BS.PerfTestAnalyzer.subPlots[graphID];
+            if (graph.plot.getData().length == 0) {
+                $j("#loadingWarning").css("display" , "block");
+                BS.PerfTestAnalyzer.subPlots[graphID].plot = $j.plot($j("#chart" + graphID), graph.dataset, graph.settings);
+                BS.PerfTestAnalyzer.initPlotSettings(graphID);
+                $j('#' + graphID).parent().css("padding-bottom", "20px");
+                $j("#loadingWarning").css("display" , "none");
+            }
         }
+        setUIState(newState, graphID);
         sendState(buildTypeId, newState, graphID);
+
     });
 
     $j('.expandAll').unbind('click').bind('click', function (event) {
@@ -318,7 +338,6 @@ $j(document).ready(function () {
         sendState(buildTypeId, stateShown, "");
     });
 });
-
 
 function setUIState(state, id) {
     if (state.indexOf(stateShown) != -1) {

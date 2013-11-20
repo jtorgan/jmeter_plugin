@@ -26,8 +26,8 @@ public final class RemoteMonitoring {
 
 	private volatile boolean stopped;
 	private final Queue<String> monitoringResults;
-	Thread getter;
-	Thread processor;
+	private final Thread getter;
+	private final Thread processor;
 
 
 	public RemoteMonitoring(final PerformanceProperties properties, final String resultFile) {

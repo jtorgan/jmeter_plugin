@@ -77,7 +77,7 @@
             </c:forEach>
           };
           BS.PerfTestAnalyzer.isShowLog = ${isShowLogAtBottom};
-          BS.PerfTestAnalyzer.addPlot("${metric.id}", data, ${metric.max}, "${metric.XAxisMode}", "${metric.YAxisMode}", 0, ${startTime},  ${endTime});
+          BS.PerfTestAnalyzer.addPlot("${metric.id}", data, ${metric.max}, "${metric.XAxisMode}", "${metric.YAxisMode}", 0, ${startTime},  ${endTime}, "${metric.state}".indexOf(stateShown) != -1);
         })();
       </script>
     </c:forEach>

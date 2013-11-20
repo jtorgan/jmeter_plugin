@@ -51,7 +51,8 @@ public abstract class Aggregation {
 			return new StringBuilder("Metric - ").append(metric.getTitle())
 					.append("; label - ").append(title)
 					.append("; \nreference value: ").append(Math.round(referenceValue))
-					.append("; current value: ").append(Math.round(currentValue)).toString();
+					.append("; current value: ").append(Math.round(currentValue))
+					.append("; variation: ").append(variation).toString();
 		}
 		return null;
 	}

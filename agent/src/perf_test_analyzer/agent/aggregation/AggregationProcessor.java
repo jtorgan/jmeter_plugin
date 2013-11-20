@@ -141,13 +141,17 @@ public final class AggregationProcessor {
 			String line;
 			while (reader.ready() && !(line = reader.readLine()).isEmpty()) {
 				String[] referenceItem = PerformanceMessageParser.DELIMITER_PATTERN.split(line);
-				if (referenceItem.length != 3) {
+				if (referenceItem.length < 3) {
 					myLogger.logMessage("Wrong reference data format!\n format: <label>\t<metric>\t<value>. find: " + referenceItem + "\n Available metrics: average, min, max, line90");
 					continue;
 				}
 				String sampler = referenceItem[0];
 				PerformanceStatisticMetrics metric = PerformanceStatisticMetrics.valueOf(referenceItem[1].toUpperCase());
-				Double referenceValue = Double.valueOf(referenceItem[2]);
+				Double referenceValue = Double.parseDouble(referenceItem[2]);
+
+				if (referenceItem.length > 3 && referenceItem[3] != null) {
+					variation = Double.parseDouble(referenceItem[3]);
+				}
 
 				myLogger.logMessage(metric.getReferenceKey(), Math.round(referenceValue), sampler);
 				String result = report.checkValue(sampler, metric, referenceValue, variation);
