@@ -333,6 +333,15 @@ $j(document).ready(function () {
         event.stopPropagation();
         $j('.collapsible').each( function() {
             $j(this).closest('table').find('a').text("[Hide]");
+            var graphID = $j(this).attr("id");
+            var graph = BS.PerfTestAnalyzer.subPlots[graphID];
+            if (graph.plot.getData().length == 0) {
+                $j("#loadingWarning").css("display" , "block");
+                BS.PerfTestAnalyzer.subPlots[graphID].plot = $j.plot($j("#chart" + graphID), graph.dataset, graph.settings);
+                BS.PerfTestAnalyzer.initPlotSettings(graphID);
+                $j('#' + graphID).parent().css("padding-bottom", "20px");
+                $j("#loadingWarning").css("display" , "none");
+            }
             $j(this).show();
         });
         sendState(buildTypeId, stateShown, "");
