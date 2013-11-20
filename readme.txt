@@ -92,17 +92,21 @@ timeStamp	elapsed	label	responseCode	success	responseMessage	thread	dataType
 
 Reference data format
 ======================
-format:label	metric	value
-example:1#Login	line90	120
+format:label	metric	value	variation(optional)
+
+example1: 1#Login	line90	120
+example2: 1#Home page	average	340	0.1
 
 Delimiter - \t
 All labels must be matched to corresponding item labels in raw test file. 
+It is possible to set own variation for each label. If  value of variation isn't set, it will be extracted from feature 
+settings (by default 0.05).
+
 Possible values for metrics: 
 min 
 max 
 average 
 line90
-
 
 
 Statistic visualization
