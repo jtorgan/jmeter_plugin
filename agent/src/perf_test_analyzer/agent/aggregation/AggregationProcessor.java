@@ -133,7 +133,6 @@ public final class AggregationProcessor {
         myLogger.activityStarted(PerformanceLogger.CHECK_REFERENCE_ACTIVITY_NAME);
 
         String referenceData = myProperties.getReferenceDataFile(checkoutDir);
-        double variation = myProperties.getVariation();
 
         BufferedReader reader = null;
 		try {
@@ -148,10 +147,7 @@ public final class AggregationProcessor {
 				String sampler = referenceItem[0];
 				PerformanceStatisticMetrics metric = PerformanceStatisticMetrics.valueOf(referenceItem[1].toUpperCase());
 				Double referenceValue = Double.parseDouble(referenceItem[2]);
-
-				if (referenceItem.length > 3 && referenceItem[3] != null) {
-					variation = Double.parseDouble(referenceItem[3]);
-				}
+				double variation = referenceItem.length > 3 && referenceItem[3] != null ? Double.parseDouble(referenceItem[3]) : myProperties.getVariation();
 
 				myLogger.logMessage(metric.getReferenceKey(), Math.round(referenceValue), sampler);
 				String result = report.checkValue(sampler, metric, referenceValue, variation);
