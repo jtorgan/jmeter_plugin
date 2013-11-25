@@ -29,7 +29,7 @@ public class PerfStatisticTab extends BuildTypeTab {
 
 
 	public PerfStatisticTab(@NotNull WebControllerManager manager,@NotNull ProjectManager projectManager, @NotNull PerfStatisticDataProvider dataProvider, ValueProviderRegistry registry, @NotNull final PluginDescriptor descriptor) {
-		super(myTabID, "PerformanceStatistics", manager, projectManager, descriptor.getPluginResourcesPath("statistics/aggregationStatistic.jsp"));
+		super(myTabID, "Performance Statistics", manager, projectManager, descriptor.getPluginResourcesPath("statistics/aggregationStatistic.jsp"));
 		myDataProvider = dataProvider;
 		myRegistry = registry;
 		myProjectManager = projectManager;

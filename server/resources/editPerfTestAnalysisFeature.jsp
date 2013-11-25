@@ -26,7 +26,7 @@
     <th>File to aggregate results: <l:star/></th>
     <td>
       <props:textProperty name="perfTest.agg.file"/>
-      <span class="smallNote">Enter artifact file to aggregate values.</span>
+      <span class="smallNote">The path to the artifact file containing values to aggregate</span>
       <span class="error" id="error_perfTest.agg.file"></span>
     </td>
   </tr>
@@ -65,8 +65,8 @@
         </tr>
         <tr>
           <td>
-            <props:checkboxProperty name="perfTest.agg.assert"/><label for="perfTest.agg.assert">check assertions</label>
-            <span class="smallNote">build failed condition: success of any sample - 0 (false)</span>
+            <props:checkboxProperty name="perfTest.agg.assert"/><label for="perfTest.agg.assert">include assertions check</label>
+            <span class="smallNote">Fail the build if any assertion check fails</span>
           </td>
         </tr>
       </table>
@@ -79,7 +79,7 @@
 <c:set var="display"><c:if test="${propertiesBean.properties['perfTest.check.ref.data'] != 'true'}">style="display: none"</c:if></c:set>
 
 <tr class="groupingTitle">
-  <td><label for="perfTest.check.ref.data">Check reference data </label>
+  <td><label for="perfTest.check.ref.data">Compare with reference data </label>
   </td>
   <td><props:checkboxProperty name="perfTest.check.ref.data"
                               onclick="perfAnalyzerChanged(this, 'reference_data');"
@@ -87,7 +87,7 @@
 </tr>
 
 <tr class="reference_data"  ${display}>
-  <td colspan="2"><span class="smallNote">Build failed condition: the metric aggregated values exceed reference values considering variation.</span>
+  <td colspan="2"><span class="smallNote">Fail the build if the aggregated metric values exceed the reference values considering variation.</span>
   </td>
 </tr>
 
@@ -96,6 +96,7 @@
   <td>
     <props:textProperty name="perfTest.ref.data" style="width: 24em"/>
     <bs:vcsTree fieldId="perfTest.ref.data"/>
+    <span class="smallNote">The path to the reference file</span>
     <span class="error" id="error_perfTest.ref.data"></span>
   </td>
 </tr>
@@ -128,22 +129,19 @@
 
 <tr class="remote_perf_mon" ${display}>
   <td colspan="2">
-    <span class="smallNote">
-    There is running Server Agent on remote machine.
-    <br/>If tests will be running from another machine(non-BuildAgent), set <strong>system clock delay</strong> between build agent and test machine to sync time of monitoring.
-    </span>
+    <span class="smallNote"> Enable to run tests from another machine (non-Build Agent). </span>
   </td>
 </tr>
 <tr class="remote_perf_mon" ${display}>
   <th>Build step to analyze: <l:star/></th>
   <td>
     <props:textProperty name="perfTest.buildStep"/>
-    <span class="smallNote">Specify name of the build step with performance tests.</span>
+    <span class="smallNote">The name of the build step with performance tests</span>
     <span class="error" id="error_perfTest.buildStep"></span>
   </td>
 </tr>
 <tr class="remote_perf_mon" ${display}>
-  <th><label for="remote.params">Remote options:</label></th>
+  <th><label for="remote.params">Remote machine:</label></th>
   <td>
     <table id="remote.params">
       <tr>
@@ -161,16 +159,24 @@
         </td>
       </tr>
       <tr>
-        <td style="padding-left: 0 !important; padding-right: 2px !important;"><label for="perfTest.mon.interval">interval:</label></td>
-        <td style="padding-left: 0 !important; padding-right: 2px !important;"><props:textProperty name="perfTest.mon.interval"/></td>
-      </tr>
-      <tr>
-        <td style="padding-left: 0 !important; padding-right: 2px !important;"><label for="perfTest.mon.clock.delay">clock delay:</label></td>
-        <td style="padding-left: 0 !important; padding-right: 2px !important;"><props:textProperty name="perfTest.mon.clock.delay"/></td>
+        <td style="padding-left: 0 !important; padding-right: 2px !important; width: 20px !important;"><label for="perfTest.mon.clock.delay">clock delay:</label></td>
+        <td style="padding-left: 0 !important; padding-right: 2px !important;">
+          <props:textProperty name="perfTest.mon.clock.delay"/>
+          <span class="smallNote">in seconds. Set to sync the time of monitoring between the build agent and the test machine</span>
+        </td>
       </tr>
     </table>
   </td>
 </tr>
+
+<tr>
+  <th><label for="perfTest.mon.interval">Monitoring interval:</label></th>
+  <td>
+    <props:textProperty name="perfTest.mon.interval"/>
+    <span class="smallNote">in seconds</span>
+  </td>
+</tr>
+
 <tr class="remote_perf_mon" ${display}>
   <td colspan="2">
       <span class="smallNote">

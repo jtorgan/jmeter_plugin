@@ -11,13 +11,13 @@
 
 <div style="padding: 10px 0; vertical-align: top; color: #888888">
   <label><strong>X-Axis settings:</strong>
-    <c:if test="${useDepArtifactBN == true}">artifact dependency</c:if>
-    <c:if test="${useDepArtifactBN == false}">original</c:if>
-    build numbers are used; </label>
+    <c:if test="${useDepArtifactBN == true}">build numbers of the dependency (tested app)</c:if>
+    <c:if test="${useDepArtifactBN == false}">actual build numbers</c:if>
+    are used, </label>
   <a href="${perfAnalysis_url}" style="text-decoration: none !important;">
     change to
-    <c:if test="${useDepArtifactBN == true}">original</c:if>
-    <c:if test="${useDepArtifactBN == false}">artifact dependency</c:if>
+    <c:if test="${useDepArtifactBN == true}">actual build numbers</c:if>
+    <c:if test="${useDepArtifactBN == false}">build numbers of the dependency (tested app)</c:if>
   </a>
 </div>
 
