@@ -30,7 +30,7 @@
   <input type="hidden" value="${version}"/>
 
   <div class="legendHint" style="display: block">
-    System statistics: the gray area in the charts indicates the warm-up period.
+    System statistics: the gray area in the charts indicates the warm-up period.<br/>
     Show the log at the bottom of the page: <input id="isShowLogAtBottom" onclick="setLogView('${buildTypeId}', this.checked);" type="checkbox" <c:if test="${isShowLogAtBottom}">checked</c:if>>
     <%--<a class="hideWarmUp" onclick="hideWarmUP(${startTime}, ${endTime}, true);">Hide warm-up</a>--%>
     <a class="expandAll">[Show all]</a>
