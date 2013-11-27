@@ -27,8 +27,7 @@
         <constructor-arg index="0" ref="webControllerManager"/>
         <constructor-arg index="1" ref="projectManager"/>
         <constructor-arg index="2" ref="perfStatStorageValueProvider"/>
-        <constructor-arg index="3" ref="valueProviderRegistry"/>
-
+        <constructor-arg index="3" ref="jetbrains.buildServer.web.statistics.graph.BuildGraphHelper"/>
     </bean>
 
 

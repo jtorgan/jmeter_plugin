@@ -3,7 +3,6 @@ package perf_test_analyzer.server.aggregation;
 import jetbrains.buildServer.serverSide.ProjectManager;
 import jetbrains.buildServer.serverSide.SBuildFeatureDescriptor;
 import jetbrains.buildServer.serverSide.SBuildType;
-import jetbrains.buildServer.serverSide.statistics.ValueProviderRegistry;
 import jetbrains.buildServer.users.SUser;
 import jetbrains.buildServer.web.openapi.PluginDescriptor;
 import jetbrains.buildServer.web.openapi.WebControllerManager;
@@ -23,16 +22,12 @@ public class PerfStatisticTab extends BuildTypeTab {
 	private static final String myTabID = "perf_test_analyzer";
 
 	private final PerfStatisticDataProvider myDataProvider;
-	private final ValueProviderRegistry myRegistry;
-	private final ProjectManager myProjectManager;
+	private final BuildGraphHelper myGraphHelper;
 
-
-
-	public PerfStatisticTab(@NotNull WebControllerManager manager,@NotNull ProjectManager projectManager, @NotNull PerfStatisticDataProvider dataProvider, ValueProviderRegistry registry, @NotNull final PluginDescriptor descriptor) {
+	public PerfStatisticTab(@NotNull WebControllerManager manager,@NotNull ProjectManager projectManager, @NotNull PerfStatisticDataProvider dataProvider, @NotNull final BuildGraphHelper buildGraphHelper, @NotNull final PluginDescriptor descriptor) {
 		super(myTabID, "Performance Statistics", manager, projectManager, descriptor.getPluginResourcesPath("statistics/aggregationStatistic.jsp"));
 		myDataProvider = dataProvider;
-		myRegistry = registry;
-		myProjectManager = projectManager;
+		myGraphHelper = buildGraphHelper;
 
 		addCssFile("/css/buildGraph.css");
 	}
@@ -57,7 +52,7 @@ public class PerfStatisticTab extends BuildTypeTab {
 
 	@Override
 	protected void fillModel(@NotNull Map<String, Object> model, @NotNull HttpServletRequest request, @NotNull SBuildType buildType, @Nullable SUser user) {
-		request.setAttribute("buildGraphHelper", new BuildGraphHelper(myRegistry, myProjectManager));
+		request.setAttribute("buildGraphHelper", myGraphHelper);
 
 		String useDepArtifactBN = request.getParameter("useDepArtifactBN");
 		if (useDepArtifactBN != null) {

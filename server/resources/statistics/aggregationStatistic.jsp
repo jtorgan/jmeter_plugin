@@ -13,7 +13,8 @@
   <label><strong>X-Axis settings:</strong>
     <c:if test="${useDepArtifactBN == true}">build numbers of the dependency (tested app)</c:if>
     <c:if test="${useDepArtifactBN == false}">actual build numbers</c:if>
-    are used, </label>
+    are used,
+  </label>
   <a href="${perfAnalysis_url}" style="text-decoration: none !important;">
     change to
     <c:if test="${useDepArtifactBN == true}">actual build numbers</c:if>
