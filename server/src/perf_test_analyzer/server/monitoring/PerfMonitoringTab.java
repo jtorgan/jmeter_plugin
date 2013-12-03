@@ -97,7 +97,7 @@ public class PerfMonitoringTab extends SimpleCustomTab {
 						perfMonitoringLog = artifact;
 					}
 					String resultLogFile = build.getParametersProvider().get(PluginConstants.PARAMS_AGGREGATE_FILE);
-					if (absPath.startsWith("results") || (resultLogFile != null && absPath.equals(resultLogFile)))  {  // todo: fix it with value from feature parameters
+					if (resultLogFile != null && absPath.equals(resultLogFile))  {  // todo: fix it with value from feature parameters
 						perfResultLog = artifact;
 					}
 				}
