@@ -41,7 +41,7 @@ public class PerfMonitoringTab extends SimpleCustomTab {
 		addJsFile(descriptor.getPluginResourcesPath("flot/jquery.flot.crosshair.js"));
 		addJsFile(descriptor.getPluginResourcesPath("flot/jquery.flot.selection.js"));
 
-		addJsFile(descriptor.getPluginResourcesPath("monitoring/js/remotePerfMon.plots.js"));
+		addJsFile(descriptor.getPluginResourcesPath("monitoring/js/remotePerfMon.format.js"));
 		addJsFile(descriptor.getPluginResourcesPath("monitoring/js/remotePerfMon.plots.js"));
 		addJsFile(descriptor.getPluginResourcesPath("monitoring/js/remotePerfMon.log.js"));
 
@@ -57,9 +57,20 @@ public class PerfMonitoringTab extends SimpleCustomTab {
 	}
 
 	public void fillModel(@NotNull Map<String, Object> model, @NotNull HttpServletRequest request) {
+		SBuild build = BuildDataExtensionUtil.retrieveBuild(request, myServer);
+
+		if (build != null) {
+			SBuildType buildType = build.getBuildType();
+			model.put("isShowLogAtBottom", getBuildTypeParameter(buildType, "logView"));
+			updateBuildTypeParameter(buildType, "useCheckBox", request.getParameter("useCheckBox"));
+			updateBuildTypeParameter(buildType, "replaceNull", request.getParameter("replaceNull"));
+			model.put("useCheckBox", getBuildTypeParameter(buildType, "useCheckBox"));
+			model.put("replaceNull", getBuildTypeParameter(buildType, "replaceNull"));
+		}
+
 		Collection<Graph> data = new ArrayList<Graph>();
 		if (perfResultLog != null) {
-			ResultLogDataProvider provider = new ResultLogDataProvider();
+			ResultLogDataProvider provider = new ResultLogDataProvider(getBuildTypeParameter(build.getBuildType(), "replaceNull"));
 			data = provider.getGraphs(perfResultLog);
 			model.put("startTime", provider.getMinTime());
 			model.put("endTime", provider.getMaxTime());
@@ -67,15 +78,14 @@ public class PerfMonitoringTab extends SimpleCustomTab {
 		if (perfMonitoringLog != null) {
 			data.addAll(new MonitoringLogDataProvider().getGraphs(perfMonitoringLog));
 		}
-		SBuild build = BuildDataExtensionUtil.retrieveBuild(request, myServer);
+
 		if (build != null) {
 			setState(data, build.getBuildType());
-			model.put("isShowLogAtBottom", getLogViewMode(build.getBuildType()));
 		}
 		model.put("metrics", data);
 		model.put("build", build);
 		model.put("logFile", perfResultLog.getName());
-		model.put("version", version);  //temporary
+		model.put("tabID", "jmeter");
 
 	}
 
@@ -110,7 +120,7 @@ public class PerfMonitoringTab extends SimpleCustomTab {
 	 * @param graphs
 	 * @param buildType
 	 */
-	private void setState(Collection<Graph> graphs, SBuildType buildType) {
+	private void setState(Collection<Graph> graphs, @NotNull SBuildType buildType) {
 		CustomDataStorage stateStorage = buildType.getCustomDataStorage("teamcity.jmeter.graph.states");
 		for (Graph graph : graphs) {
 			String state = stateStorage.getValue(graph.getId());
@@ -118,8 +128,19 @@ public class PerfMonitoringTab extends SimpleCustomTab {
 		}
 	}
 
-	private boolean getLogViewMode(SBuildType buildType) {
-		String logView = buildType.getCustomDataStorage("teamcity.perf.analysis.mon").getValue("logView");
-		return logView != null ? Boolean.parseBoolean(logView) : true;
+	private boolean getBuildTypeParameter(SBuildType buildType, String key) {
+		String logView = buildType.getCustomDataStorage("teamcity.perf.analysis.mon").getValue(key);
+		return logView == null || Boolean.parseBoolean(logView);
+	}
+
+	public void updateBuildTypeParameter(@NotNull SBuildType buildType, String key, String newValue) {
+		CustomDataStorage storage = buildType.getCustomDataStorage("teamcity.perf.analysis.mon");
+		String value = storage.getValue(key);
+		if (value == null) {
+			storage.putValue(key, newValue == null ? "true" : newValue);
+		} else if (newValue != null && !value.equals(newValue)) {
+			storage.putValue(key, newValue);
+		}
+		storage.flush();
 	}
 }

@@ -17,6 +17,7 @@ public class PerformanceProperties {
 	private final boolean[] metrics = new boolean[4];
 	private final boolean includeHTTPCodes;
 	private final boolean checkAssert;
+	private final boolean calcTotal;
 
 	//Reference	parameters
 	private final boolean checkReference;
@@ -40,6 +41,7 @@ public class PerformanceProperties {
 		metrics[3] = Boolean.parseBoolean(params.get(PluginConstants.PARAMS_METRIC_LINE90));
 		includeHTTPCodes = Boolean.parseBoolean(params.get(PluginConstants.PARAMS_HTTP_RESPONSE_CODE));
 		checkAssert = Boolean.parseBoolean(params.get(PluginConstants.PARAMS_CHECK_ASSERT));
+		calcTotal = Boolean.parseBoolean(params.get(PluginConstants.PARAMS_CALC_TOTAL));
 
 		checkReference = Boolean.parseBoolean(params.get(PluginConstants.PARAMS_CHECK_REF_DATA));
 		referenceData = params.get(PluginConstants.PARAMS_REFERENCE_DATA);
@@ -84,9 +86,12 @@ public class PerformanceProperties {
 	public boolean isCheckAssert() {
 		return checkAssert;
 	}
+	public boolean isCalculateTotal() {
+		return calcTotal;
+	}
 
 
-    //Reference	parameter's getters
+	//Reference	parameter's getters
 	public boolean isCheckReferenceData() {
 		return checkReference;
 	}

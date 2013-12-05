@@ -27,6 +27,7 @@ public final class AggregationProcessor {
     final PerformanceProperties myProperties;
     private final boolean includeHTTpCodes;
 	private final boolean checkAsserts;
+	private final boolean totalCalculation;
 
 	private final Map<String, List<String>> failedAsserts;
 
@@ -35,8 +36,9 @@ public final class AggregationProcessor {
 	public AggregationProcessor(@NotNull final PerformanceLogger logger, @NotNull final PerformanceProperties properties) {
 		myLogger = logger;
         myProperties = properties;
-		this.includeHTTpCodes = properties.isIncludeHTTPCodes();
-		this.checkAsserts = properties.isCheckAssert();
+		includeHTTpCodes = properties.isIncludeHTTPCodes();
+		checkAsserts = properties.isCheckAssert();
+		totalCalculation = properties.isCalculateTotal();
 		failedAsserts = checkAsserts ? new HashMap<String, List<String>>() : null;
 	}
 
@@ -46,7 +48,7 @@ public final class AggregationProcessor {
 
         if (checkAsserts && !failedAsserts.isEmpty()) { // check asserts if needed
             for (String key : failedAsserts.keySet()) {
-	            StringBuilder description = new StringBuilder(key).append("\n");
+	            StringBuilder description = new StringBuilder(key).append("; failed count = (").append(failedAsserts.size()).append(")\n");
 	            for(String line : failedAsserts.get(key)) {
 		            description.append(line).append("\n");
 	            }
@@ -64,7 +66,9 @@ public final class AggregationProcessor {
             for(PerformanceStatisticMetrics metric : myProperties.getSelectedMetrics()) {
                 if (!metric.equals(PerformanceStatisticMetrics.RESPONSE_CODE)) {
                     String metricName = metric.getKey();
-                    myLogger.logMessage(metricName, Math.round(report.getAggregateValue(metric)), report.title);
+	                if (totalCalculation) {
+		                myLogger.logMessage(metricName, Math.round(report.getAggregateValue(metric)), report.title);
+	                }
                     for(AggregateSampler sampler : report.samplers.values()) {
                         myLogger.logMessage(metricName, Math.round(sampler.getAggregateValue(metric)), sampler.title);
                     }
@@ -81,7 +85,7 @@ public final class AggregationProcessor {
         String logPath = myProperties.getAggregateDataFile(workingDir);
 		BufferedReader reader = null;
 		try {
-            report = new AggregateReport(includeHTTpCodes);
+            report = new AggregateReport(includeHTTpCodes, totalCalculation);
             reader = new BufferedReader(new FileReader(logPath));
 
 			String logLine;

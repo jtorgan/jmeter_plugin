@@ -8,10 +8,10 @@ public class ResultLogDataProvider extends AbstractFileDataProvider {
 	private long minTime;
 	private long maxTime;
 
-	public ResultLogDataProvider() {
+	public ResultLogDataProvider(boolean isReplaceNull) {
 		super();
 
-		metrics.put("rps", new RPSGraph());
+		metrics.put("rps", new RPSGraph(isReplaceNull));
 		metrics.put("srt", new SRTGraph());
 
 		maxTime = Long.MIN_VALUE;

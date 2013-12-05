@@ -3,11 +3,16 @@
 <%@ taglib prefix="forms" tagdir="/WEB-INF/tags/forms" %>
 
 <%--@elvariable id="metrics" type="java.util.Collection<jmeter_runner.server.build_perfmon.graph.Graph>"--%>
-<%--@elvariable id="version" type="java.lang.String"--%>
+
 <%--@elvariable id="startTime" type="java.lang.Long"--%>
 <%--@elvariable id="endTime" type="java.lang.Long"--%>
+
 <%--@elvariable id="logFile" type="java.lang.String>"--%>
+<%--@elvariable id="tabID" type="java.lang.String>"--%>
+
 <%--@elvariable id="isShowLogAtBottom" type="java.lang.Boolean"--%>
+<%--@elvariable id="useCheckBox" type="java.lang.Boolean"--%>
+<%--@elvariable id="replaceNull" type="java.lang.Boolean"--%>
 
 <%--@elvariable id="build" type="jetbrains.buildServer.serverSide.SBuild>"--%>
 <jsp:useBean id="teamcityPluginResourcesPath" type="java.lang.String" scope="request"/>
@@ -18,21 +23,34 @@
 <script type="text/javascript" src="${teamcityPluginResourcesPath}flot/jquery.flot.stack.js"></script>
 <script type="text/javascript" src="${teamcityPluginResourcesPath}flot/jquery.flot.crosshair.js"></script>
 <script type="text/javascript" src="${teamcityPluginResourcesPath}flot/jquery.flot.selection.js"></script>
-<script type="text/javascript" src="${teamcityPluginResourcesPath}monitoring/js/remoteRefMon.format.js"></script>
+<script type="text/javascript" src="${teamcityPluginResourcesPath}monitoring/js/remoteRerfMon.format.js"></script>
 <script type="text/javascript" src="${teamcityPluginResourcesPath}monitoring/js/remotePerfMon.plots.js"></script>
 <script type="text/javascript" src="${teamcityPluginResourcesPath}monitoring/js/remotePerfMon.log.js"></script>
 
+<script type="text/javascript" src="${teamcityPluginResourcesPath}monitoring/js/checkbox.plot.js"></script>
+<script type="text/javascript" src="${teamcityPluginResourcesPath}monitoring/js/radio.plot.js"></script>
+
 <link type="text/css" href="${teamcityPluginResourcesPath}monitoring/css/remotePerfMon.styles.css" rel="stylesheet"/>
+
+<c:url var="my_url" value="/viewLog.html?buildId=${build.buildId}&buildTypeId=${build.buildType.externalId}&tab=${tabID}"/>
 
 <div id="jmeterPerfmon">
   <c:set var="buildTypeId" value="${build.buildType.externalId}"/>
 
-  <input type="hidden" value="${version}"/>
-
   <div class="legendHint" style="display: block">
-    System statistics: the gray area in the charts indicates the warm-up period.<br/>
-    Show the log at the bottom of the page: <input id="isShowLogAtBottom" onclick="setLogView('${buildTypeId}', this.checked);" type="checkbox" <c:if test="${isShowLogAtBottom}">checked</c:if>>
-    <%--<a class="hideWarmUp" onclick="hideWarmUP(${startTime}, ${endTime}, true);">Hide warm-up</a>--%>
+    System statistics: the gray area in the charts indicates the warm-up period.
+    <br/>Show the log at the bottom of the page: <input id="isShowLogAtBottom" onclick="setLogView('${buildTypeId}', this.checked);" type="checkbox" <c:if test="${isShowLogAtBottom}">checked</c:if>>
+    <br/>SRT & RPS:
+    <input type="hidden" id="useCheckBox" value="${useCheckBox}">
+    <a href="${my_url}&useCheckBox=${!useCheckBox}" style="text-decoration: none !important;">
+      <c:if test="${useCheckBox}">use radio buttons</c:if>
+      <c:if test="${!useCheckBox}">use checkbox</c:if>
+    </a>
+    <br/>RPS:
+    <a href="${my_url}&replaceNull=${!replaceNull}" style="text-decoration: none !important;">
+      <c:if test="${replaceNull}">'0' => nulls</c:if>
+      <c:if test="${!replaceNull}">nulls => '0'</c:if>
+    </a>
     <a class="expandAll">[Show all]</a>
   </div>
 
@@ -56,12 +74,26 @@
                 <div id="chart${metric.id}" class="chart"></div>
               </div>
               <div id="legend${metric.id}" class="legend">
+                <c:set var="isFirst" value="true"/>
+
                 <c:forEach items="${metric.keys}" var="key">
+
                   <div class="legend_item">
-                    <forms:checkbox name="${key}" checked="true" style="display: block; float: right" className="pta_checked"/>
-                    <label for="${key}" class="legendLabel">${key}</label><span></span>
+                    <c:choose>
+                      <c:when test="${(metric.id == 'srt' || metric.id == 'rps') && !useCheckBox}">
+                        <forms:radioButton name="${metric.id}" id="${key}" checked="${isFirst}" style="display: block; float: right" className="pta_checked"/>
+                        <label for="${key}" class="legendLabel">${key}</label><span></span>
+                        <c:set var="isFirst" value="false"/>
+                      </c:when>
+
+                      <c:otherwise>
+                        <forms:checkbox name="${key}" checked="true" style="display: block; float: right" className="pta_checked"/>
+                        <label for="${key}" class="legendLabel">${key}</label><span></span>
+                      </c:otherwise>
+                    </c:choose>
                   </div>
                 </c:forEach>
+
               </div>
             </div>
           </td>

@@ -13,17 +13,24 @@ import java.util.*;
 public final class AggregateReport extends Aggregation {
 	final Map<String, AggregateSampler> samplers;
 	final Map<String, Long> codes;
-	final boolean includeHTTPCodes;
 
-	AggregateReport(boolean httpCodes) {
+	final boolean includeHTTPCodes;
+	final boolean calcTotal;
+
+	AggregateReport(boolean httpCodes, boolean totalCalculation) {
 		super(PluginConstants.AGGREGATION_TOTAL_NAME);
+
 		samplers = new HashMap<String, AggregateSampler>();
-		includeHTTPCodes = httpCodes;
 		codes = new HashMap<String, Long>();
+
+		includeHTTPCodes = httpCodes;
+		calcTotal = totalCalculation;
 	}
 
 	void addItem(Item item) {
-		super.addItem(item.responseTime);
+		if (calcTotal) {
+			super.addItem(item.responseTime);
+		}
 		if (samplers.get(item.label) == null) {
 			samplers.put(item.label, new AggregateSampler(item));
 		} else {

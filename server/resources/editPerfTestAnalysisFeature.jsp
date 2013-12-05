@@ -69,6 +69,11 @@
             <span class="smallNote">Fail the build if any assertion check fails</span>
           </td>
         </tr>
+        <tr>
+          <td>
+            <props:checkboxProperty name="perfTest.agg.total"/><label for="perfTest.agg.total">include total calculation</label>
+          </td>
+        </tr>
       </table>
     </td>
   </tr>
@@ -169,7 +174,7 @@
   </td>
 </tr>
 
-<tr>
+<tr class="remote_perf_mon" ${display}>
   <th><label for="perfTest.mon.interval">Monitoring interval:</label></th>
   <td>
     <props:textProperty name="perfTest.mon.interval"/>

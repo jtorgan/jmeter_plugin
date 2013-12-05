@@ -3,6 +3,7 @@ if (!window.$j) {
 }
 
 BS.PerfTestAnalyzer = {
+    colors: ["#edc240", "#afd8f8", "#cb4b4b", "#4da74d", "#9440ed"],
     isShowLog: true,
     subPlots: {},
 
@@ -14,15 +15,33 @@ BS.PerfTestAnalyzer = {
     },
 
     initPlot: function (plotID, data, max, xformat, yformat, isBytesFormat, startColor, startTime, endTime, isDraw) {
+        var isRadio = (plotID == "srt" || plotID == "rps") && $j("#useCheckBox").val() == "false";
+
         var chartElem = $j("#chart" + plotID);
 
         var chartData = [];
-        var i = startColor;
-        for (var key in data) {
-            chartData.push({ data: data[key], label: key, color: ++i, lines: {order: 1}});
-        }
+        var sc = startColor;
 
-        var stacked =  false;//plotID.indexOf("memory") != -1 || plotID.indexOf("cpu") != -1 || plotID.indexOf("pool") != -1;
+        var variation = 0, i = 0;
+
+        for (var key in data) {
+            var color =  ++sc;
+            if (isRadio) {
+                if (this.colors.length == i)
+                    color = $j.color.make(100, 100, 100);
+                else
+                    color = $j.color.parse(this.colors[i]);
+                var sign = variation % 2 == 1 ? -1 : 1;
+                color.scale('rgb', 1 + sign * Math.ceil(variation / 2) * 0.2);
+                ++i;
+                if (i >= this.colors.length) {
+                    i = 0;
+                    ++variation;
+                }
+                color.scale('rgb', 1 + sign * Math.ceil(variation / 2) * 0.2)
+            }
+            chartData.push({ data: data[key], label: key, color: color, lines: {order: 1}});
+        }
 
         var markings = [
             { xaxis: {from: startTime, to: endTime }, color: "#FFFFFF"}
@@ -30,8 +49,7 @@ BS.PerfTestAnalyzer = {
 
         var settings = {
             series: {
-                stack: stacked,
-                lines: { show: true, fill: stacked},
+                lines: { show: true },
                 points: { show: true, radius: 1 }
             },
             legend: {
@@ -65,10 +83,12 @@ BS.PerfTestAnalyzer = {
             }
         };
 
+        var actualData = isRadio ? [chartData[0]] : chartData;
         this.subPlots[plotID] = {
+            isRadio: isRadio,
             dataset: chartData,
             settings: settings,
-            plot: $j.plot(chartElem, isDraw ? chartData : [], settings),
+            plot: $j.plot(chartElem, isDraw ? actualData : [], settings),
             selected: false,
             zoom: false,
             utils: {
@@ -81,13 +101,16 @@ BS.PerfTestAnalyzer = {
     initPlotSettings: function (plotID) {
         this.initLegend(plotID);
         this.initTooltip(plotID);
-        this.initLegendCrosshair(plotID);
+        if (!this.subPlots[plotID].isRadio) {
+            this.initLegendCrosshair(plotID);
+        }
         this.initClick(plotID);
     },
 
     initLegend: function(plotID) {
+        var subplot = this.subPlots[plotID];
         // set colors
-        var data = this.subPlots[plotID].plot.getData();
+        var data = subplot.isRadio ? subplot.dataset : subplot.plot.getData();
         var colors = {};
         for (var i = 0; i < data.length; ++i) {
             colors[data[i].label] = data[i].color;
@@ -108,12 +131,11 @@ BS.PerfTestAnalyzer = {
 
         // bind events
         var legendElem = $j("#legend" + plotID);
-        var subplot = this.subPlots[plotID];
         function toggleSeries() {
             var data = [];
             var allData = subplot.dataset;
             legendElem.find("input:checked").each(function () {
-                var key = $j(this).attr("name");
+                var key = $j(this).attr("type") =="radio" ? $j(this).attr("id") : $j(this).attr("name");
                 if (key) {
                     for (var i in allData) {
                         if (allData[i].label == key) {
@@ -385,15 +407,5 @@ function setLogView(buildTypeId, isShowLog) {
         }
     });
 }
-
-function hideWarmUP(start, end, isHide) {
-    for (var plotKey in BS.PerfTestAnalyzer.subPlots) {
-        var subplot = BS.PerfTestAnalyzer.subPlots[plotKey];
-        subplot.settings.xaxis.min = start;
-        subplot.settings.xaxis.max = end;
-        subplot.plot.draw();
-    }
-}
-
 
 

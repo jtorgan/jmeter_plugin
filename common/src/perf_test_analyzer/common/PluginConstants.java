@@ -13,6 +13,7 @@ public class PluginConstants {
 	public static final String PARAMS_METRIC_LINE90 = "perfTest.agg.90line";
 	public static final String PARAMS_HTTP_RESPONSE_CODE = "perfTest.agg.respCode";
 	public static final String PARAMS_CHECK_ASSERT = "perfTest.agg.assert";
+	public static final String PARAMS_CALC_TOTAL = "perfTest.agg.total";
 
 	public static final String PARAMS_CHECK_REF_DATA = "perfTest.check.ref.data";
 	public static final String PARAMS_REFERENCE_DATA = "perfTest.ref.data";

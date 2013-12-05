@@ -9,15 +9,17 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 public final class RPSGraph extends Graph {
+	private final boolean isReplaceNull;
 	private static final Pattern sharp_pattern = Pattern.compile("#");
 	private Map<String, String> myOrders;
 
 	private Set<Long> timestamps;
 
-	public RPSGraph() {
+	public RPSGraph(boolean replaceNull) {
 		super("rps", "Requests Per Second", "time", "", 6);
 		timestamps = new HashSet<Long>();
 		myOrders = new HashMap<String, String>();
+		isReplaceNull = replaceNull;
 	}
 
 	@Override
@@ -70,9 +72,11 @@ public final class RPSGraph extends Graph {
 
 		@Override
 		public List<List<Long>> getValues() {
-			for(long timestamp : timestamps) {
-				if (myValues.get(timestamp) == null) {
-					addValue(timestamp, 0);
+			if (isReplaceNull) {
+				for(long timestamp : timestamps) {
+					if (myValues.get(timestamp) == null) {
+						addValue(timestamp, 0);
+					}
 				}
 			}
 			return toListFormat();
