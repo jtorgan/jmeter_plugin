@@ -82,8 +82,17 @@ BS.PerfTestAnalyzer = {
                 mode: "x"
             }
         };
+        var actualData = chartData;
 
-        var actualData = isRadio ? [chartData[0]] : chartData;
+        if (isRadio) {
+            var selectedLabel = $j("#legend" + plotID).find("input:checked")[0];
+            for (var i in chartData) {
+                if (chartData[i].label == $j(selectedLabel).attr("id")) {
+                    actualData = [chartData[i]]; break;
+                }
+            }
+        }
+
         this.subPlots[plotID] = {
             isRadio: isRadio,
             dataset: chartData,
