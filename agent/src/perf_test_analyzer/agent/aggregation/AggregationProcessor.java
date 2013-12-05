@@ -48,7 +48,7 @@ public final class AggregationProcessor {
 
         if (checkAsserts && !failedAsserts.isEmpty()) { // check asserts if needed
             for (String key : failedAsserts.keySet()) {
-	            StringBuilder description = new StringBuilder(key).append("; failed count = (").append(failedAsserts.size()).append(")\n");
+	            StringBuilder description = new StringBuilder(key).append(" (").append(failedAsserts.get(key).size()).append(")\n");
 	            for(String line : failedAsserts.get(key)) {
 		            description.append(line).append("\n");
 	            }
