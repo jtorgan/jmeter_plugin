@@ -85,7 +85,7 @@ public final class AggregationProcessor {
         String logPath = myProperties.getAggregateDataFile(workingDir);
 		BufferedReader reader = null;
 		try {
-            report = new AggregateReport(includeHTTpCodes, totalCalculation);
+            report = new AggregateReport(includeHTTpCodes, totalCalculation, checkAsserts);
             reader = new BufferedReader(new FileReader(logPath));
 
 			String logLine;

@@ -40,7 +40,7 @@ BS.PerfTestAnalyzer = {
                 }
                 color.scale('rgb', 1 + sign * Math.ceil(variation / 2) * 0.2)
             }
-            chartData.push({ data: data[key], label: key, color: color, lines: {order: 1}});
+            chartData.push({ data: data[key], label: key, color: color.toString(), lines: {order: 1}});
         }
 
         var markings = [

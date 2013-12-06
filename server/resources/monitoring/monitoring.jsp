@@ -27,9 +27,6 @@
 <script type="text/javascript" src="${teamcityPluginResourcesPath}monitoring/js/remotePerfMon.plots.js"></script>
 <script type="text/javascript" src="${teamcityPluginResourcesPath}monitoring/js/remotePerfMon.log.js"></script>
 
-<script type="text/javascript" src="${teamcityPluginResourcesPath}monitoring/js/checkbox.plot.js"></script>
-<script type="text/javascript" src="${teamcityPluginResourcesPath}monitoring/js/radio.plot.js"></script>
-
 <link type="text/css" href="${teamcityPluginResourcesPath}monitoring/css/remotePerfMon.styles.css" rel="stylesheet"/>
 
 <c:url var="my_url" value="/viewLog.html?buildId=${build.buildId}&buildTypeId=${build.buildType.externalId}&tab=${tabID}"/>

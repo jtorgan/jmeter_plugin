@@ -16,8 +16,9 @@ public final class AggregateReport extends Aggregation {
 
 	final boolean includeHTTPCodes;
 	final boolean calcTotal;
+	final boolean checkAsserts;
 
-	AggregateReport(boolean httpCodes, boolean totalCalculation) {
+	AggregateReport(boolean httpCodes, boolean totalCalculation, boolean checkAssertions) {
 		super(PluginConstants.AGGREGATION_TOTAL_NAME);
 
 		samplers = new HashMap<String, AggregateSampler>();
@@ -25,17 +26,20 @@ public final class AggregateReport extends Aggregation {
 
 		includeHTTPCodes = httpCodes;
 		calcTotal = totalCalculation;
+		checkAsserts = checkAssertions;
 	}
 
 	void addItem(Item item) {
-		if (calcTotal) {
-			super.addItem(item.responseTime);
+		if (checkAsserts && item.isSuccessful) {
+			if (calcTotal) {
+				super.addItem(item.responseTime);
+			}
+			if (samplers.get(item.label) == null) {
+				samplers.put(item.label, new AggregateSampler(item));
+			} else {
+				samplers.get(item.label).addItem(item);
+			};
 		}
-		if (samplers.get(item.label) == null) {
-			samplers.put(item.label, new AggregateSampler(item));
-		} else {
-			samplers.get(item.label).addItem(item);
-		};
 		if (includeHTTPCodes) {
 			Long count = codes.get(item.responseCode);
 			codes.put(item.responseCode, count != null ? count + 1 : 1);
