@@ -53,15 +53,15 @@ public abstract class AbstractFileDataProvider {
 				}
 			}
 		} catch (FileNotFoundException e) {
-			Loggers.STATS.error(new StringBuilder(PluginConstants.FEATURE_TYPE).append(" plugin error. File ").append(file.getAbsolutePath()).append(" not found!").toString(), e);
+			Loggers.STATS.error(PluginConstants.FEATURE_TYPE + " plugin error. File " + file.getAbsolutePath() + " not found!", e);
 		} catch (IOException e) {
-			Loggers.STATS.error(new StringBuilder(PluginConstants.FEATURE_TYPE).append(" plugin error. Error reading file ").append(file.getAbsolutePath()).toString(), e);
+			Loggers.STATS.error(PluginConstants.FEATURE_TYPE + " plugin error. Error reading file " + file.getAbsolutePath(), e);
 		} finally {
 			if (reader != null) {
 				try {
 					reader.close();
 				} catch (IOException e) {
-					Loggers.STATS.error(new StringBuilder(PluginConstants.FEATURE_TYPE).append(" plugin error. Error closing file ").append(file.getAbsolutePath()).toString(), e);
+					Loggers.STATS.error(PluginConstants.FEATURE_TYPE + " plugin error. Error closing file " + file.getAbsolutePath(), e);
 				}
 			}
 		}
@@ -69,7 +69,7 @@ public abstract class AbstractFileDataProvider {
 
 	private boolean checkItem(String[] values) {
 		if (values.length < 3) {
-			Loggers.STATS.error(new StringBuilder(PluginConstants.FEATURE_TYPE).append(" plugin error. \nItem: timestamp\tresultValue\tlabel \n Found: ").append(values).toString());
+			Loggers.STATS.error(PluginConstants.FEATURE_TYPE + " plugin error. \nItem: timestamp\tresultValue\tlabel \n Found: " + Arrays.toString(values));
 			return false;
 		}
 		return (values[0].matches("\\d+") && values[1].matches("[0-9]*\\.?[0-9]*([Ee][+-]?[0-9]+)?"));

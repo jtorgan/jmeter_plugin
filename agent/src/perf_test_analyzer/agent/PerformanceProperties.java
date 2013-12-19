@@ -61,7 +61,7 @@ public class PerformanceProperties {
 		if (aggregateFile == null) {
 			throw new IllegalArgumentException("File for aggregation must not be null!");
 		}
-		return new StringBuilder(workingDir).append(File.separator).append(aggregateFile).toString();
+		return workingDir + File.separator + aggregateFile;
 	}
 	@NotNull
 	public String getAggregateDataFile() {
@@ -97,7 +97,7 @@ public class PerformanceProperties {
 	}
 	@NotNull
 	public String getReferenceDataFile(@NotNull final String checkoutDir) {
-		return new StringBuilder(checkoutDir).append(File.separator).append(referenceData).toString();
+		return checkoutDir + File.separator + referenceData;
 	}
 	public double getVariation() {
 		return variation != null ? Double.parseDouble(variation) : 0.05;

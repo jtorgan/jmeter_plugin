@@ -3,6 +3,8 @@ package perf_test_analyzer.agent.aggregation;
 import org.jetbrains.annotations.NotNull;
 import perf_test_analyzer.common.PerformanceStatisticMetrics;
 
+import java.util.Arrays;
+
 /**
  * Base class to count aggregate values
  */
@@ -48,11 +50,10 @@ public abstract class Aggregation {
 	public String checkValue(@NotNull final PerformanceStatisticMetrics metric, double referenceValue, double variation) {
 		Double currentValue = getAggregateValue(metric);
 		if (currentValue > referenceValue * (1 + variation)) {
-			return new StringBuilder("Metric - ").append(metric.getTitle())
-					.append("; label - ").append(title)
-					.append("; \nreference value: ").append(Math.round(referenceValue))
-					.append("; current value: ").append(Math.round(currentValue))
-					.append("; variation: ").append(variation).toString();
+			return "Metric - " + metric.getTitle() + "; label - " + title
+					+ "; \nreference value: " + Math.round(referenceValue)
+					+ "; current value: " + Math.round(currentValue)
+					+ "; variation: " + variation;
 		}
 		return null;
 	}
@@ -70,19 +71,19 @@ public abstract class Aggregation {
 
 		public Item(String[] values, boolean includeResponseCodes, boolean checkAsserts) {
 			if (values == null || values.length < 3) {  //failureMessage may be empty
-				throw new IllegalArgumentException("Result item format: startTime\tresponseTime\tlabel ...");
+				throw new IllegalArgumentException("Result item format: startTime\tresponseTime\tlabel ...\n" + "Found: " + Arrays.toString(values));
 			}
             this.startTime = values[0];
             this.responseTime = Long.parseLong(values[1]);
             this.label = values[2];
             if (checkAsserts && includeResponseCodes && values.length < 5) {
-                throw new IllegalArgumentException("Result item format must included asserted result. Format: startTime\tresponseTime\tlabel\tisSuccess ...");
+                throw new IllegalArgumentException("Result item format must included asserted result. Format: startTime\tresponseTime\tlabel\tisSuccess ...\n" + "Found: " + Arrays.toString(values));
             }
             if (includeResponseCodes && values.length < 4) {
-                throw new IllegalArgumentException("Result item format must included response code. Format: startTime\tresponseTime\tlabel\tresponseCode ...");
+                throw new IllegalArgumentException("Result item format must included response code. Format: startTime\tresponseTime\tlabel\tresponseCode ...\n" + "Found: " + Arrays.toString(values));
             }
             if (checkAsserts && values.length < 4) {
-                throw new IllegalArgumentException("Result item format must included asserted result. Format: startTime\tresponseTime\tlabel\tisSuccess ...");
+                throw new IllegalArgumentException("Result item format must included asserted result. Format: startTime\tresponseTime\tlabel\tisSuccess ...\n" + "Found: " + Arrays.toString(values));
             }
 
             if (checkAsserts && includeResponseCodes) {
@@ -96,11 +97,11 @@ public abstract class Aggregation {
         }
 
 		public String toString(){
-			return new StringBuilder("_Item_: startTime=[").append(startTime)
-					.append("] responseTime=[").append(responseTime)
-					.append("] lable=[").append(label)
-					.append("] responseCode=[").append(responseCode)
-					.append("] isSuccessful=[").append(isSuccessful).toString();
+			return "_Item_: startTime=[" + startTime
+					+ "] responseTime=[" + responseTime
+					+ "] lable=[" + label
+					+ "] responseCode=[" + responseCode
+					+ "] isSuccessful=[" + isSuccessful;
 		}
 	}
 }

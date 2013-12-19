@@ -18,7 +18,7 @@ public class PerfMonitoringController extends BaseController {
 
 	enum Type {
 		CHANGE_STATE,
-		LOG_VIEW;
+		LOG_VIEW
 	}
 
 	public PerfMonitoringController(@NotNull final SBuildServer server, @NotNull final WebControllerManager manager) {

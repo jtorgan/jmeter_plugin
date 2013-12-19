@@ -27,7 +27,6 @@ import java.util.Map;
 public class PerfMonitoringTab extends SimpleCustomTab {
 	private File perfMonitoringLog;
 	private File perfResultLog;
-	private String version;
 
 	protected final SBuildServer myServer;
 
@@ -46,7 +45,6 @@ public class PerfMonitoringTab extends SimpleCustomTab {
 		addJsFile(descriptor.getPluginResourcesPath("monitoring/js/remotePerfMon.log.js"));
 
 		addCssFile(descriptor.getPluginResourcesPath("monitoring/css/remotePerfMon.styles.css"));
-		version = descriptor.getPluginVersion(); //temporary
 		register();
 	}
 
@@ -61,15 +59,17 @@ public class PerfMonitoringTab extends SimpleCustomTab {
 
 		if (build != null) {
 			SBuildType buildType = build.getBuildType();
-			model.put("isShowLogAtBottom", getBuildTypeParameter(buildType, "logView"));
-			updateBuildTypeParameter(buildType, "useCheckBox", request.getParameter("useCheckBox"));
-			updateBuildTypeParameter(buildType, "replaceNull", request.getParameter("replaceNull"));
-			model.put("useCheckBox", getBuildTypeParameter(buildType, "useCheckBox"));
-			model.put("replaceNull", getBuildTypeParameter(buildType, "replaceNull"));
+			if (buildType != null) {
+				model.put("isShowLogAtBottom", getBuildTypeParameter(buildType, "logView"));
+				updateBuildTypeParameter(buildType, "useCheckBox", request.getParameter("useCheckBox"));
+				updateBuildTypeParameter(buildType, "replaceNull", request.getParameter("replaceNull"));
+				model.put("useCheckBox", getBuildTypeParameter(buildType, "useCheckBox"));
+				model.put("replaceNull", getBuildTypeParameter(buildType, "replaceNull"));
+			}
 		}
 
 		Collection<Graph> data = new ArrayList<Graph>();
-		if (perfResultLog != null) {
+		if (perfResultLog != null && build != null) {
 			ResultLogDataProvider provider = new ResultLogDataProvider(getBuildTypeParameter(build.getBuildType(), "replaceNull"));
 			data = provider.getGraphs(perfResultLog);
 			model.put("startTime", provider.getMinTime());

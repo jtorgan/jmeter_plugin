@@ -1,6 +1,7 @@
 package perf_test_analyzer.agent.monitoring;
 
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import perf_test_analyzer.agent.PerformanceProperties;
 
 import java.io.*;
@@ -11,23 +12,16 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public final class RemoteMonitoring {
 	public static final Logger CLASS_LOGGER = Logger.getLogger(RemoteMonitoring.class);
 
-	private static final String METRICS_COMMAND = new StringBuilder("metrics:cpu:combined\tcpu:user\tcpu:system\tcpu:iowait\t")
-			.append("memory:used\t")
-			.append("disks:reads\tdisks:writes\t")
-			.append("jmx:url=localhost\\:4711:gc-time\t")
-			.append("jmx:url=localhost\\:4711:class-count\t")
-			.append("jmx:url=localhost\\:4711:memory-usage\t")
-			.append("jmx:url=localhost\\:4711:memory-committed\t")
-			.append("jmx:url=localhost\\:4711:memorypool-usage\t")
-			.append("jmx:url=localhost\\:4711:memorypool-committed\t\n")
-			.toString();
-
-
+	private static final String METRICS_COMMAND = "metrics:cpu:combined\tcpu:user\tcpu:system\tcpu:iowait\t"
+			+ "memory:used\t" + "disks:reads\tdisks:writes\t" + "jmx:url=localhost\\:4711:gc-time\t"
+			+ "jmx:url=localhost\\:4711:class-count\t" + "jmx:url=localhost\\:4711:memory-usage\t"
+			+ "jmx:url=localhost\\:4711:memory-committed\t" + "jmx:url=localhost\\:4711:memorypool-usage\t"
+			+ "jmx:url=localhost\\:4711:memorypool-committed\t\n";
 
 	private volatile boolean stopped;
-	private final Queue<String> monitoringResults;
-	private final Thread getter;
-	private final Thread processor;
+	@NotNull private final Queue<String> monitoringResults;
+	@NotNull private final Thread getter;
+	@NotNull private final Thread processor;
 
 
 	public RemoteMonitoring(final PerformanceProperties properties, final String resultFile) {
@@ -158,19 +152,19 @@ public final class RemoteMonitoring {
 				}
 				long time = Long.parseLong(parts[13]) + delay;
 
-				writer.write(new StringBuilder().append(time).append("\t").append(parts[0]).append("\tcpu\t\n").toString());
-				writer.write(new StringBuilder().append(time).append("\t").append(parts[1]).append("\tcpu user\t\n").toString());
-				writer.write(new StringBuilder().append(time).append("\t").append(parts[2]).append("\tcpu system\t\n").toString());
-				writer.write(new StringBuilder().append(time).append("\t").append(parts[3]).append("\tcpu iowait\t\n").toString());
-				writer.write(new StringBuilder().append(time).append("\t").append(parts[4]).append("\tmemory used\t\n").toString());
-				writer.write(new StringBuilder().append(time).append("\t").append(parts[5]).append("\tdisks reads\t\n").toString());
-				writer.write(new StringBuilder().append(time).append("\t").append(parts[6]).append("\tdisks writes\t\n").toString());
-				writer.write(new StringBuilder().append(time).append("\t").append(parts[7]).append("\tjmx gc-time\t\n").toString());
-				writer.write(new StringBuilder().append(time).append("\t").append(parts[8]).append("\tjmx class-count\t\n").toString());
-				writer.write(new StringBuilder().append(time).append("\t").append(parts[9]).append("\tjmx memory-usage\t\n").toString());
-				writer.write(new StringBuilder().append(time).append("\t").append(parts[10]).append("\tjmx memory-committed\t\n").toString());
-				writer.write(new StringBuilder().append(time).append("\t").append(parts[11]).append("\tjmx memorypool-usage\t\n").toString());
-				writer.write(new StringBuilder().append(time).append("\t").append(parts[12]).append("\tjmx memorypool-committed\t\n").toString());
+				writer.write(String.valueOf(time) + "\t" + parts[0] + "\tcpu\t\n");
+				writer.write(String.valueOf(time) + "\t" + parts[1] + "\tcpu user\t\n");
+				writer.write(String.valueOf(time) + "\t" + parts[2] + "\tcpu system\t\n");
+				writer.write(String.valueOf(time) + "\t" + parts[3] + "\tcpu iowait\t\n");
+				writer.write(String.valueOf(time) + "\t" + parts[4] + "\tmemory used\t\n");
+				writer.write(String.valueOf(time) + "\t" + parts[5] + "\tdisks reads\t\n");
+				writer.write(String.valueOf(time) + "\t" + parts[6] + "\tdisks writes\t\n");
+				writer.write(String.valueOf(time) + "\t" + parts[7] + "\tjmx gc-time\t\n");
+				writer.write(String.valueOf(time) + "\t" + parts[8] + "\tjmx class-count\t\n");
+				writer.write(String.valueOf(time) + "\t" + parts[9] + "\tjmx memory-usage\t\n");
+				writer.write(String.valueOf(time) + "\t" + parts[10] + "\tjmx memory-committed\t\n");
+				writer.write(String.valueOf(time) + "\t" + parts[11] + "\tjmx memorypool-usage\t\n");
+				writer.write(String.valueOf(time) + "\t" + parts[12] + "\tjmx memorypool-committed\t\n");
 				writer.flush();
 			}
 		};
@@ -178,10 +172,8 @@ public final class RemoteMonitoring {
 	}
 
 	public void start() {
-		if (getter != null && processor != null) {
-			getter.start();
-			processor.start();
-		}
+		getter.start();
+		processor.start();
 	}
 
 	public void stop() {

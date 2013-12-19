@@ -11,10 +11,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public final class AggregationProcessor {
 	private static final String FILE_NOT_FOUND = "file_not_found";
@@ -145,7 +142,7 @@ public final class AggregationProcessor {
 			while (reader.ready() && !(line = reader.readLine()).isEmpty()) {
 				String[] referenceItem = PerformanceMessageParser.DELIMITER_PATTERN.split(line);
 				if (referenceItem.length < 3) {
-					myLogger.logMessage("Wrong reference data format!\n format: <label>\t<metric>\t<value>. find: " + referenceItem + "\n Available metrics: average, min, max, line90");
+					myLogger.logMessage("Wrong reference data format!\n format: <label>\t<metric>\t<value>. find: " + Arrays.toString(referenceItem) + "\n Available metrics: average, min, max, line90");
 					continue;
 				}
 				String sampler = referenceItem[0];

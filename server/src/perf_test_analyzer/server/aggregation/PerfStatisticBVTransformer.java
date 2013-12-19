@@ -59,7 +59,7 @@ public class PerfStatisticBVTransformer extends BuildValueTransformer {
 
 	public static boolean getState(@NotNull SBuildType buildType) {
 		String value = buildType.getCustomDataStorage("teamcity.perf.analysis.statistic").getValue("useBNTransformer");
-		return value == null ? false : Boolean.parseBoolean(value);
+		return value != null && Boolean.parseBoolean(value);
 	}
 
 	public static void updateState(@NotNull SBuildType buildType, String value) {

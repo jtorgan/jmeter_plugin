@@ -41,8 +41,6 @@ public final class ResponseCodeCompositeVT extends AbstractCompositeVT {
 
 	@Override
 	public String getSubKey(String subKey) {
-		return new StringBuilder(currentBuildTypeID).append('_')
-				.append(getKey()).append('_')
-				.append(subKey).toString();
+		return currentBuildTypeID + '_' + getKey() + '_' + subKey;
 	}
 }

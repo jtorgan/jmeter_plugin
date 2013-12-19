@@ -65,7 +65,7 @@ public class PerfStatisticPublisher implements BuildFinishAware, ValueProvider {
 					updateStorageValue(sampleAliasStorage, alias, sampleValue);
 					updateStorageValue(sampleOrderStorage, alias, order);
 
-					myStorage.publishValue(new StringBuilder().append(buildTypeId).append('_').append(metricValue).append('_').append(alias).toString(), buildId, new BigDecimal(value));
+					myStorage.publishValue(buildTypeId + '_' + metricValue + '_' + alias, buildId, new BigDecimal(value));
 
 					if (metricValue.equals(PerformanceStatisticMetrics.RESPONSE_CODE.getKey())) {
 						codes.add(sampleValue);

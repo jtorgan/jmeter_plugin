@@ -38,7 +38,7 @@ public final class AggregateReport extends Aggregation {
 				samplers.put(item.label, new AggregateSampler(item));
 			} else {
 				samplers.get(item.label).addItem(item);
-			};
+			}
 		}
 		if (includeHTTPCodes) {
 			Long count = codes.get(item.responseCode);

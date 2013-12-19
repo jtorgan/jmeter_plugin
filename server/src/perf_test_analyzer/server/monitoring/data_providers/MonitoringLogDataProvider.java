@@ -23,7 +23,7 @@ public class MonitoringLogDataProvider extends AbstractFileDataProvider {
 			String label = itemValues[2];
 
 //			TODO old format support: remove code after all older monitoring results will be removed;
-			if (label.indexOf("labs.intellij.net") != -1) {
+			if (label.contains("labs.intellij.net")) {
 				label = correctOldPerfMonFormat(label);
 				value = value / 1000;
 			}
@@ -34,39 +34,41 @@ public class MonitoringLogDataProvider extends AbstractFileDataProvider {
 	}
 
 	private String correctOldPerfMonFormat(String label) {
-		label = label.toLowerCase();
-		if (label != null && label.indexOf("memory") != -1) {
-			label = (label.indexOf("jmx") != -1 ? "jmx" : "") + label.substring(label.indexOf("memory"));
-		}
-		if (label != null && label.indexOf("cpu") != -1) {
-			label = label.substring(label.indexOf("cpu"));
-		}
-		if (label != null && label.indexOf("disks") != -1) {
-			label = label.substring(label.indexOf("disks"));
-		}
-		if (label != null && label.indexOf("gc-time") != -1) {
-			label = "jmx gc-time";
-		}
-		if (label != null && label.indexOf("class-count") != -1) {
-			label = "jmx class-count";
+		if (label != null) {
+			label = label.toLowerCase();
+			if (label.contains("memory")) {
+				label = (label.contains("jmx") ? "jmx" : "") + label.substring(label.indexOf("memory"));
+			}
+			if (label.contains("cpu")) {
+				label = label.substring(label.indexOf("cpu"));
+			}
+			if (label.contains("disks")) {
+				label = label.substring(label.indexOf("disks"));
+			}
+			if (label.contains("gc-time")) {
+				label = "jmx gc-time";
+			}
+			if (label.contains("class-count")) {
+				label = "jmx class-count";
+			}
 		}
 		return label;
 	}
 
 	private Graph getMetric(String label) {
-		if (label != null && label.indexOf("memory") != -1) {
+		if (label != null && label.contains("memory")) {
 			return metrics.get("memory");
 		}
-		if (label != null && label.indexOf("cpu") != -1) {
+		if (label != null && label.contains("cpu")) {
 			return metrics.get("cpu");
 		}
-		if (label != null && label.indexOf("disks") != -1) {
+		if (label != null && label.contains("disks")) {
 			return metrics.get("disks");
 		}
-		if (label != null && label.indexOf("gc-time") != -1) {
+		if (label != null && label.contains("gc-time")) {
 			return metrics.get("jmx_gc");
 		}
-		if (label != null && label.indexOf("class-count") != -1) {
+		if (label != null && label.contains("class-count")) {
 			return metrics.get("jmx_class_count");
 		}
 		return MonitorGraph.UNKNOWN_GRAPH;

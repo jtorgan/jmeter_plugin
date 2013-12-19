@@ -57,7 +57,7 @@ public class PerfStatisticDataProvider{
 	private synchronized ValueProvider updateOrCreateValueProvider(@NotNull String key) {
 		ValueProvider valueProvider = myRegistry.getValueProvider(key);
 		if (valueProvider == null) {
-			if (key.indexOf("ResponseCode") > -1) {
+			if (key.contains("ResponseCode")) {
 				valueProvider = new ResponseCodeCompositeVT(myStorage, myRegistry, myServer, key);
 			} else {
 				valueProvider = new AggregateCompositeVT(myStorage, myRegistry, myServer, key);

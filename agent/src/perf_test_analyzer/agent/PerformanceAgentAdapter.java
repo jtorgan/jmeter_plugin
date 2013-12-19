@@ -57,7 +57,7 @@ public class PerformanceAgentAdapter extends AgentLifeCycleAdapter {
 	public void beforeRunnerStart(@NotNull final BuildRunnerContext runner) {
 		final Collection<AgentBuildFeature> features = runner.getBuild().getBuildFeaturesOfType(PluginConstants.FEATURE_TYPE);
 		if (!features.isEmpty() && checkBuildRunnerForMonitoring(runner.getName())) {
-			final String resultFile = new StringBuilder(runner.getWorkingDirectory().getAbsolutePath()).append(File.separator).append(PluginConstants.MONITORING_RESULT_FILE).toString();
+			final String resultFile = runner.getWorkingDirectory().getAbsolutePath() + File.separator + PluginConstants.MONITORING_RESULT_FILE;
 			myRemoteMonitoring = new RemoteMonitoring(myProperties, resultFile);
 			myRemoteMonitoring.start();
 		}

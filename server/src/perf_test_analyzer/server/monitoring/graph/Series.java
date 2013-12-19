@@ -34,7 +34,7 @@ public abstract class Series {
 		List<List<Long>> values = new SortedList<List<Long>>(new Comparator<List<Long>>() {
 			@Override
 			public int compare(List<Long> o1, List<Long> o2) {
-				return o2.get(0) == o1.get(0) ? 0 : o1.get(0) < o2.get(0) ? -1 : 1;
+				return o2.get(0).equals(o1.get(0)) ? 0 : o1.get(0) < o2.get(0) ? -1 : 1;
 			}
 		});
 		for (long time: myValues.keySet()) {

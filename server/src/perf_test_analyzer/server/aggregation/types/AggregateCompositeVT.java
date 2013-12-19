@@ -43,9 +43,7 @@ public final class AggregateCompositeVT extends AbstractCompositeVT {
 
 	@Override
 	public String getSubKey(String subKey) {
-		return new StringBuilder(currentBuildTypeID).append('_')
-				.append(subKey).append('_')
-				.append(getKey()).toString();
+		return currentBuildTypeID + '_' + subKey + '_' + getKey();
 	}
 
 	@Override
