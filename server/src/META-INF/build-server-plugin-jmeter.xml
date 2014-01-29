@@ -6,37 +6,43 @@
         default-autowire="constructor"
         >
 
+    <!--AGGREGATION & CHECK REFERENCE: calculation of performance metrics - min, max, 90% line, avg -->
+    <bean id="performanceStatisticFeature" class="perf_statistic.server.FeaturePerformanceStatistic"/>
 
-    <bean id="performanceAnalysisFeature" class="perf_test_analyzer.server.PerformanceAnalysisFeature"/>
-    <bean id="badPerfProblemType" class="perf_test_analyzer.server.BadPerfProblemTypeProvider"/>
-    <bean id="assertFailProblemType" class="perf_test_analyzer.server.AssertFailProblemTypeProvider"/>
+    <bean id="performanceTestFailProblemType" class="perf_statistic.server.ProblemTypeProviderPerformanceTestFailed"/>
+    <bean id="performanceDeclineProblemType" class="perf_statistic.server.ProblemTypeProviderPerformanceDecline"/>
 
-
-    <!--aggregated statistic by builds-->
-    <bean id="perfStatStorageValueProvider" class="perf_test_analyzer.server.aggregation.PerfStatisticDataProvider">
+    <bean id="performanceStatisticPublisher" class="perf_statistic.server.model.PerformanceStatisticsPublisher">
         <constructor-arg index="0" ref="BuildDataStorage"/>
         <constructor-arg index="1" ref="valueProviderRegistry"/>
-        <constructor-arg index="2" ref="buildServer"/>
-    </bean>
-
-    <bean id="perfStatPublisher" class="perf_test_analyzer.server.aggregation.PerfStatisticPublisher">
-        <constructor-arg index="0" ref="BuildDataStorage"/>
-    </bean>
-
-    <bean id="performanceStatisticTab" class="perf_test_analyzer.server.aggregation.PerfStatisticTab" init-method="register">
-        <constructor-arg index="0" ref="webControllerManager"/>
-        <constructor-arg index="1" ref="projectManager"/>
-        <constructor-arg index="2" ref="perfStatStorageValueProvider"/>
-        <constructor-arg index="3" ref="jetbrains.buildServer.web.statistics.graph.BuildGraphHelper"/>
     </bean>
 
 
-    <!-- performance monitoring-->
-    <bean id="jmeterPerfMonStateController" class="perf_test_analyzer.server.monitoring.PerfMonitoringController"/>
 
-    <bean id="jMeterPerfMonTab" class="perf_test_analyzer.server.monitoring.PerfMonitoringTab">
+    <!--REMOTE MONITORING: Monitoring of remote machine-->
+    <bean id="performanceRemoteMonitoringFeature"  class="perf_statistic.server.FeatureRemoteMonitoring"/>
+
+
+
+    <!-- VIEW RESULTS: Performance statistic tab -->
+    <bean id="performanceTestHolder" class="perf_statistic.server.model.PerformanceTestHolder">
+        <constructor-arg index="0" ref="buildServer"/>
+        <constructor-arg index="1" ref="BuildDataStorage"/>
+        <constructor-arg index="2" ref="valueProviderRegistry"/>
+    </bean>
+
+    <bean id="performanceStatisticTab" class="perf_statistic.server.visualisation.PerformanceStatisticTab" init-method="register">
         <constructor-arg index="0" ref="webControllerManager"/>
         <constructor-arg index="1" ref="buildServer"/>
+        <constructor-arg index="2" ref="BuildDataStorage"/>
+        <constructor-arg index="3" ref="valueProviderRegistry"/>
+        <constructor-arg index="4" ref="jetbrains.buildServer.web.statistics.graph.BuildGraphHelper"/>
+        <constructor-arg index="5" ref="performanceTestHolder"/>
     </bean>
 
+    <bean id="performanceChartController" class="perf_statistic.server.visualisation.PerformanceChartController">
+        <constructor-arg index="0" ref="webControllerManager"/>
+        <constructor-arg index="1" ref="buildServer"/>
+        <constructor-arg index="2" ref="performanceTestHolder"/>
+    </bean>
 </beans>

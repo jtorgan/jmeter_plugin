@@ -2,7 +2,9 @@ package perf_test_analyzer.common;
 
 public class PluginConstants {
 	private PluginConstants() {}
-	public static final String FEATURE_TYPE = "performance_test_analyzer";
+	public static final String FEATURE_TYPE_AGGREGATION = "performance_metric_aggregation";
+	public static final String FEATURE_TYPE_REFERENCE_CHECK_FAILED = "performance_failure_condition";
+	public static final String FEATURE_TYPE_REMOTE_MONITORING = "performance_remote_monitoring";
 
 
 	//Feature's parameters
@@ -12,11 +14,15 @@ public class PluginConstants {
 	public static final String PARAMS_METRIC_AVG = "perfTest.agg.avg";
 	public static final String PARAMS_METRIC_LINE90 = "perfTest.agg.90line";
 	public static final String PARAMS_HTTP_RESPONSE_CODE = "perfTest.agg.respCode";
-	public static final String PARAMS_CHECK_ASSERT = "perfTest.agg.assert";
+	public static final String PARAMS_USED_TEST_FORMAT = "perfTest.agg.testFormat";
 	public static final String PARAMS_CALC_TOTAL = "perfTest.agg.total";
+	public static final String PARAMS_CHECK_ASSERT = "perfTest.agg.assert";
+	public static final String PARAMS_TEST_GROUPS = "perfTest.agg.testGroups";
 
-	public static final String PARAMS_CHECK_REF_DATA = "perfTest.check.ref.data";
-	public static final String PARAMS_REFERENCE_DATA = "perfTest.ref.data";
+	public static final String PARAMS_REF_CHECK = "perfTest.check.ref.data";
+	public static final String PARAMS_REF_TYPE = "perfTest.ref.type";
+	public static final String PARAMS_REF_BUILD_COUNT = "perfTest.ref.buildCount";
+	public static final String PARAMS_REF_DATA_FILE = "perfTest.ref.data";
 	public static final String PARAMS_VARIATION = "perfTest.ref.variation";
 
 	public static final String PARAMS_REMOTE_PERF_MON = "perfTest.remote.perf.mon";
@@ -35,7 +41,7 @@ public class PluginConstants {
 
 	//	custom build type storage constants
 	public static final String STORAGE_ID_COMMON_JMETER = "teamcity.jmeter.statistic";
-	public static final String STORAGE_ID_SAMPLE_ALIAS = "teamcity.jmeter.sample.keys";
+	public static final String STORAGE_ID_TEST_ALIAS = "teamcity.jmeter.sample.keys";
 	public static final String STORAGE_ID_SAMPLE_ORDER = "teamcity.jmeter.sample.order";
 
 	public static final String STORAGE_KEY_METRIC = "Metrics";

@@ -9,5 +9,5 @@
     <!-- declare all beans you like Spring Dependency Injection to create -->
     <!-- see http://static.springsource.org/spring/docs/3.0.x/spring-framework-reference/html/beans.html -->
 
-    <bean id="agentPerfAggrListener" class="perf_test_analyzer.agent.PerformanceAgentAdapter"/>
+    <bean id="agentAggregationListener" class="perf_test_analyzer.agent.metric_aggregation.AggregationAgentAdapter"/>
 </beans>
