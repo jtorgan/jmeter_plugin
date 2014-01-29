@@ -6,7 +6,7 @@ import jetbrains.buildServer.serverSide.PropertiesProcessor;
 import jetbrains.buildServer.web.openapi.PluginDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import perf_test_analyzer.common.PluginConstants;
+import perf_statistic.common.PluginConstants;
 
 import java.util.ArrayList;
 import java.util.Collection;

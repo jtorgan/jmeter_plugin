@@ -5,7 +5,7 @@ import jetbrains.buildServer.serverSide.SBuild;
 import jetbrains.buildServer.serverSide.problems.BaseBuildProblemTypeDetailsProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import perf_test_analyzer.common.PluginConstants;
+import perf_statistic.common.PluginConstants;
 
 public class ProblemTypeProviderPerformanceTestFailed extends BaseBuildProblemTypeDetailsProvider {
 	@Nullable

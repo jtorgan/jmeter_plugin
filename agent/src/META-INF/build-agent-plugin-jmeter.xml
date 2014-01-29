@@ -9,5 +9,7 @@
     <!-- declare all beans you like Spring Dependency Injection to create -->
     <!-- see http://static.springsource.org/spring/docs/3.0.x/spring-framework-reference/html/beans.html -->
 
-    <bean id="agentAggregationListener" class="perf_test_analyzer.agent.metric_aggregation.AggregationAgentAdapter"/>
+    <bean id="agentAggregationListener" class="perf_statistic.agent.metric_aggregation.AggregationAgentAdapter"/>
+    <bean id="agentRemoteRefMonListener" class="perf_statistic.agent.remote_monitoring.RemoteMonitoringAgentAdapter"/>
+
 </beans>

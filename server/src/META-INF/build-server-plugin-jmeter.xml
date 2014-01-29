@@ -12,26 +12,19 @@
     <bean id="performanceTestFailProblemType" class="perf_statistic.server.ProblemTypeProviderPerformanceTestFailed"/>
     <bean id="performanceDeclineProblemType" class="perf_statistic.server.ProblemTypeProviderPerformanceDecline"/>
 
-    <bean id="performanceStatisticPublisher" class="perf_statistic.server.model.PerformanceStatisticsPublisher">
+    <bean id="performanceStatisticPublisher" class="perf_statistic.server.perf_tests.PerformanceStatisticsPublisher">
         <constructor-arg index="0" ref="BuildDataStorage"/>
         <constructor-arg index="1" ref="valueProviderRegistry"/>
     </bean>
 
-
-
-    <!--REMOTE MONITORING: Monitoring of remote machine-->
-    <bean id="performanceRemoteMonitoringFeature"  class="perf_statistic.server.FeatureRemoteMonitoring"/>
-
-
-
     <!-- VIEW RESULTS: Performance statistic tab -->
-    <bean id="performanceTestHolder" class="perf_statistic.server.model.PerformanceTestHolder">
+    <bean id="performanceTestHolder" class="perf_statistic.server.perf_tests.PerformanceTestProvider">
         <constructor-arg index="0" ref="buildServer"/>
         <constructor-arg index="1" ref="BuildDataStorage"/>
         <constructor-arg index="2" ref="valueProviderRegistry"/>
     </bean>
 
-    <bean id="performanceStatisticTab" class="perf_statistic.server.visualisation.PerformanceStatisticTab" init-method="register">
+    <bean id="performanceStatisticTab" class="perf_statistic.server.perf_test_charts.PerformanceStatisticTab" init-method="register">
         <constructor-arg index="0" ref="webControllerManager"/>
         <constructor-arg index="1" ref="buildServer"/>
         <constructor-arg index="2" ref="BuildDataStorage"/>
@@ -40,9 +33,23 @@
         <constructor-arg index="5" ref="performanceTestHolder"/>
     </bean>
 
-    <bean id="performanceChartController" class="perf_statistic.server.visualisation.PerformanceChartController">
+    <bean id="performanceChartController" class="perf_statistic.server.perf_test_charts.PerformanceChartController">
         <constructor-arg index="0" ref="webControllerManager"/>
         <constructor-arg index="1" ref="buildServer"/>
         <constructor-arg index="2" ref="performanceTestHolder"/>
     </bean>
+
+
+
+
+
+    <!--REMOTE MONITORING: Monitoring of remote machine-->
+    <bean id="remotePerfMonFeature" class="perf_statistic.server.FeatureRemotePerfMon"/>
+    <bean id="remotePerfMonStateController" class="perf_statistic.server.remote_monitoring.RemotePerfMonController"/>
+
+    <bean id="remotePerfMonTab" class="perf_statistic.server.remote_monitoring.RemotePerfMonTab">
+        <constructor-arg index="0" ref="webControllerManager"/>
+        <constructor-arg index="1" ref="buildServer"/>
+    </bean>
+
 </beans>
