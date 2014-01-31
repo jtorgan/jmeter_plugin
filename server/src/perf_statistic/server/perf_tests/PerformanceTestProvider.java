@@ -52,7 +52,13 @@ public class PerformanceTestProvider {
 		List<PerformanceTestRun> sortedValues = new SortedList<PerformanceTestRun>(new Comparator<PerformanceTestRun>() {
 			@Override
 			public int compare(PerformanceTestRun o1, PerformanceTestRun o2) {
-				return o1.getTestsGroupName().compareTo((o2.getTestsGroupName()));
+				int groupCompare = o1.getTestsGroupName().compareTo((o2.getTestsGroupName()));
+				if (groupCompare == 0) {
+					if ("Total".equals(o1.getTestName())) return 1;
+					if ("Total".equals(o2.getTestName())) return -1;
+					return o1.getTestName().compareTo(o2.getTestName());
+				}
+				return groupCompare;
 			}
 		});
 		sortedValues.addAll(myFailedTestRuns.values());
@@ -66,7 +72,13 @@ public class PerformanceTestProvider {
 		List<PerformanceTestRun> sortedValues = new SortedList<PerformanceTestRun>(new Comparator<PerformanceTestRun>() {
 			@Override
 			public int compare(PerformanceTestRun o1, PerformanceTestRun o2) {
-				return o1.getTestsGroupName().compareTo((o2.getTestsGroupName()));
+				int groupCompare = o1.getTestsGroupName().compareTo((o2.getTestsGroupName()));
+				if (groupCompare == 0) {
+					if ("Total".equals(o1.getTestName())) return 1;
+					if ("Total".equals(o2.getTestName())) return -1;
+					return o1.getTestName().compareTo(o2.getTestName());
+				}
+				return groupCompare;
 			}
 		});
 		sortedValues.addAll(mySuccessTestRuns.values());

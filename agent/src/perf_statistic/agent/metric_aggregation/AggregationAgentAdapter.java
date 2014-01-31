@@ -1,6 +1,6 @@
 package perf_statistic.agent.metric_aggregation;
 
-import jetbrains.buildServer.BuildProblemData;
+import jetbrains.buildServer.BuildProblemTypes;
 import jetbrains.buildServer.agent.*;
 import jetbrains.buildServer.util.EventDispatcher;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +35,7 @@ public class AggregationAgentAdapter extends AgentLifeCycleAdapter {
 				reader.processFile(properties.getAggregateDataFile(build.getWorkingDirectory().getAbsolutePath()));
 				reader.logProcessingResults();
 			} catch (BaseFileReader.FileFormatException e) {
-				logger.logBuildProblem(BuildProblemData.TC_ERROR_MESSAGE_TYPE, "FileFormatException", e.getMessage());
+				logger.logBuildProblem(BuildProblemTypes.TC_ERROR_MESSAGE_TYPE, "FileFormatException", e.getMessage());
 			} finally {
 				logger.activityFinished(PluginConstants.PERFORMANCE_TESTS_ACTIVITY_NAME);
 				build.addSharedConfigParameter(PluginConstants.PARAMS_AGGREGATE_FILE, properties.getAggregateDataFile());
@@ -53,7 +53,7 @@ public class AggregationAgentAdapter extends AgentLifeCycleAdapter {
 								properties.getVariation());
 						checker.checkValues(logger, reader.myReport);
 					} catch (BaseFileReader.FileFormatException e) {
-						logger.logBuildProblem(BuildProblemData.TC_ERROR_MESSAGE_TYPE, "FileFormatException", e.getMessage());
+						logger.logBuildProblem(BuildProblemTypes.TC_ERROR_MESSAGE_TYPE, "FileFormatException", e.getMessage());
 					}
 				} else {
 					//todo:
