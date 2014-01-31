@@ -27,8 +27,41 @@
 <script type="text/javascript" src="${teamcityPluginResourcesPath}flot/jquery.flot.crosshair.js"></script>
 <script type="text/javascript" src="${teamcityPluginResourcesPath}flot/jquery.flot.selection.js"></script>
 
-<script type="text/javascript" src="${teamcityPluginResourcesPath}statistic/tabPerfStat.js"></script>
-<link type="text/css" href="${teamcityPluginResourcesPath}statistic/tabPerfStat.css" rel="stylesheet"/>
+<style type="text/css">
+  .chartPerfTestContainer {
+    padding:  10px 10px;
+    border-right: 1px solid #CCCCCC;
+    border-left: 1px solid #CCCCCC;    box-shadow:  0 0 10px rgba(0, 0, 0, .05) inset;
+  }
+  .test-collapse {
+    cursor: pointer;
+  }
+  .chart-content {
+    display: none;
+  }
+  #perfTestFailedHeader {
+    background: none no-repeat scroll 5px 5px / 16px 16px #EBEDEF;
+    color: #ED2C10;
+    vertical-align: bottom;
+    padding: 4px 4px 4px 25px;
+    font-weight: bold;
+    background-image: url("img/buildStates/buildFailed.png");
+  }
+  .test-collapse-selected {
+    border-right: 1px solid #CCCCCC;
+    border-left: 1px solid #CCCCCC;
+  }
+  .test-collapse-selected td {
+    border-bottom: none !important;
+    background-color: #f1f1f1;
+  }
+  .test-collapse-unselected td {
+    border-bottom: 1px solid #CCCCCC;
+    background-image: inherit;
+  }
+</style>
+
+
 
 <div class="testsGeneral" style="width: 100%">
 <div style="display: block; width: 100%; margin-bottom: 5px">
@@ -45,8 +78,8 @@
             </c:forEach>
           </select>
       </span>
-
-  <span class="nowrap" style="margin-right: 10px"> Thread group: </span>
+  <c:if test="${not empty allTestGroups}">
+    <span class="nowrap" style="margin-right: 10px"> Thread group: </span>
     <span class="nowrap" style="margin: 0 10px;">
       <select id="testGroupFilter" title="Thread group"  onchange="testGroupFilter();">
         <option selected value="none"></option>
@@ -55,6 +88,8 @@
         </c:forEach>
       </select>
     </span>
+  </c:if>
+
 </div>
 
 <c:if test="${not empty performanceFailedTests}">
@@ -176,6 +211,71 @@
     }
     return false;
   });
+
+  function hideChart(testChartContainer, testTitleContainer) {
+    $j(testChartContainer).css("display", "none");
+    $j(testTitleContainer).attr("class", "test-collapse-unselected");
+  }
+
+  function showChart(testChartContainer, testTitleContainer) {
+    $j(testChartContainer).css("display", "table-row");
+    $j(testTitleContainer).attr("class", "test-collapse-selected");
+  }
+
+  function filterByName() {
+    $j("#testGroupFilter").val("none");
+    var name = $j("#testNameFilter").val();
+    if (name == "none") {
+      showAllItems();
+    } else {
+      $j("#perfTestFailed").find("tbody.testRowData").each(  function() {
+        var currValue = $j(this).find("input[name=test]").val();
+        if (currValue != name) {
+          $j(this).css("display", "none");
+        } else {
+          $j(this).css("display", "table-row-group");
+        }
+      });
+      $j("#perfTestSuccess").find("tbody.testRowData").each( function() {
+        var currValue = $j(this).find("input[name=test]").val();
+        if (currValue != name) {
+          $j(this).css("display", "none");
+        } else {
+          $j(this).css("display", "table-row-group");
+        }
+      });
+    }
+  }
+
+  function testGroupFilter() {
+    $j("#testNameFilter").val("none");
+    var threads = $j("#testGroupFilter").val();
+    if (threads == "none") {
+      showAllItems();
+    } else {
+      $j("#perfTestFailed").find("tbody.testRowData").each(function() {
+        var currValue = $j(this).find("input[name=threads]").val();
+        if (currValue != threads) {
+          $j(this).css("display", "none");
+        } else {
+          $j(this).css("display", "table-row-group");
+        }
+      });
+      $j("#perfTestSuccess").find("tbody.testRowData").each(function() {
+        var currValue = $j(this).find("input[name=threads]").val();
+        if (currValue != threads) {
+          $j(this).css("display", "none");
+        } else {
+          $j(this).css("display", "table-row-group");
+        }
+      });
+    }
+  }
+
+  function showAllItems() {
+    $j("#perfTestFailed").find("tbody.testRowData").css("display", "table-row-group");
+    $j("#perfTestSuccess").find("tbody.testRowData").css("display", "table-row-group");
+  }
 </script>
 </div>
 

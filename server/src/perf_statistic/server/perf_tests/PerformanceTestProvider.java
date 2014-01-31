@@ -120,7 +120,9 @@ public class PerformanceTestProvider {
 		for (STestRun test : build.getFullStatistics().getAllTests()) {
 			PerformanceTestRun performanceTest = new PerformanceTestRun(test);
 
-			threadGroups.add(performanceTest.getTestsGroupName());
+			if (!performanceTest.getTestsGroupName().isEmpty()) {
+				threadGroups.add(performanceTest.getTestsGroupName());
+			}
 			testNames.add(performanceTest.getTestName());
 
 			List<BuildProblemData> testProblems = problems.get(performanceTest.getFullName());

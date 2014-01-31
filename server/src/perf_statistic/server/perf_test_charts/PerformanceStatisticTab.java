@@ -51,9 +51,6 @@ public class PerformanceStatisticTab extends SimpleCustomTab {
 
 		addJsFile(descriptor.getPluginResourcesPath("statistic/perfChartsCustom.js"));
 
-		addJsFile(descriptor.getPluginResourcesPath("statistic/tabPerfStat.js"));
-		addCssFile(descriptor.getPluginResourcesPath("statistic/tabPerfStat.css"));
-
 		register();
 	}
 
