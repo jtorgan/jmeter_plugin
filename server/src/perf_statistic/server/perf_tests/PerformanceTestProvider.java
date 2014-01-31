@@ -30,6 +30,8 @@ public class PerformanceTestProvider {
 
 	private Map<String, PerformanceTestRun> myFailedTestRuns;
 	private Map<String, PerformanceTestRun> mySuccessTestRuns;
+	private Set<String> threadGroups;
+	private Set<String> testNames;
 
 	private String[] logTitles;
 
@@ -44,7 +46,9 @@ public class PerformanceTestProvider {
 	}
 
 	public Collection<PerformanceTestRun> getFailedTestRuns(@NotNull SBuild build) {
-		checkOrUpdateTestList(build);
+		if (build.getBuildId() != myBuildID) {
+			updateTestList(build);
+		}
 		List<PerformanceTestRun> sortedValues = new SortedList<PerformanceTestRun>(new Comparator<PerformanceTestRun>() {
 			@Override
 			public int compare(PerformanceTestRun o1, PerformanceTestRun o2) {
@@ -56,7 +60,9 @@ public class PerformanceTestProvider {
 	}
 
 	public Collection<PerformanceTestRun> getSuccessTestRuns(@NotNull SBuild build) {
-		checkOrUpdateTestList(build);
+		if (build.getBuildId() != myBuildID) {
+			updateTestList(build);
+		}
 		List<PerformanceTestRun> sortedValues = new SortedList<PerformanceTestRun>(new Comparator<PerformanceTestRun>() {
 			@Override
 			public int compare(PerformanceTestRun o1, PerformanceTestRun o2) {
@@ -67,56 +73,72 @@ public class PerformanceTestProvider {
 		return mySuccessTestRuns != null ? sortedValues : Collections.<PerformanceTestRun>emptyList();
 	}
 
+	public Collection<String> getAllTestNames(@NotNull SBuild build) {
+		if (build.getBuildId() != myBuildID) {
+			updateTestList(build);
+		}
+		return testNames;
+	}
+
+	public Collection<String> getAllThreadGroups(@NotNull SBuild build) {
+		if (build.getBuildId() != myBuildID) {
+			updateTestList(build);
+		}
+		return threadGroups;
+	}
+
 	public PerformanceTestRun findTestByName(@NotNull SBuild build, String testName) {
-		checkOrUpdateTestList(build);
+		updateTestList(build);
 		return myFailedTestRuns.get(testName) != null ? myFailedTestRuns.get(testName) : mySuccessTestRuns.get(testName);
 	}
 
 	public String[] getLogTitles(@NotNull SBuild build) {
-		checkOrUpdateTestList(build);
+		updateTestList(build);
 		return logTitles;
 	}
 
 
-	private synchronized void checkOrUpdateTestList(@NotNull SBuild build) {
-		if (build.getBuildId() != myBuildID) {
+	private synchronized void updateTestList(@NotNull SBuild build) {
+		myFailedTestRuns = new HashMap<String, PerformanceTestRun>();
+		mySuccessTestRuns = new HashMap<String, PerformanceTestRun>();
+		threadGroups = new HashSet<String>();
+		testNames = new HashSet<String>();
 
-			myFailedTestRuns = new HashMap<String, PerformanceTestRun>();
-			mySuccessTestRuns = new HashMap<String, PerformanceTestRun>();
-
-			Map<String, List<BuildProblemData>> problems = new HashMap<String, List<BuildProblemData>>();
-			for(BuildProblemData buildProblem : build.getFailureReasons()) {
-				if (PluginConstants.BAD_PERFORMANCE_PROBLEM_TYPE.equals(buildProblem.getType())) {
-					String fullTestName = buildProblem.getAdditionalData().trim();
-					List<BuildProblemData> buildProblemDataList = problems.get(fullTestName);
-					if (buildProblemDataList == null) {
-						buildProblemDataList = new ArrayList<BuildProblemData>();
-					}
-					buildProblemDataList.add(buildProblem);
-					problems.put(fullTestName, buildProblemDataList);
+		Map<String, List<BuildProblemData>> problems = new HashMap<String, List<BuildProblemData>>();
+		for(BuildProblemData buildProblem : build.getFailureReasons()) {
+			if (PluginConstants.BAD_PERFORMANCE_PROBLEM_TYPE.equals(buildProblem.getType())) {
+				String fullTestName = buildProblem.getAdditionalData().trim();
+				List<BuildProblemData> buildProblemDataList = problems.get(fullTestName);
+				if (buildProblemDataList == null) {
+					buildProblemDataList = new ArrayList<BuildProblemData>();
 				}
+				buildProblemDataList.add(buildProblem);
+				problems.put(fullTestName, buildProblemDataList);
 			}
-
-			for (STestRun test : build.getFullStatistics().getAllTests()) {
-				PerformanceTestRun performanceTest = new PerformanceTestRun(test);
-				String fn = performanceTest.getFullName();
-				List<BuildProblemData> testProblems = problems.get(performanceTest.getFullName());
-				if (testProblems != null) {
-					performanceTest.setPerformanceProblems(testProblems);
-					myFailedTestRuns.put(performanceTest.getFullName(), performanceTest);
-				} else {
-					mySuccessTestRuns.put(performanceTest.getFullName(), performanceTest);
-				}
-				updateOrCreateValueProvider(performanceTest.getChartKey());
-				updateOrCreateValueProvider(PerformanceStatisticMetrics.RESPONSE_CODE.getKey() + "_" + performanceTest.getChartKey());
-			}
-
-			String logFileName =  build.getParametersProvider().get(PluginConstants.PARAMS_AGGREGATE_FILE);
-			if (logFileName != null) {
-				logTitles = myLogDataProvider.readLog(build.getArtifactsDirectory().getAbsolutePath() + File.separator + logFileName);
-			}
-			myBuildID = build.getBuildId();
 		}
+
+		for (STestRun test : build.getFullStatistics().getAllTests()) {
+			PerformanceTestRun performanceTest = new PerformanceTestRun(test);
+
+			threadGroups.add(performanceTest.getTestsGroupName());
+			testNames.add(performanceTest.getTestName());
+
+			List<BuildProblemData> testProblems = problems.get(performanceTest.getFullName());
+			if (testProblems != null) {
+				performanceTest.setPerformanceProblems(testProblems);
+				myFailedTestRuns.put(performanceTest.getFullName(), performanceTest);
+			} else {
+				mySuccessTestRuns.put(performanceTest.getFullName(), performanceTest);
+			}
+			updateOrCreateValueProvider(performanceTest.getChartKey());
+			updateOrCreateValueProvider(PerformanceStatisticMetrics.RESPONSE_CODE.getKey() + "_" + performanceTest.getChartKey());
+		}
+
+		String logFileName =  build.getParametersProvider().get(PluginConstants.PARAMS_AGGREGATE_FILE);
+		if (logFileName != null) {
+			logTitles = myLogDataProvider.readLog(build.getArtifactsDirectory().getAbsolutePath() + File.separator + logFileName);
+		}
+		myBuildID = build.getBuildId();
 	}
 
 	private void updateOrCreateValueProvider(@NotNull String key) {

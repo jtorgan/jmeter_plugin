@@ -3,18 +3,8 @@
 <%@ taglib prefix="forms" tagdir="/WEB-INF/tags/forms" %>
 
 <%--@elvariable id="metrics" type="java.util.Collection<jmeter_runner.server.build_perfmon.graph.Graph>"--%>
-
-<%--@elvariable id="startTime" type="java.lang.Long"--%>
-<%--@elvariable id="endTime" type="java.lang.Long"--%>
-
-<%--@elvariable id="logFile" type="java.lang.String>"--%>
-<%--@elvariable id="tabID" type="java.lang.String>"--%>
-
-<%--@elvariable id="isShowLogAtBottom" type="java.lang.Boolean"--%>
-<%--@elvariable id="useCheckBox" type="java.lang.Boolean"--%>
-<%--@elvariable id="replaceNull" type="java.lang.Boolean"--%>
-
 <%--@elvariable id="build" type="jetbrains.buildServer.serverSide.SBuild>"--%>
+
 <jsp:useBean id="teamcityPluginResourcesPath" type="java.lang.String" scope="request"/>
 
 <!-- JIT Library File -->
@@ -24,16 +14,18 @@
 <script type="text/javascript" src="${teamcityPluginResourcesPath}flot/jquery.flot.crosshair.js"></script>
 <script type="text/javascript" src="${teamcityPluginResourcesPath}flot/jquery.flot.selection.js"></script>
 
-<%--<script type="text/javascript" src="${teamcityPluginResourcesPath}monitoring/js/perf.format.js"></script>--%>
-<%--<script type="text/javascript" src="${teamcityPluginResourcesPath}monitoring/js/perf.plots.js"></script>--%>
-<script type="text/javascript" src="${teamcityPluginResourcesPath}monitoring/remotePerfMon.log.js"></script>
-
+<script type="text/javascript" src="${teamcityPluginResourcesPath}monitoring/remotePerfMon.plot.js"></script>
+<script type="text/javascript" src="${teamcityPluginResourcesPath}monitoring/remotePerfMon.format.js"></script>
 <link type="text/css" href="${teamcityPluginResourcesPath}monitoring/remotePerfMon.styles.css" rel="stylesheet"/>
 
 <div id="jmeterPerfmon">
   <c:set var="buildTypeId" value="${build.buildType.externalId}"/>
 
-  <div>
+  <div style="text-align: right; display: block">
+    <a class="expandAll">[Show all]</a>
+  </div>
+
+  <div style="float: left">
     <input type="hidden" name="buildTypeId" value="${buildTypeId}"/>
 
     <c:forEach items="${metrics}" var="metric">
@@ -77,30 +69,11 @@
             "${item.label}": ${item.values} ${not loop.last ? "," : ""}
             </c:forEach>
           };
-          BS.PerfTestAnalyzer.addPlot("${metric.id}", data, ${metric.max}, "${metric.XAxisMode}", "${metric.YAxisMode}", 0, ${startTime},  ${endTime}, "${metric.state}".indexOf(stateShown) != -1);
+          BS.PerfTestAnalyzer.addPlot("${metric.id}", data, ${metric.max}, "${metric.XAxisMode}", "${metric.YAxisMode}", 0, "${metric.state}".indexOf(stateShown) != -1);
         })();
       </script>
     </c:forEach>
   </div>
-</div>
-
-<div id="jmeterPerfmonLog">
-  <div style="height: 1em;">
-    <span id="loadingLog" style="display: none;"><forms:progressRing/>Please wait...</span>
-  </div>
-
-  <div id="jmeterLogDiv" style="display: none;">
-    <div id="jmeterLogMarker">Log with test results for <span id="jmeterTimePeriod"></span></div>
-    <div style="overflow: hidden; max-height: 300px;">
-      <div id="jmeterLogContainer"></div>
-    </div>
-  </div>
-
-  <script type="text/javascript">
-    (function() {
-      PerfTestLog.init(window['base_uri'] + "/buildArtifacts.html?buildId=${build.buildId}&showAll=false", "${logFile}");
-    })();
-  </script>
 </div>
 
 

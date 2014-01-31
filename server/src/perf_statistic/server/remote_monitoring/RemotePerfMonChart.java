@@ -6,10 +6,10 @@ import perf_statistic.server.remote_monitoring.graph.Graph;
 import perf_statistic.server.remote_monitoring.graph.Series;
 
 public class RemotePerfMonChart extends Graph {
-	public static final RemotePerfMonChart UNKNOWN_GRAPH = new RemotePerfMonChart("unknown", "unknown", "time");
+	public static final RemotePerfMonChart UNKNOWN_GRAPH = new RemotePerfMonChart("unknown", "unknown", "time", "", 0);
 
-	public RemotePerfMonChart(String id, String title, String xMode) {
-		super(id, title, xMode);
+	public RemotePerfMonChart(String id, String title, String xMode, String yMode, int orderNumber) {
+		super(id, title, xMode, yMode, orderNumber);
 	}
 
 	@Override

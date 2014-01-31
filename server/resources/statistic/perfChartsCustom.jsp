@@ -17,7 +17,7 @@
               + "<script type='text/javascript' src='js/flot/jquery.flot.time.min.js'/>"
               + "<script type='text/javascript' src='js/flot/jquery.flot.selection.min.js'/>"
               + "<script type='text/javascript' src='js/bs/chart.js'/>"
-              + "<script type='text/javascript' src='${teamcityPluginResourcesPath}js/customPerfChart.js'/>");
+              + "<script type='text/javascript' src='${teamcityPluginResourcesPath}statistic/perfChartsCustom.js'/>");
     })();
   </script>
 

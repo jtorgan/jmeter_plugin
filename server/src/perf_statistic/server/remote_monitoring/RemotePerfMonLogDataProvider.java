@@ -1,5 +1,6 @@
 package perf_statistic.server.remote_monitoring;
 
+import com.intellij.util.containers.SortedList;
 import jetbrains.buildServer.log.Loggers;
 import jetbrains.buildServer.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
@@ -18,11 +19,11 @@ public class RemotePerfMonLogDataProvider {
 
 	public RemotePerfMonLogDataProvider() {
 		metrics = new HashMap<String, Graph>();
-		metrics.put("memory", new RemotePerfMonChart("memory", "Memory", "time", "byte"));
-		metrics.put("cpu", new RemotePerfMonChart("cpu", "CPU", "time", "%"));
-		metrics.put("disks", new RemotePerfMonChart("disks", "Disks", "time", "ops"));
-		metrics.put("jmx_gc", new RemotePerfMonChart("jmx_gc","JMX: garbage collection", "time", "ms"));
-		metrics.put("jmx_class_count", new RemotePerfMonChart("jmx_class_count", "JMX: class count", "time", ""));
+		metrics.put("memory", new RemotePerfMonChart("memory", "Memory", "time", "byte", 2));
+		metrics.put("cpu", new RemotePerfMonChart("cpu", "CPU", "time", "%", 0));
+		metrics.put("disks", new RemotePerfMonChart("disks", "Disks", "time", "ops", 1));
+		metrics.put("jmx_gc", new RemotePerfMonChart("jmx_gc","JMX: garbage collection", "time", "ms", 3));
+		metrics.put("jmx_class_count", new RemotePerfMonChart("jmx_class_count", "JMX: class count", "time", "", 4));
 	}
 	protected void readLines(@NotNull final File file) {
 		BufferedReader reader = null;
@@ -98,7 +99,7 @@ public class RemotePerfMonLogDataProvider {
 	}
 
 	private Graph getMetric(String label) {
-		if (label != null && label.contains("memory")) {
+		if (label != null && (label.contains("memory") || label.contains("swap"))) {
 			return metrics.get("memory");
 		}
 		if (label != null && label.contains("cpu")) {
@@ -118,7 +119,12 @@ public class RemotePerfMonLogDataProvider {
 
 	public Collection<Graph> getGraphs(@NotNull final File file) {
 		readLines(file);
-		List<Graph> sortedMetricDescriptors = new ArrayList<Graph>();
+		List<Graph> sortedMetricDescriptors = new SortedList<Graph>(new Comparator<Graph>() {
+			@Override
+			public int compare(Graph o1, Graph o2) {
+				return o1.compareTo(o2);
+			}
+		});
 		sortedMetricDescriptors.addAll(metrics.values());
 		return sortedMetricDescriptors;
 	}

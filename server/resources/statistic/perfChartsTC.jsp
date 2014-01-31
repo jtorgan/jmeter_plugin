@@ -39,7 +39,8 @@
         if (!$j.trim($j(srtContainerID).html())) {
           <%--load cuatom charts: SRT, RPS--%>
           if (!testName.endsWith(': Total')) {
-            BS.ajaxUpdater($j(srtContainerID).get(0), "/performanceCharts.html?perfjsp=${teamcityPluginResourcesPath}perfChartsCustom.jsp&buildTypeId=${param['buildTypeId']}&buildId=${param['buildId']}&testName=" + testName, {
+            BS.ajaxUpdater($j(srtContainerID).get(0), "/performanceCharts.html", {
+              parameters: "perfjsp=${teamcityPluginResourcesPath}statistic/perfChartsCustom.jsp&buildTypeId=${param['buildTypeId']}&buildId=${param['buildId']}&testName=" + testName,
               method: "get",
               evalScripts: true
             });

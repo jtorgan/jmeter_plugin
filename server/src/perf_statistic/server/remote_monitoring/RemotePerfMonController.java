@@ -29,17 +29,6 @@ public class RemotePerfMonController extends BaseController {
 	@Nullable
 	@Override
 	protected ModelAndView doHandle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) throws Exception {
-		String requestType = request.getParameter("reqType");
-		if (requestType != null && requestType.toUpperCase().equals(Type.CHANGE_STATE.name())) {
-			changeState(request);
-		}
-		if (requestType != null && requestType.toUpperCase().equals(Type.LOG_VIEW.name())) {
-			setLogViewMode(request);
-		}
-		return null;
-	}
-
-	private void changeState(@NotNull HttpServletRequest request) {
 		String buildTypeId = request.getParameter("buildTypeId");
 		String graphID = request.getParameter("graphId");
 		String state = request.getParameter("state");
@@ -59,18 +48,6 @@ public class RemotePerfMonController extends BaseController {
 			}
 			stateStorage.flush();
 		}
-	}
-
-	private void setLogViewMode(@NotNull HttpServletRequest request) {
-		String buildTypeId = request.getParameter("buildTypeId");
-		String isShowLog = request.getParameter("showLog");
-		SBuildType buildType = myServer.getProjectManager().findBuildTypeByExternalId(buildTypeId);
-		if (buildType != null) {
-			CustomDataStorage monStorage = buildType.getCustomDataStorage("teamcity.perf.analysis.mon");
-			if (!StringUtil.isEmpty(isShowLog)) {
-				monStorage.putValue("logView", isShowLog);
-				monStorage.flush();
-			}
-		}
+		return null;
 	}
 }

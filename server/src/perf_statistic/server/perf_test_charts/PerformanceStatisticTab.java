@@ -1,6 +1,7 @@
 package perf_statistic.server.perf_test_charts;
 
 import jetbrains.buildServer.controllers.BuildDataExtensionUtil;
+import jetbrains.buildServer.messages.DefaultMessagesInfo;
 import jetbrains.buildServer.serverSide.SBuild;
 import jetbrains.buildServer.serverSide.SBuildServer;
 import jetbrains.buildServer.serverSide.buildLog.BlockLogMessage;
@@ -21,7 +22,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class PerformanceStatisticTab extends SimpleCustomTab {
-	private static final String resourceURL = "tabPerformanceStatistic.jsp";
+	private static final String resourceURL = "statistic/tabPerfStat.jsp";
 
 	private final BuildGraphHelper myGraphHelper;
 
@@ -42,11 +43,17 @@ public class PerformanceStatisticTab extends SimpleCustomTab {
 		myPerformanceTestHolder = testHolder;
 
 		addCssFile("/css/buildGraph.css");
+
 		addJsFile(descriptor.getPluginResourcesPath("flot/jquery.flot.js"));
 		addJsFile(descriptor.getPluginResourcesPath("flot/excanvas.js"));
 		addJsFile(descriptor.getPluginResourcesPath("flot/jquery.flot.selection.js"));
 		addJsFile(descriptor.getPluginResourcesPath("flot/jquery.flot.time.min.js"));
-		addJsFile(descriptor.getPluginResourcesPath("js/customPerfChart.js"));
+
+		addJsFile(descriptor.getPluginResourcesPath("statistic/perfChartsCustom.js"));
+
+		addJsFile(descriptor.getPluginResourcesPath("statistic/tabPerfStat.js"));
+		addCssFile(descriptor.getPluginResourcesPath("statistic/tabPerfStat.css"));
+
 		register();
 	}
 
@@ -59,7 +66,7 @@ public class PerformanceStatisticTab extends SimpleCustomTab {
 		Iterator<LogMessage> it = build.getBuildLog().getMessagesIterator();
 		while (it.hasNext()) {
 			BlockLogMessage block = it.next().getParent();
-			if (block != null && PluginConstants.PERFORMANCE_TESTS_ACTIVITY_NAME.equals(block.getBlockType())) {
+			if (block != null && DefaultMessagesInfo.BLOCK_TYPE_MODULE.equals(block.getBlockType()) && PluginConstants.PERFORMANCE_TESTS_ACTIVITY_NAME.equals(block.getText())) {
 				return true;
 			}
 		}
@@ -70,8 +77,13 @@ public class PerformanceStatisticTab extends SimpleCustomTab {
 		request.setAttribute("buildGraphHelper", myGraphHelper);
 
 		SBuild build = BuildDataExtensionUtil.retrieveBuild(request, myServer);
+
 		model.put("performanceOKTests", myPerformanceTestHolder.getSuccessTestRuns(build));
 		model.put("performanceFailedTests", myPerformanceTestHolder.getFailedTestRuns(build));
+
+		model.put("allTestNames", myPerformanceTestHolder.getAllTestNames(build));
+		model.put("allTestGroups", myPerformanceTestHolder.getAllThreadGroups(build));
+
 
 		model.put("build", build);
 		model.put("statistic", build.getFullStatistics());

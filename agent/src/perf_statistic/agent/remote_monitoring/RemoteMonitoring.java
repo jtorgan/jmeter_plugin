@@ -12,9 +12,14 @@ public final class RemoteMonitoring {
 	public static final Logger CLASS_LOGGER = Logger.getLogger(RemoteMonitoring.class);
 
 	private static final String METRICS_COMMAND = "metrics:cpu:combined\tcpu:user\tcpu:system\tcpu:iowait\t"
-			+ "memory:used\t" + "disks:reads\tdisks:writes\t" + "jmx:url=localhost\\:4711:gc-time\t"
-			+ "jmx:url=localhost\\:4711:class-count\t" + "jmx:url=localhost\\:4711:memory-usage\t"
-			+ "jmx:url=localhost\\:4711:memory-committed\t" + "jmx:url=localhost\\:4711:memorypool-usage\t"
+			+ "memory:used\t"
+			+ "disks:reads\tdisks:writes\t"
+			+ "swap:used\t"
+			+ "jmx:url=localhost\\:4711:gc-time\t"
+			+ "jmx:url=localhost\\:4711:class-count\t"
+//			+ "jmx:url=localhost\\:4711:memory-usage\t"
+//			+ "jmx:url=localhost\\:4711:memory-committed\t"
+			+ "jmx:url=localhost\\:4711:memorypool-usage\t"
 			+ "jmx:url=localhost\\:4711:memorypool-committed\t\n";
 
 	private volatile boolean stopped;
@@ -146,10 +151,10 @@ public final class RemoteMonitoring {
 
 			private void processLine(BufferedWriter writer, String line) throws IOException {
 				String[] parts = line.split("\t");
-				if (parts.length < 14) {
+				if (parts.length < 13) {
 					return;
 				}
-				long time = Long.parseLong(parts[13]) + delay;
+				long time = Long.parseLong(parts[12]) + delay;
 
 				writer.write(String.valueOf(time) + "\t" + parts[0] + "\tcpu\t\n");
 				writer.write(String.valueOf(time) + "\t" + parts[1] + "\tcpu user\t\n");
@@ -158,12 +163,13 @@ public final class RemoteMonitoring {
 				writer.write(String.valueOf(time) + "\t" + parts[4] + "\tmemory used\t\n");
 				writer.write(String.valueOf(time) + "\t" + parts[5] + "\tdisks reads\t\n");
 				writer.write(String.valueOf(time) + "\t" + parts[6] + "\tdisks writes\t\n");
-				writer.write(String.valueOf(time) + "\t" + parts[7] + "\tjmx gc-time\t\n");
-				writer.write(String.valueOf(time) + "\t" + parts[8] + "\tjmx class-count\t\n");
-				writer.write(String.valueOf(time) + "\t" + parts[9] + "\tjmx memory-usage\t\n");
-				writer.write(String.valueOf(time) + "\t" + parts[10] + "\tjmx memory-committed\t\n");
-				writer.write(String.valueOf(time) + "\t" + parts[11] + "\tjmx memorypool-usage\t\n");
-				writer.write(String.valueOf(time) + "\t" + parts[12] + "\tjmx memorypool-committed\t\n");
+				writer.write(String.valueOf(time) + "\t" + parts[7] + "\tswap used\t\n");
+				writer.write(String.valueOf(time) + "\t" + parts[8] + "\tjmx gc-time\t\n");
+				writer.write(String.valueOf(time) + "\t" + parts[9] + "\tjmx class-count\t\n");
+//				writer.write(String.valueOf(time) + "\t" + parts[9] + "\tjmx memory-usage\t\n");
+//				writer.write(String.valueOf(time) + "\t" + parts[10] + "\tjmx memory-committed\t\n");
+				writer.write(String.valueOf(time) + "\t" + parts[10] + "\tjmx memorypool-usage\t\n");
+				writer.write(String.valueOf(time) + "\t" + parts[11] + "\tjmx memorypool-committed\t\n");
 				writer.flush();
 			}
 		};

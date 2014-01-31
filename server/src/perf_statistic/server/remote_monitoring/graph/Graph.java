@@ -7,20 +7,25 @@ import java.util.Map;
 /**
  * Presents api for performance metrics (perfmon graphs)
  */
-public abstract class Graph {
+public abstract class Graph implements Comparable<Graph> {
 	protected final String myId;
 	protected final String myTitle;
 	protected final String myYAxisMode;
 	protected final String myXAxisMode;
 
+	protected final int myOrderNumber;
+
+	protected String state;
+
 	protected Map<String, Series> mySeries;
 	protected long max = Long.MAX_VALUE;
 
-	public Graph(String id, String title, String xMode, String yMode) {
+	public Graph(String id, String title, String xMode, String yMode, int orderNumber) {
 		this.myId = id;
 		this.myTitle = title;
 		this.myYAxisMode = yMode;
 		this.myXAxisMode = xMode;
+		this.myOrderNumber = orderNumber;
 		this.mySeries = new HashMap<String, Series>();
 	}
 
@@ -40,6 +45,16 @@ public abstract class Graph {
 		return myXAxisMode;
 	}
 
+	public int getOrderNumber() {
+		return myOrderNumber;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+	public String getState() {
+		return state;
+	}
 	public abstract void addValue(long timestamp, long value, String label);
 
 	public Collection<String> getKeys() {
@@ -57,5 +72,9 @@ public abstract class Graph {
 
 	public double getMax() {
 		return myYAxisMode.equals("%") ? 100 : max;
+	}
+
+	public int compareTo(Graph o) {
+		return o != null ? myOrderNumber - o.getOrderNumber() : -1;
 	}
 }
