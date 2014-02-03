@@ -1,19 +1,22 @@
 Performance tests analysis plugin for TeamCity
 ==============================================
 This is plugin for TeamCity 8.0 that helps to organize simplest performance testing in CI. 
-It has the ability to aggregate results from a file, calculate metrics, 
+It has the ability to aggregate results from a log file, calculate metrics, 
 compare results with reference values, monitor a remote machine with the tested application. 
 Additionally, it allows viewing all the results of performance tests as charts.
 
 How it works
 ==============
-The plugin has three main components: 
-1) Performance Test Analysis - a build feature to configure plugin settings for build configuration;
-2) Performance Statistic - a tab with values of average metrics by builds;
-3) RemotePerfMon - a tab with monitoring results for the build.
+The plugin has two features: 
+1) Performance Metrics Calculation - a build feature to configure settings for calcuation performance metrics;
+2) Performance Statistic - a tab with values of average metrics per test by builds;
 
-Performance Test Analysis   
-==========================
+3) Performance Remote Monitoring - a build feature to configure plugin settings for build configuration;
+4) RemotePerfMon - a tab with monitoring results for the build.
+
+
+Performance Metrics Calculation  
+===========================================
 required - *
 
 Aggregation: 
@@ -21,22 +24,35 @@ Aggregation:
 File to aggregate results: * 
 	a relative path to the file with the raw test results to calculate average metrics;
 Aggregate metrics: *
-	average, min, max, 90% line; must be selected one at least;
-Additional settings:
-	include http response code - may be usefull for http tests
-	check assertions - add a build failure condition if any row does not pass the test
-
+	average, min, max, 90% line,
+	response codes: it allows to calculated count of each code in test results - http code, or some other test result.
+	(for example you can log some id for exception occurred during test run: OK, InternalError, NPE)
+	note: response code NOT fail build, 
+	to DETECT errors or non-200 http codes and fail build in this case use assertions!  
+Format settings:
+	total - calculate total average values for all tests; Note: if thread groups  are used, total will be calculated by groups
+	assertions - fail the build if any assertion check fails,
+	thread groups - you can group tests in thread groups(20,100 threads..), in this case, test name must have the specific format at the log 
+	
+	used TeamCity tests format
+	This option must be set if your tests are not created and run using Test framework, like TestNG, JUnit; and you aren't use service messages to log test result in build log.
 	
 Check reference data (optionally): 
 The build will be failed if the aggregated values exceed reference values considering variation.
 -------------------------------------------
-Reference data: *
-	a relative path to reference data;
+Get reference values from: *
+	- file - set if you have a static reference values. In this case, set relative path to reference data; 
+	- builds - not supported yet
 Variation: 
 	the value of variation  [0..1] in decimal format; default - 0.05 (5%);
 	
 	
-Remote performance monitoring (optionally): 
+	
+	
+	
+	
+Performance Remote Monitoring: 
+===========================================
 allows monitoring some system and jvm statistics on the remote machine with the tested application. 
 -------------------------------------------
 Build step to analyze: *
@@ -55,10 +71,15 @@ Monitored parameters, supported by plugin:
 - Disk I/O reads/writes (ops)
 - JMX memory heap, pools commited/usage; gc time; class loaded;	
 	
+	
+	
 Formats of the file to aggregate  results:
 ==========================================
 The first line must contain the titles of columns. 
 Delimiter - \t
+Label is the same test/sample name; 
+If thread groups are used; label must have format: <thread_group_name>:<label>
+Don't end a label name with 'Total'!
 
 1) Simplest format for result file:
 startTime	spendTime	label	....
@@ -81,13 +102,13 @@ start	spend	method
 1383822067835	77	foo111
 
 timeStamp	elapsed	label	responseCode	success	responseMessage	thread	dataType
-1383843124555	153	1#Login	200	true	OK	Thread 1-1	text
-1383843126523	12	1#Login	200	true	OK	Thread 1-3	text
-1383843124713	3391	2#Open page	200	true	OK	Thread 1-1	text
-1383843128268	215	3#Search query	200	true	OK	Thread 1-4	text
-1383843128269	224	3#Search query	200	true	OK	Thread 1-2	text
-1383843128540	1457	2#Open page	200	true	OK	Thread 1-5	text
-1383843128270	2138	3#Search query	404	false	Not found!	Thread 1-3	text
+1383843124555	153	50 threads: Login	200	true	OK	Thread 1-1	text
+1383843126523	12	10 threads: Login	200	true	OK	Thread 1-3	text
+1383843124713	3391	50 threads: Open page	200	true	OK	Thread 1-1	text
+1383843128268	215	10 threads: Search query	200	true	OK	Thread 1-4	text
+1383843128269	224	50 threads: Search query	200	true	OK	Thread 1-2	text
+1383843128540	1457	10threads: Open page	200	true	OK	Thread 1-5	text
+1383843128270	2138	50 threads: Search query	404	false	Not found!	Thread 1-3	text
 
 
 
@@ -95,8 +116,10 @@ Reference data format
 ======================
 format:label	metric	value	variation(optional)
 
-example1: 1#Login	line90	120
-example2: 1#Home page	average	340	0.1
+example1:
+10 threads: Login	line90	120
+example2: 
+Home page	average	340	0.1
 
 Delimiter - \t
 All labels must  match the corresponding item labels in the raw test file. 
@@ -113,10 +136,12 @@ line90
 Statistic visualization
 ========================
 
-PerformanceStatistic tab
+Performance Statistics tab
 -------------------------
-After running configuration with Performance Test Analysis feature, you can see Performance Statistic tab on the build 
-configuration home page. It contains charts with Response codes (if selected) and charts for each label 
+After running configuration with Performance Metrics Calculation feature, you can see Performance Statistic tab on the build page. 
+// TODO
+It contains two sections if performance check is not passed
+charts with Response codes (if selected) and charts for each label 
 with aggregated metrics. The charts contain comparative statistics by builds. 
 
 X-Axis settings has 2 options:
@@ -124,22 +149,14 @@ actual build numbers   - x-axis constanis the build numbers of the configuration
 build numbers of the dependency - if your test configuration uses an artifact dependency from the tested application,
 x-axis contains build numbers of the tested application, and the numbers will be extracted from the artifact 
 dependencies.
-
+Server Response Time - shows the distribution time for each type of test row (label); 
+Request Per Seconds - show count of rows per second for each label. 
 
 RemotePerfMon tab
 -----------------
-RemotePerfMon tab will appear on the build page.
-By default, it contains two charts: Server Response Time - shows the distribution time for each type of test row (label); 
-Request Per Seconds - show count of rows per second for each label. If you use Remote monitoring, the charts 
-with system metrics and jmx metrics are displayed here. Note, all metrics related to memory 
-(system memory, jmx memory, memorypool) will be on the same chart.
-
-The gray area in the charts indicates the warm-up period. 
-If you set "Show log at the bottom of the page" after selecting the point or area at the chart, the related part 
-of the result log will appear at the bottom of the page. This part of log will contain all requests for the selected period. 
-
-Note: you can number the labels in format <N#title> (ex: '1# Login to application'); labels in the reference data file must 
-have the same names! Then all chart at Performance Statistic will be ordered in the same sequence as the labels. 
+After running configuration with Performance Remote Monitoring feature, you can see RemotePerfMon tab on the build page. 
+The charts with system metrics and jmx metrics are displayed here. Note, all metrics related to memory 
+(system memory, jmx memory, memorypool, swap) will be on the same chart.
 
 
 Useful links:

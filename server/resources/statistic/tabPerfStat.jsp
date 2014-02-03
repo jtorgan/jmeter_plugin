@@ -131,7 +131,7 @@
       <tr class="chart-content" id="performance${failedTest.ID}Chart">
         <td colspan="5" style="padding: 0 !important;" class="chartPerfTestContainer">
           <div id="performance${failedTest.ID}ChartTC"></div>
-          <c:if test="${not fn:contains(failedTest.fullName, ': Total')}">
+          <c:if test="${not fn:endsWith(failedTest.fullName, 'Total')}">
             <div id="performance${failedTest.ID}ChartCustom"></div>
           </c:if>
         </td>
@@ -174,7 +174,7 @@
       <tr class="chart-content" id="performance${successTest.ID}Chart">
         <td colspan="5" style="padding: 0 !important;" class="chartPerfTestContainer">
           <div id="performance${successTest.ID}ChartTC"></div>
-          <c:if test="${not fn:contains(successTest.fullName, ': Total')}">
+          <c:if test="${not fn:endsWith(successTest.fullName, 'Total')}">
             <div id="performance${successTest.ID}ChartCustom"></div>
           </c:if>
         </td>
