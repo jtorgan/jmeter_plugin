@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.web.servlet.ModelAndView;
 import perf_statistic.server.perf_tests.PerformanceTestProvider;
+import perf_statistic.server.perf_tests.PerformanceTestRun;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,9 +36,11 @@ public class PerformanceChartController extends BaseController {
 
 		Map<String, Object> myModel = mv.getModel();
 
-		myModel.put("logTitles", myTestHolder.getLogTitles(build));
-		myModel.put("test", myTestHolder.findTestByName(build, testName));
-
+		if (build != null) {
+			PerformanceTestRun test =  myTestHolder.findTestByName(build, testName);
+			myModel.put("logTitles", myTestHolder.fillLogItems(build, test));
+			myModel.put("test", test);
+		}
 		return mv;
 	}
 }

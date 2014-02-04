@@ -28,8 +28,8 @@ public class PerformanceTestProvider {
 	private final BuildDataStorage myStorage;
 	private final SBuildServer myServer;
 
-	private Map<String, PerformanceTestRun> myFailedTestRuns;
-	private Map<String, PerformanceTestRun> mySuccessTestRuns;
+	private List<PerformanceTestRun> myFailedTestRuns;
+	private List<PerformanceTestRun> mySuccessTestRuns;
 	private Set<String> threadGroups;
 	private Set<String> testNames;
 
@@ -49,40 +49,14 @@ public class PerformanceTestProvider {
 		if (build.getBuildId() != myBuildID) {
 			updateTestList(build);
 		}
-		List<PerformanceTestRun> sortedValues = new SortedList<PerformanceTestRun>(new Comparator<PerformanceTestRun>() {
-			@Override
-			public int compare(PerformanceTestRun o1, PerformanceTestRun o2) {
-				int groupCompare = o1.getTestsGroupName().compareTo((o2.getTestsGroupName()));
-				if (groupCompare == 0) {
-					if ("Total".equals(o1.getTestName())) return 1;
-					if ("Total".equals(o2.getTestName())) return -1;
-					return o1.getTestName().compareTo(o2.getTestName());
-				}
-				return groupCompare;
-			}
-		});
-		sortedValues.addAll(myFailedTestRuns.values());
-		return myFailedTestRuns != null ? sortedValues : Collections.<PerformanceTestRun>emptyList();
+		return myFailedTestRuns != null ? myFailedTestRuns : Collections.<PerformanceTestRun>emptyList();
 	}
 
 	public Collection<PerformanceTestRun> getSuccessTestRuns(@NotNull SBuild build) {
 		if (build.getBuildId() != myBuildID) {
 			updateTestList(build);
 		}
-		List<PerformanceTestRun> sortedValues = new SortedList<PerformanceTestRun>(new Comparator<PerformanceTestRun>() {
-			@Override
-			public int compare(PerformanceTestRun o1, PerformanceTestRun o2) {
-				int groupCompare = o1.getTestsGroupName().compareTo((o2.getTestsGroupName()));
-				if (groupCompare == 0) {
-					if ("Total".equals(o1.getTestName())) return 1;
-					if ("Total".equals(o2.getTestName())) return -1;
-					return o1.getTestName().compareTo(o2.getTestName());
-				}
-				return groupCompare;
-			}
-		});
-		sortedValues.addAll(mySuccessTestRuns.values());
-		return mySuccessTestRuns != null ? sortedValues : Collections.<PerformanceTestRun>emptyList();
+		return mySuccessTestRuns != null ? mySuccessTestRuns : Collections.<PerformanceTestRun>emptyList();
 	}
 
 	public Collection<String> getAllTestNames(@NotNull SBuild build) {
@@ -101,18 +75,43 @@ public class PerformanceTestProvider {
 
 	public PerformanceTestRun findTestByName(@NotNull SBuild build, String testName) {
 		updateTestList(build);
-		return myFailedTestRuns.get(testName) != null ? myFailedTestRuns.get(testName) : mySuccessTestRuns.get(testName);
+		for(PerformanceTestRun test : myFailedTestRuns) {
+			if (test.getFullName().equals(testName)) return test;
+		}
+		for(PerformanceTestRun test : mySuccessTestRuns) {
+			if (test.getFullName().equals(testName)) return test;
+		}
+		return null;
 	}
 
-	public String[] getLogTitles(@NotNull SBuild build) {
+	public String[] fillLogItems(@NotNull SBuild build, @NotNull PerformanceTestRun testRun) {
 		updateTestList(build);
+
+		String logFileName =  build.getParametersProvider().get(PluginConstants.PARAMS_AGGREGATE_FILE);
+		if (logFileName != null) {
+			logTitles = myLogDataProvider.readLog(build.getArtifactsDirectory().getAbsolutePath() + File.separator + logFileName, testRun);
+		}
+
 		return logTitles;
 	}
 
 
 	private synchronized void updateTestList(@NotNull SBuild build) {
-		myFailedTestRuns = new HashMap<String, PerformanceTestRun>();
-		mySuccessTestRuns = new HashMap<String, PerformanceTestRun>();
+		Comparator<PerformanceTestRun> comparator = new Comparator<PerformanceTestRun>() {
+			@Override
+			public int compare(PerformanceTestRun o1, PerformanceTestRun o2) {
+				int groupCompare = o1.getTestsGroupName().compareTo((o2.getTestsGroupName()));
+				if (groupCompare == 0) {
+					if ("Total".equals(o1.getTestName())) return 1;
+					if ("Total".equals(o2.getTestName())) return -1;
+					return o1.getTestName().compareTo(o2.getTestName());
+				}
+				return groupCompare;
+			}
+		};
+
+		myFailedTestRuns = new SortedList<PerformanceTestRun>(comparator);
+		mySuccessTestRuns = new SortedList<PerformanceTestRun>(comparator);
 		threadGroups = new HashSet<String>();
 		testNames = new HashSet<String>();
 
@@ -140,17 +139,12 @@ public class PerformanceTestProvider {
 			List<BuildProblemData> testProblems = problems.get(performanceTest.getFullName());
 			if (testProblems != null) {
 				performanceTest.setPerformanceProblems(testProblems);
-				myFailedTestRuns.put(performanceTest.getFullName(), performanceTest);
+				myFailedTestRuns.add(performanceTest);
 			} else {
-				mySuccessTestRuns.put(performanceTest.getFullName(), performanceTest);
+				mySuccessTestRuns.add(performanceTest);
 			}
 			updateOrCreateValueProvider(performanceTest.getChartKey());
 			updateOrCreateValueProvider(PerformanceStatisticMetrics.RESPONSE_CODE.getKey() + "_" + performanceTest.getChartKey());
-		}
-
-		String logFileName =  build.getParametersProvider().get(PluginConstants.PARAMS_AGGREGATE_FILE);
-		if (logFileName != null) {
-			logTitles = myLogDataProvider.readLog(build.getArtifactsDirectory().getAbsolutePath() + File.separator + logFileName);
 		}
 		myBuildID = build.getBuildId();
 	}
@@ -177,7 +171,7 @@ public class PerformanceTestProvider {
 		 * @param fileName
 		 * @return titles of results log lines
 		 */
-		public String[] readLog(@NotNull final String fileName) {
+		public String[] readLog(@NotNull final String fileName, @NotNull PerformanceTestRun test) {
 			BufferedReader reader = null;
 			String[] titles = null;
 			try {
@@ -193,11 +187,7 @@ public class PerformanceTestProvider {
 						String label = StringHacks.checkTestName(items[2].trim());
 						items[2] = label;
 
-						PerformanceTestRun test = myFailedTestRuns.get(label);
-						if (test == null) {
-							test = mySuccessTestRuns.get(label);
-						}
-						if (test != null) {
+						if (label.equals(test.getFullName())) {
 							test.addTimeValue(startTime, elapsedTime);
 							test.addLogLine(startTime, items);
 						}
