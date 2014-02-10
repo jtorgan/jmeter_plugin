@@ -12,8 +12,10 @@ public class StringHacks {
 	private static final Pattern sharp_pattern = Pattern.compile("#");
 
 	public static String checkTestName(String testName) {
-		String[] parts = sharp_pattern.split(testName);
-		return  parts.length >= 2 ? parts[1].trim() : testName;
+		if (testName.contains("#")) {
+			return sharp_pattern.split(testName)[1].trim();
+		}
+		return testName;
 	}
 
 	public static String getBuildProblemId(final String metricKey, final String testName) {

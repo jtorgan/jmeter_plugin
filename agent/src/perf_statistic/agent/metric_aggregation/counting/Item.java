@@ -1,28 +1,33 @@
 package perf_statistic.agent.metric_aggregation.counting;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import perf_statistic.agent.common.BaseFileReader;
 import perf_statistic.agent.metric_aggregation.AggregationProperties;
+import perf_statistic.common.PerformanceMessageParser;
 import perf_statistic.common.StringHacks;
 
 import java.util.Arrays;
 
 public class Item {
-
-	protected final String startTime;
+	private static final String EMPTY_TEST_GROUP_NAME = "";
+//	protected final long startTime;
 	protected final long responseTime;
 	protected final String testName;
 	protected String responseCode = null;
 	protected boolean isSuccessful;
-	protected String testGroupName = "";
+	protected String testGroupName;
 
+//	save only if check assertions and item is not successful
+	protected String logLine;
 
-	protected String[] allValues;
+	public Item(String line, AggregationProperties properties) throws IllegalItemFormatException {
+		String[] values = PerformanceMessageParser.DELIMITER_PATTERN.split(line);
 
-	public Item(String[] values, AggregationProperties properties) throws IllegalItemFormatException {
 		if (values == null || values.length < 3) {  //failureMessage may be empty
 			throw new IllegalItemFormatException("", values);
 		}
-		startTime = values[0];
+//		startTime = Long.parseLong(values[0]);
 		responseTime = Long.parseLong(values[1]);
 		if (properties.isUsedTestGroups()) {
 			String[] testNameParts = values[2].split(":");
@@ -31,15 +36,17 @@ public class Item {
 			}
 			testGroupName = testNameParts[0].trim();
 			testName = StringHacks.checkTestName(testNameParts[1].trim());
-			values[2] = StringHacks.checkTestName(values[2]);
 		} else {
 			testName = StringHacks.checkTestName(values[2]);
-			values[2] = StringHacks.checkTestName(values[2]);
+			values[2] = testName;
 		}
-		allValues = values;
 
 		boolean codes = properties.isCalculateResponseCodes();
 		boolean assets = properties.isCheckAssertions();
+
+		if (assets && !isSuccessful) {
+			logLine = line;
+		}
 
 		if(codes && assets) {
 			if (values.length < 5)
@@ -57,9 +64,9 @@ public class Item {
 		}
 	}
 
-	public String getStartTime() {
-		return startTime;
-	}
+//	public long getStartTime() {
+//		return startTime;
+//	}
 
 	public long getResponseTime() {
 		return responseTime;
@@ -69,6 +76,7 @@ public class Item {
 		return testName;
 	}
 
+	@Nullable
 	public String getResponseCode() {
 		return responseCode;
 	}
@@ -77,16 +85,18 @@ public class Item {
 		return isSuccessful;
 	}
 
+	@NotNull
 	public String getTestGroupName() {
-		return testGroupName;
+		return testGroupName  != null ? testGroupName : EMPTY_TEST_GROUP_NAME;
 	}
 
-	public String[] getAllValues() {
-		return allValues;
+	@Nullable
+	public String getLogLine() {
+		return logLine;
 	}
+
 	public String toString(){
-		return "_Item_: startTime=[" + startTime
-				+ "] responseTime=[" + responseTime
+		return "_Item_: responseTime=[" + responseTime
 				+ "] testName=[" + testName
 				+ "] responseCode=[" + responseCode
 				+ "] isSuccessful=[" + isSuccessful

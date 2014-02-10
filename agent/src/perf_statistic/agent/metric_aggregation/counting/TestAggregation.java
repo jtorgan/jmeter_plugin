@@ -7,7 +7,6 @@ import java.util.*;
 
 public class TestAggregation extends BaseAggregation {
 	protected final List<Item> items;
-	private final StringBuilder failedItems;
 
 	public TestAggregation(Item item, AggregationProperties properties) {
 		super(item.testName, properties);
@@ -19,7 +18,6 @@ public class TestAggregation extends BaseAggregation {
 				return o1.responseTime < o2.responseTime ? -1 : 1;
 			}
 		});
-		failedItems = new StringBuilder();
 		addItem(item);
 	}
 
@@ -27,8 +25,6 @@ public class TestAggregation extends BaseAggregation {
 		super.addItem(item);
 		if (myProperties.isCheckAssertions() && item.isSuccessful || !myProperties.isCheckAssertions()) {
 			items.add(item);
-		} else if (myProperties.isCheckAssertions() && !item.isSuccessful) {
-			failedItems.append(Arrays.toString(item.getAllValues())).append("\n");
 		}
 	}
 
@@ -41,6 +37,14 @@ public class TestAggregation extends BaseAggregation {
 	}
 
 	public String getFailedItems() {
-		return failedItems.toString();
+		if (myProperties.isCheckAssertions()) {
+			StringBuilder failedItems = new StringBuilder();
+			for (Item i : items) {
+				if (!i.isSuccessful)
+					failedItems.append(i.logLine).append("\n");
+			}
+			return  failedItems.toString();
+		}
+		return null;
 	}
 }
