@@ -1,10 +1,13 @@
 package perf_statistic.agent.metric_aggregation.counting;
 
+import com.intellij.util.containers.SortedList;
 import org.jetbrains.annotations.NotNull;
 import perf_statistic.agent.metric_aggregation.AggregationProperties;
 import perf_statistic.common.PerformanceStatisticMetrics;
 
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,11 +26,18 @@ public abstract class BaseAggregation {
 	protected double mean;
 	protected double min = Double.MAX_VALUE;
 	protected double max = Double.MIN_VALUE;
+	protected List<Double> responseTimesToAggregate; //to calculate quantiles
 
 	protected BaseAggregation(String title, AggregationProperties properties) {
 		myTitle = title;
 		myProperties = properties;
 		codes = new HashMap<String, Long>();
+		responseTimesToAggregate = new SortedList<Double>(new Comparator<Double>() {
+			@Override
+			public int compare(Double o1, Double o2) {
+				return o1.compareTo(o2);
+			}
+		});
 	}
 
 	public String getTitle() {
@@ -35,12 +45,12 @@ public abstract class BaseAggregation {
 	}
 
 	public void addItem(Item item) {
-		if (myProperties.isCheckAssertions() && item.isSuccessful || !myProperties.isCheckAssertions()) {
-			addCalculatedValue(item.responseTime);
+		if (myProperties.isCheckAssertions() && item.isSuccessful() || !myProperties.isCheckAssertions()) {
+			addCalculatedValue(item.getResponseTime());
 		}
 		if (myProperties.isCalculateResponseCodes()) {
-			Long count = codes.get(item.responseCode);
-			codes.put(item.responseCode, count != null ? ++count : 1);
+			Long count = codes.get(item.getResponseCode());
+			codes.put(item.getResponseCode(), count != null ? ++count : 1);
 		}
 	}
 
@@ -51,9 +61,8 @@ public abstract class BaseAggregation {
 		mean = sum / count;
 		min = Math.min(itemValue, min);
 		max = Math.max(itemValue, max);
+		responseTimesToAggregate.add(itemValue);
 	}
-
-	protected abstract double get90line();
 
 	public Double getAggregateValue(@NotNull final PerformanceStatisticMetrics param)
 	{
@@ -64,8 +73,10 @@ public abstract class BaseAggregation {
 				return max;
 			case MIN:
 				return min;
-			case LINE90:
-				return get90line();
+			case LINE90: {
+				int ind90 = (int) Math.round(responseTimesToAggregate.size() * 0.9d);
+				return responseTimesToAggregate.get(ind90 - 1);
+			}
 			default:
 				return null;
 		}

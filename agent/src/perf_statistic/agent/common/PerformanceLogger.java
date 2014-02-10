@@ -5,7 +5,7 @@ import jetbrains.buildServer.agent.BuildProgressLogger;
 import jetbrains.buildServer.messages.DefaultMessagesInfo;
 import org.jetbrains.annotations.NotNull;
 import perf_statistic.common.PerformanceMessageParser;
-import perf_statistic.common.StringHacks;
+import perf_statistic.common.StringUtils;
 
 
 public class PerformanceLogger {
@@ -33,14 +33,14 @@ public class PerformanceLogger {
 	}
 
 	public void logBuildProblem(final String metric, final String testName, final String type, final String description) {
-		BuildProblemData buildProblem = BuildProblemData.createBuildProblem(StringHacks.getBuildProblemId(metric, testName), type, description, testName);
+		BuildProblemData buildProblem = BuildProblemData.createBuildProblem(StringUtils.getBuildProblemId(metric, testName), type, description, testName);
 		System.out.println(buildProblem);
 		System.out.println("Additional data: " + buildProblem.getAdditionalData());
 		logger.logBuildProblem(buildProblem);
 	}
 
 	public void logBuildProblem(final String identity, final String type, final String description) {
-		BuildProblemData buildProblem = BuildProblemData.createBuildProblem(StringHacks.cutLongBuildProblemIdentity(identity), type, description);
+		BuildProblemData buildProblem = BuildProblemData.createBuildProblem(StringUtils.cutLongBuildProblemIdentity(identity), type, description);
 		logger.logBuildProblem(buildProblem);
 	}
 

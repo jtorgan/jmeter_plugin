@@ -10,9 +10,9 @@ import jetbrains.buildServer.serverSide.statistics.ValueProvider;
 import jetbrains.buildServer.serverSide.statistics.ValueProviderRegistry;
 import jetbrains.buildServer.serverSide.statistics.build.BuildDataStorage;
 import org.jetbrains.annotations.NotNull;
+import perf_statistic.common.StringUtils;
 import perf_statistic.server.perf_test_charts.types.PerformanceMetricCompositeVT;
 import perf_statistic.server.perf_test_charts.types.ResponseCodeCompositeVT;
-import perf_statistic.common.StringHacks;
 import perf_statistic.common.PerformanceMessageParser;
 import perf_statistic.common.PerformanceStatisticMetrics;
 import perf_statistic.common.PluginConstants;
@@ -184,7 +184,7 @@ public class PerformanceTestProvider {
 					if (checkItem(items)) {
 						long startTime = Long.parseLong(items[0]);
 						long elapsedTime = Long.parseLong(items[1]);
-						String label = StringHacks.checkTestName(items[2].trim());
+						String label = StringUtils.checkTestName(items[2].trim());
 						items[2] = label;
 
 						if (label.equals(test.getFullName())) {

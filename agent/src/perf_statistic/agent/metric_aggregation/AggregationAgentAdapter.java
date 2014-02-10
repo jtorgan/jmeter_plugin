@@ -7,15 +7,15 @@ import org.jetbrains.annotations.NotNull;
 import perf_statistic.agent.common.BaseFileReader;
 import perf_statistic.agent.common.PerformanceLogger;
 import perf_statistic.agent.metric_aggregation.counting.*;
-import perf_statistic.common.PerformanceMessageParser;
 import perf_statistic.common.PerformanceStatisticMetrics;
 import perf_statistic.common.PluginConstants;
+import perf_statistic.common.StringUtils;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 public class AggregationAgentAdapter extends AgentLifeCycleAdapter {
+	private String workingDir;
 
 	public AggregationAgentAdapter(@NotNull final EventDispatcher<AgentLifeCycleListener> agentDispatcher) {
 		agentDispatcher.addListener(this);
@@ -25,12 +25,13 @@ public class AggregationAgentAdapter extends AgentLifeCycleAdapter {
 		Collection<AgentBuildFeature> features = build.getBuildFeaturesOfType(PluginConstants.FEATURE_TYPE_AGGREGATION);
 		if (!features.isEmpty()) {
 
-
 			AggregationProperties properties = new AggregationProperties(features.iterator().next().getParameters());
 			PerformanceLogger logger = new PerformanceLogger(build.getBuildLogger());
 
 			logger.activityStarted(PluginConstants.PERFORMANCE_TESTS_ACTIVITY_NAME);
 			LogReader reader = new LogReader(logger, properties);
+			reader.workingDir = build.getWorkingDirectory().getAbsolutePath();
+
 			try {
 				reader.processFile(properties.getAggregateDataFile(build.getWorkingDirectory().getAbsolutePath()));
 				reader.logProcessingResults();
@@ -72,6 +73,9 @@ public class AggregationAgentAdapter extends AgentLifeCycleAdapter {
 		private boolean logResultsAsTests;
 		private boolean isTitleLine = true;
 
+		private String workingDir;
+		private Set<String> failedFileKeys;
+
 		public LogReader(PerformanceLogger logger, AggregationProperties properties) {
 			super(logger);
 			myProperties = properties;
@@ -84,8 +88,16 @@ public class AggregationAgentAdapter extends AgentLifeCycleAdapter {
 		@Override
 		protected void processLine(String line) throws FileFormatException {
 			if (!isTitleLine) {
-				String[] fieldValues = PerformanceMessageParser.DELIMITER_PATTERN.split(line);
-				myReport.addItem(new Item(fieldValues, myProperties));
+				Item item = new Item(line, myProperties);
+				myReport.addItem(item);
+				if (myProperties.isCheckAssertions() && !item.isSuccessful()) {
+					String fileKey = FileHelper.getFilePath(workingDir, item.getTestGroupName(), item.getTestName());
+					if (failedFileKeys == null) {
+						failedFileKeys = new HashSet<String>();
+					}
+					FileHelper.appendLineToFile(fileKey, item.getLogLine());
+					failedFileKeys.add(fileKey);
+				}
 			} else {
 				isTitleLine = false;
 			}
@@ -104,18 +116,21 @@ public class AggregationAgentAdapter extends AgentLifeCycleAdapter {
 
 				if (!tests.isEmpty()) {
 					for(TestAggregation test : tests.values()) {
-						if (logResultsAsTests) {
-							myLogger.logTestStarted(test.getTitle());
+						String testName = test.getTitle();
 
+						if (logResultsAsTests) {
+							myLogger.logTestStarted(testName);
+
+							String failedFileKey = FileHelper.getFilePath(workingDir, testsGroupName, testName);
 							//	log assertions results
-							if (myProperties.isCheckAssertions() && !test.getFailedItems().isEmpty()) {
-								myLogger.logTestFailed(test.getTitle() + testsGroupName, PluginConstants.ASSERTION_FAILED_PROBLEM_TYPE, test.getFailedItems());
+							if (myProperties.isCheckAssertions() &&  failedFileKeys != null && failedFileKeys.contains(failedFileKey)) {
+								myLogger.logTestFailed(testName + testsGroupName, PluginConstants.ASSERTION_FAILED_PROBLEM_TYPE, FileHelper.getFileContent(failedFileKey));
 							}
 						}
 						logMetricResults(test, testsGroupName);
 
 						if (logResultsAsTests) {
-							myLogger.logTestFinished(test.getTitle());
+							myLogger.logTestFinished(testName);
 						}
 					}
 				}
@@ -144,5 +159,58 @@ public class AggregationAgentAdapter extends AgentLifeCycleAdapter {
 			}
 		}
 
+	}
+
+
+
+
+	/**
+	 * Helper to log failed items in temp files
+	 */
+	private final static class FileHelper {
+		private static String getFilePath(String workingDir, String testGroupName, String testName) {
+			return workingDir+ File.separator + StringUtils.replaceNonWordSymbols(testName + testGroupName) + ".failed";
+		}
+
+		private static void appendLineToFile(String fileName, String line) {
+			BufferedWriter out = null;
+			try {
+				out = new BufferedWriter(new FileWriter(fileName, true));
+				out.write(line + "\n");
+				out.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				if (out != null) {
+					try {
+						out.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+
+		private static String getFileContent(String fileName) {
+			BufferedReader in = null;
+			StringBuilder builder = new StringBuilder();
+			try {
+				in = new BufferedReader(new FileReader(fileName));
+				while (in.ready()) {
+					builder.append(in.readLine()).append("\n");
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				if (in != null) {
+					try {
+						in.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			return builder.toString();
+		}
 	}
 }

@@ -18,35 +18,15 @@ public class TestsGroupAggregation extends BaseAggregation {
 		if (myProperties.isCalculateTotal()) {
 			super.addItem(item);
 		}
-		if (tests.get(item.testName) == null) {
-			tests.put(item.testName, new TestAggregation(item, myProperties));
-		} else {
-			tests.get(item.testName).addItem(item);
+
+		TestAggregation testAggregation = tests.get(item.getTestName());
+		if (testAggregation == null) {
+			testAggregation = new TestAggregation(item, myProperties);
 		}
+		testAggregation.addItem(item);
+		tests.put(item.getTestName(), testAggregation);
 	}
-	protected double get90line() {
-		List<Item> allItems = new ArrayList<Item>();
-		for (TestAggregation sampler : tests.values())  {
-			for (Item item : sampler.items) {
-				if (myProperties.isCheckAssertions() && item.isSuccessful || !myProperties.isCheckAssertions()) {
-					allItems.add(item);
-				}
-			}
-		}
-		if (allItems.isEmpty()) {
-			return 0;
-		}
-		Collections.sort(allItems, new Comparator<Item>() {
-			@Override
-			public int compare(Item o1, Item o2) {
-				if (o1.responseTime == o2.responseTime)
-					return 0;
-				return o1.responseTime < o2.responseTime ? -1 : 1;
-			}
-		});
-		int ind90 = (int) Math.round(allItems.size() * 0.9d);
-		return allItems.get(ind90 - 1).responseTime;
-	}
+
 
 	public Map<String, TestAggregation> getTests() {
 		return tests;

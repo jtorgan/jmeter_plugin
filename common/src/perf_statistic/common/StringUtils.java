@@ -7,13 +7,19 @@ import java.util.regex.Pattern;
 /**
  * Created by Yuliya.Torhan on 1/27/14.
  */
-public class StringHacks {
+public class StringUtils {
+	public static final String EMPTY = "";
+
 	private static final Pattern non_word_pattern = Pattern.compile("\\W");
 	private static final Pattern sharp_pattern = Pattern.compile("#");
 
 	public static String checkTestName(String testName) {
 		String[] parts = sharp_pattern.split(testName);
 		return  parts.length >= 2 ? parts[1].trim() : testName;
+	}
+
+	public static String replaceNonWordSymbols(String str) {
+		return non_word_pattern.matcher(str).replaceAll("");
 	}
 
 	public static String getBuildProblemId(final String metricKey, final String testName) {
