@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import perf_statistic.agent.common.BaseFileReader;
 import perf_statistic.agent.common.PerformanceLogger;
 import perf_statistic.agent.metric_aggregation.counting.*;
-import perf_statistic.common.PerformanceMessageParser;
 import perf_statistic.common.PerformanceStatisticMetrics;
 import perf_statistic.common.PluginConstants;
 
@@ -24,7 +23,7 @@ public class AggregationAgentAdapter extends AgentLifeCycleAdapter {
 	public void beforeBuildFinish(@NotNull AgentRunningBuild build, @NotNull BuildFinishedStatus buildStatus) {
 		Collection<AgentBuildFeature> features = build.getBuildFeaturesOfType(PluginConstants.FEATURE_TYPE_AGGREGATION);
 		if (!features.isEmpty()) {
-
+			build.addSharedConfigParameter("isPerfStatEnable", "true");
 
 			AggregationProperties properties = new AggregationProperties(features.iterator().next().getParameters());
 			PerformanceLogger logger = new PerformanceLogger(build.getBuildLogger());
@@ -84,8 +83,8 @@ public class AggregationAgentAdapter extends AgentLifeCycleAdapter {
 		@Override
 		protected void processLine(String line) throws FileFormatException {
 			if (!isTitleLine) {
-				String[] fieldValues = PerformanceMessageParser.DELIMITER_PATTERN.split(line);
-				myReport.addItem(new Item(fieldValues, myProperties));
+//				String[] fieldValues = PerformanceMessageParser.DELIMITER_PATTERN.split(line);
+				myReport.addItem(new Item(line, myProperties));
 			} else {
 				isTitleLine = false;
 			}
