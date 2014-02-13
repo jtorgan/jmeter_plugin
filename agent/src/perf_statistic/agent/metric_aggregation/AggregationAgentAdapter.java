@@ -45,8 +45,8 @@ public class AggregationAgentAdapter extends AgentLifeCycleAdapter {
 			}
 
 			if (properties.isCheckReferences()) {
-				logger.activityStarted(PluginConstants.CHECK_REFERENCE_ACTIVITY_NAME);
 				if (properties.isFileValues()) {
+					logger.activityStarted(PluginConstants.CHECK_REFERENCE_ACTIVITY_NAME);
 					FileValuesChecker checker = null;
 					try {
 						checker = new FileValuesChecker(logger,
@@ -56,10 +56,13 @@ public class AggregationAgentAdapter extends AgentLifeCycleAdapter {
 					} catch (BaseFileReader.FileFormatException e) {
 						logger.logBuildProblem(BuildProblemTypes.TC_ERROR_MESSAGE_TYPE, "FileFormatException", e.getMessage());
 					}
+					logger.activityFinished(PluginConstants.CHECK_REFERENCE_ACTIVITY_NAME);
 				} else {
-					//todo:
+					build.addSharedConfigParameter(PluginConstants.PARAMS_REF_CHECK, "true");
+					build.addSharedConfigParameter(PluginConstants.PARAMS_REF_TYPE, "builds");
+					build.addSharedConfigParameter(PluginConstants.PARAMS_REF_BUILD_COUNT, String.valueOf(properties.getBuildCount()));
+					build.addSharedConfigParameter(PluginConstants.PARAMS_VARIATION, String.valueOf(properties.getVariation()));
 				}
-				logger.activityFinished(PluginConstants.CHECK_REFERENCE_ACTIVITY_NAME);
 			}
 
 		}

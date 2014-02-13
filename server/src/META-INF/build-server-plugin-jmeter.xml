@@ -39,10 +39,6 @@
         <constructor-arg index="2" ref="performanceTestHolder"/>
     </bean>
 
-
-
-
-
     <!--REMOTE MONITORING: Monitoring of remote machine-->
     <bean id="remotePerfMonFeature" class="perf_statistic.server.FeatureRemotePerfMon"/>
     <bean id="remotePerfMonStateController" class="perf_statistic.server.remote_monitoring.RemotePerfMonController"/>
@@ -52,4 +48,10 @@
         <constructor-arg index="1" ref="buildServer"/>
     </bean>
 
+
+    <!--todo:-->
+
+    <bean id="buildHistoryRefCheck" class="perf_statistic.server.ref_data.BuildHistoryRefCheckAdapter">
+        <constructor-arg index="0" ref="BuildDataStorage"/>
+    </bean>
 </beans>

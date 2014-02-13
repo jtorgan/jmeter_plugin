@@ -9,6 +9,8 @@ import jetbrains.buildServer.web.openapi.WebControllerManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.web.servlet.ModelAndView;
+import perf_statistic.common.PerformanceStatisticMetrics;
+import perf_statistic.common.PluginConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,7 +20,8 @@ public class RemotePerfMonController extends BaseController {
 
 	enum Type {
 		CHANGE_STATE,
-		LOG_VIEW
+		LOG_VIEW,
+		SAVE_DESELECTED
 	}
 
 	public RemotePerfMonController(@NotNull final SBuildServer server, @NotNull final WebControllerManager manager) {
@@ -30,24 +33,40 @@ public class RemotePerfMonController extends BaseController {
 	@Override
 	protected ModelAndView doHandle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) throws Exception {
 		String buildTypeId = request.getParameter("buildTypeId");
-		String graphID = request.getParameter("graphId");
-		String state = request.getParameter("state");
 		SBuildType buildType = myServer.getProjectManager().findBuildTypeByExternalId(buildTypeId);
 		if (buildType != null) {
-			CustomDataStorage stateStorage = buildType.getCustomDataStorage("teamcity.jmeter.graph.states");
-			if (!StringUtil.isEmpty(graphID)) {
-				stateStorage.putValue(graphID, state);
-			}
-			else {
-				Map<String, String> states = stateStorage.getValues();
-				if (states != null) {
-					for (String key : states.keySet()) {
-						stateStorage.putValue(key, state);
+			String requestType = request.getParameter("reqtype");
+			if (requestType != null && requestType.equals(Type.SAVE_DESELECTED.name().toLowerCase())) {
+				updateDefaultDeselectedMetrics(buildType, request.getParameter("deselected").split(","));
+			} else {
+				String graphID = request.getParameter("graphId");
+				String state = request.getParameter("state");
+				CustomDataStorage stateStorage = buildType.getCustomDataStorage("teamcity.jmeter.graph.states");
+				if (!StringUtil.isEmpty(graphID)) {
+					stateStorage.putValue(graphID, state);
+				}
+				else {
+					Map<String, String> states = stateStorage.getValues();
+					if (states != null) {
+						for (String key : states.keySet()) {
+							stateStorage.putValue(key, state);
+						}
 					}
 				}
+				stateStorage.flush();
 			}
-			stateStorage.flush();
 		}
 		return null;
+	}
+
+	private void updateDefaultDeselectedMetrics(SBuildType buildType, String[] deselectedSeries) {
+		CustomDataStorage stateStorage = buildType.getCustomDataStorage(PluginConstants.STORAGE_ID_DEFAULT_DESELECTED_SERIES);
+		for (PerformanceStatisticMetrics metric: PerformanceStatisticMetrics.values()) {
+			stateStorage.putValue(metric.getKey(), "false");
+		}
+		for (String series: deselectedSeries) {
+			stateStorage.putValue(series, "true");
+		}
+		stateStorage.flush();
 	}
 }

@@ -126,9 +126,9 @@
       <tr>
         <td>
           <div>
-            <props:radioButtonProperty name="perfTest.ref.type" value="builds" disabled="true"/>
+            <props:radioButtonProperty name="perfTest.ref.type" value="builds"/>
             <label for="perfTest.ref.type"> builds </label>
-            <props:textProperty name="perfTest.ref.buildCount" style="width: 10em" disabled="true"/>
+            <props:textProperty name="perfTest.ref.buildCount" style="width: 10em"/>
           </div>
           <div>
             <span class="smallNote">Set count of last builds to calculate reference values</span>

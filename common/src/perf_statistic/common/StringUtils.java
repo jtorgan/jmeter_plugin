@@ -4,14 +4,11 @@ import jetbrains.buildServer.BuildProblemData;
 
 import java.util.regex.Pattern;
 
-/**
- * Created by Yuliya.Torhan on 1/27/14.
- */
 public class StringUtils {
 	public static final String EMPTY = "";
 
-	private static final Pattern non_word_pattern = Pattern.compile("\\W");
-	private static final Pattern sharp_pattern = Pattern.compile("#");
+	public static final Pattern non_word_pattern = Pattern.compile("\\W");
+	public static final Pattern sharp_pattern = Pattern.compile("#");
 
 	public static String checkTestName(String testName) {
 		if (testName.contains("#")) {

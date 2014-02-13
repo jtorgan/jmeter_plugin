@@ -49,11 +49,12 @@ public class AggregationProperties {
 
 		checkReferences = Boolean.parseBoolean(params.get(PluginConstants.PARAMS_REF_CHECK));
 		if (checkReferences) {
+			String tmp = params.get(PluginConstants.PARAMS_VARIATION);
+			variation = tmp == null ? 0.05 : Double.parseDouble(tmp);
+
 			isFileValues = "file".equals(params.get(PluginConstants.PARAMS_REF_TYPE));
 			if (isFileValues) {
 				referencesDataFile = params.get(PluginConstants.PARAMS_REF_DATA_FILE);
-				String tmp = params.get(PluginConstants.PARAMS_VARIATION);
-				variation = tmp == null ? 0.05 : Double.parseDouble(tmp);
 			} else {
 				buildCount = Integer.parseInt(params.get(PluginConstants.PARAMS_REF_BUILD_COUNT));
 			}
