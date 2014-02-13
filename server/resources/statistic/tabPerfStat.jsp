@@ -14,6 +14,7 @@
 <%--@elvariable id="allTestNames" type="java.util.Collection<java.lang.String>"--%>
 <%--@elvariable id="allTestGroups" type="java.util.Collection<java.lang.String>"--%>
 
+<%--@elvariable id="deselectedSeries" type="java.util.Map<java.lang.String,java.lang.String>"--%>
 
 <%--@elvariable id="build" type="jetbrains.buildServer.serverSide.SBuild"--%>
 <%--@elvariable id="statistic" type="jetbrains.buildServer.serverSide.BuildStatistics"--%>
@@ -59,18 +60,63 @@
     border-bottom: 1px solid #CCCCCC;
     background-image: inherit;
   }
+  #deselectedMetrics {
+    padding: 0 0 0 10px;
+  }
+
+  #deselectedMetrics table {
+    width: 100%;
+    border-top: 1px solid #CECECE;
+    border-bottom: 1px solid #CECECE;
+  }
+  #deselectedMetrics td {
+    line-height: 1 !important;
+    padding-right: 5px;
+    vertical-align: middle;
+
+  }
+  #deselectedMetrics input {
+    margin: 0 5px 0 0px;
+  }
 </style>
 
 
 
 <div class="testsGeneral" style="width: 100%">
-<div style="display: block; width: 100%; margin-bottom: 5px">
-  <strong>Total:</strong> test count  -  ${statistic.allTestCount} ; duration  -  <bs:printTime time="${statistic.totalDuration/1000}" showIfNotPositiveTime="&lt; 1s"/>
-</div>
+<table style="width: 100%">
+  <tr>
+    <td>
+      <strong>Total:</strong> test count  -  ${statistic.allTestCount} ; duration  -  <bs:printTime time="${statistic.totalDuration/1000}" showIfNotPositiveTime="&lt; 1s"/>
+    </td>
+    <td width="200px" rowspan="2" id="deselectedMetrics">
+      <span class="nowrap" style="float: left; width: 100%">Default deselected series: <a href="#" onclick="saveDeselectedMetrics();" style="float: right">Save</a></span>
 
-<div  class="actionBar" title="Filters" style="background-color: #F1F6FF !important;">
-  <span class="nowrap" style="margin-right: 10px"> Test name: </span>
-    <span class="nowrap" style="margin: 0 10px;">
+      <table style="width: 100%">
+        <tr>
+          <td><input type="checkbox" name="metric" value="Min"
+                     <c:if test="${deselectedSeries['Min'] == 'true'}">checked</c:if>
+                  > Min</td>
+          <td><input type="checkbox" name="metric" value="Average"
+                     <c:if test="${deselectedSeries['Average'] == 'true'}">checked</c:if>
+                  > Average</td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" name="metric" value="Max"
+                     <c:if test="${deselectedSeries['Max'] == 'true'}">checked</c:if>
+                  > Max</td>
+          <td><input type="checkbox" name="metric" value="90Line"
+                     <c:if test="${deselectedSeries['90Line'] == 'true'}">checked</c:if>
+                  > 90% line</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      <div  class="actionBar" title="Filters" style="background-color: #F1F6FF !important;">
+        <span class="nowrap" style="margin-right: 10px"> Test name: </span>
+      <span class="nowrap" style="margin: 0 10px;">
           <select id="testNameFilter" title="Test name" onchange="filterByName();">
             <option selected value="none"></option>
             <c:forEach items="${allTestNames}" var="testName">
@@ -78,19 +124,22 @@
             </c:forEach>
           </select>
       </span>
-  <c:if test="${not empty allTestGroups}">
-    <span class="nowrap" style="margin-right: 10px"> Thread group: </span>
-    <span class="nowrap" style="margin: 0 10px;">
-      <select id="testGroupFilter" title="Thread group"  onchange="testGroupFilter();">
-        <option selected value="none"></option>
-        <c:forEach items="${allTestGroups}" var="testGroup">
-          <option value="${testGroup}" title="${testGroup}">${testGroup}</option>
-        </c:forEach>
-      </select>
-    </span>
-  </c:if>
 
-</div>
+        <c:if test="${not empty allTestGroups}">
+          <span class="nowrap" style="margin-right: 10px"> Thread group: </span>
+        <span class="nowrap" style="margin: 0 10px;">
+          <select id="testGroupFilter" title="Thread group"  onchange="testGroupFilter();">
+            <option selected value="none"></option>
+            <c:forEach items="${allTestGroups}" var="testGroup">
+              <option value="${testGroup}" title="${testGroup}">${testGroup}</option>
+            </c:forEach>
+          </select>
+        </span>
+        </c:if>
+      </div>
+    </td>
+  </tr>
+</table>
 
 <c:if test="${not empty performanceFailedTests}">
   <table id="perfTestFailed" cellspacing="0" class="testList dark sortable borderBottom" width="1000" style="margin: 10px 0">
@@ -275,6 +324,23 @@
   function showAllItems() {
     $j("#perfTestFailed").find("tbody.testRowData").css("display", "table-row-group");
     $j("#perfTestSuccess").find("tbody.testRowData").css("display", "table-row-group");
+  }
+
+
+  function saveDeselectedMetrics() {
+    var deselected = "";
+    $j("#deselectedMetrics").find("input[name=metric]:checked").each(function() {
+      deselected = deselected + $j(this).val() + ",";
+    });
+    BS.ajaxRequest("/app/performance_test_analyzer/**", {
+      method: "post",
+      parameters: {'buildTypeId' : '${build.buildTypeExternalId}', 'reqtype' : 'save_deselected', 'deselected': deselected},
+      onComplete: function(transport) {
+        if (transport.responseXML) {
+          alert(transport.responseXML);
+        }
+      }
+    });
   }
 </script>
 </div>

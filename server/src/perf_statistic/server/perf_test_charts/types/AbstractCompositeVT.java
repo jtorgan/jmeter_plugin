@@ -9,12 +9,10 @@ import jetbrains.buildServer.serverSide.statistics.ChartSettings;
 import jetbrains.buildServer.serverSide.statistics.ValueProviderRegistry;
 import jetbrains.buildServer.serverSide.statistics.build.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import perf_statistic.common.PerformanceStatisticMetrics;
 import perf_statistic.common.PluginConstants;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public abstract class AbstractCompositeVT extends CompositeVTB {
@@ -22,8 +20,6 @@ public abstract class AbstractCompositeVT extends CompositeVTB {
 
 	protected String[] subKeys;
 	protected String currentBuildTypeID;
-
-//	private volatile boolean useBuildValueTransformer = false;
 
 	protected AbstractCompositeVT(BuildDataStorage buildDataStorage, ValueProviderRegistry valueProviderRegistry, SBuildServer server, String key) {
 		super(buildDataStorage, valueProviderRegistry, server, key);
@@ -52,7 +48,9 @@ public abstract class AbstractCompositeVT extends CompositeVTB {
 	@NotNull
 	public List<BuildValue> getDataSet(@NotNull final ChartSettings _chartSettings) {
 		if (_chartSettings instanceof BuildChartSettings) {
-			updateKeys(((BuildChartSettings) _chartSettings).getBuildTypeId());
+			BuildChartSettings settings = (BuildChartSettings) _chartSettings;
+			updateKeys(settings.getBuildTypeId());
+			setDefaultDeselectedKeys(settings);
 			return super.getDataSet(_chartSettings);
 		}
 		return Collections.emptyList();
@@ -68,8 +66,8 @@ public abstract class AbstractCompositeVT extends CompositeVTB {
 				if (value != null) {
 					subKeys = comma_pattern.split(value);
 				}
-//				useBuildValueTransformer = PerfStatisticBVTransformer.getState(buildType);
 			}
+
 		}
 	}
 
@@ -94,11 +92,29 @@ public abstract class AbstractCompositeVT extends CompositeVTB {
 				}
 				return values;
 			}
-			@Nullable
-			protected BuildValueTransformer getValueProcessor() {
-//				return useBuildValueTransformer ? new PerfStatisticBVTransformer(myServer) : null;
-				return null;
-			}
 		};
+	}
+
+	private void setDefaultDeselectedKeys(@NotNull final BuildChartSettings chartSettings){
+		if (chartSettings.isResetToDefaultRequest() || !chartSettings.isUpdateRequest()) {
+			SBuildType buildType = myServer.getProjectManager().findBuildTypeByExternalId(currentBuildTypeID);
+			Set<String> deselectedKeys = new HashSet<String>();
+
+			Map<String, String> storage = buildType.getCustomDataStorage(PluginConstants.STORAGE_ID_DEFAULT_DESELECTED_SERIES).getValues();
+
+			if (storage != null) {
+				for (String key : storage.keySet()) {
+					if ("true".equals(storage.get(key))) {
+						PerformanceStatisticMetrics metric = PerformanceStatisticMetrics.getMetricByKey(key);
+						if (metric != null) {
+							deselectedKeys.add(metric.getTitle());
+							deselectedKeys.add(metric.getReferenceTitle());
+						}
+					}
+				}
+			}
+			chartSettings.setAll(BuildChartSettings.FILTER_S, deselectedKeys.toArray(new String[deselectedKeys.size()]));
+			chartSettings.setSingle("_resetDefaults", ""); // hack, because default setting show all series
+		}
 	}
 }

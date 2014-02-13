@@ -40,7 +40,7 @@ public class PluginConstants {
 	//	custom build type storage constants
 	public static final String STORAGE_ID_COMMON_JMETER = "teamcity.jmeter.statistic";
 	public static final String STORAGE_ID_TEST_ALIAS = "teamcity.jmeter.sample.keys";
-	public static final String STORAGE_ID_SAMPLE_ORDER = "teamcity.jmeter.sample.order";
+	public static final String STORAGE_ID_DEFAULT_DESELECTED_SERIES = "teamcity.jmeter.default.deselected.series";
 
 	public static final String STORAGE_KEY_METRIC = "Metrics";
 	public static final String STORAGE_KEY_SAMPLES = "Samples";

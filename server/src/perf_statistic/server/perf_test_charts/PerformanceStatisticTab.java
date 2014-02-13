@@ -67,6 +67,7 @@ public class PerformanceStatisticTab extends SimpleCustomTab {
 		request.setAttribute("buildGraphHelper", myGraphHelper);
 
 		SBuild build = BuildDataExtensionUtil.retrieveBuild(request, myServer);
+		model.put("deselectedSeries", build.getBuildType().getCustomDataStorage(PluginConstants.STORAGE_ID_DEFAULT_DESELECTED_SERIES).getValues());
 
 		model.put("performanceOKTests", myPerformanceTestHolder.getSuccessTestRuns(build));
 		model.put("performanceFailedTests", myPerformanceTestHolder.getFailedTestRuns(build));
