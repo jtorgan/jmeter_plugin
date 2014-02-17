@@ -106,8 +106,10 @@ public abstract class AbstractCompositeVT extends CompositeVTB {
 				for (String key : storage.keySet()) {
 					if ("true".equals(storage.get(key))) {
 						PerformanceStatisticMetrics metric = PerformanceStatisticMetrics.getMetricByKey(key);
-						deselectedKeys.add(metric.getTitle());
-						deselectedKeys.add(metric.getReferenceTitle());
+						if (metric != null) {
+							deselectedKeys.add(metric.getTitle());
+							deselectedKeys.add(metric.getReferenceTitle());
+						}
 					}
 				}
 			}

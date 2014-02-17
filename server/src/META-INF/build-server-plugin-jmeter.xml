@@ -39,9 +39,12 @@
         <constructor-arg index="2" ref="performanceTestHolder"/>
     </bean>
 
+    <!--different simplest-->
+    <bean id="performancePOSTChartController" class="perf_statistic.server.PerformancePostChartController"/>
+
     <!--REMOTE MONITORING: Monitoring of remote machine-->
     <bean id="remotePerfMonFeature" class="perf_statistic.server.FeatureRemotePerfMon"/>
-    <bean id="remotePerfMonStateController" class="perf_statistic.server.remote_monitoring.RemotePerfMonController"/>
+
 
     <bean id="remotePerfMonTab" class="perf_statistic.server.remote_monitoring.RemotePerfMonTab">
         <constructor-arg index="0" ref="webControllerManager"/>

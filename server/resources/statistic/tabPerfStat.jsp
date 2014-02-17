@@ -61,25 +61,68 @@
     border-bottom: 1px solid #CCCCCC;
     background-image: inherit;
   }
-  #deselectedMetrics {
-    padding: 0 0 0 10px;
-  }
+  /*  #deselectedMetrics {
+      padding: 0 0 0 10px;
+    }*/
 
   #deselectedMetrics table {
     width: 100%;
-    border-top: 1px solid #CECECE;
-    border-bottom: 1px solid #CECECE;
+    margin-bottom: 5px;
+    /*border-top: 1px solid #CECECE;*/
+    /*border-bottom: 1px solid #CECECE;*/
   }
   #deselectedMetrics td {
-    line-height: 1 !important;
-    padding-right: 5px;
+    padding: 3px 5px;
     vertical-align: middle;
 
   }
   #deselectedMetrics input {
     margin: 0 5px 0 0px;
   }
+  #deselectedMetrics input[type=button] {
+    float: right;
+    margin: 10px 0;
+  }
 </style>
+
+<div id="deselectedMetrics" class="popupDiv popupWithTitle">
+
+  <h3 class="popupWithTitleHeader">
+    <div class="closeWindow">
+      <a onclick="BS.Hider.hideDiv('deselectedMetrics'); return false" href="#" showdiscardchangesmessage="false" class="closeWindowLink">&#xd7;</a>
+    </div>
+    Default Charts Settings
+  </h3>
+  <div class="contentWrapper">
+    <div>
+      Deselected series (included references):
+    </div>
+    <table>
+      <tr><td colspan="2" ></td></tr>
+      <tr>
+        <td><input type="checkbox" name="metric" value="Min"
+                   <c:if test="${deselectedSeries['Min'] == 'true'}">checked</c:if>
+                > Min</td>
+        <td><input type="checkbox" name="metric" value="Average"
+                   <c:if test="${deselectedSeries['Average'] == 'true'}">checked</c:if>
+                > Average</td>
+      </tr>
+      <tr>
+        <td><input type="checkbox" name="metric" value="Max"
+                   <c:if test="${deselectedSeries['Max'] == 'true'}">checked</c:if>
+                > Max</td>
+        <td><input type="checkbox" name="metric" value="90Line"
+                   <c:if test="${deselectedSeries['90Line'] == 'true'}">checked</c:if>
+                > 90% line</td>
+      </tr>
+    </table>
+    <div style="border-top: 1px dotted #CCCCCC">
+      <input type="button" value="Save" onclick="saveDeselectedMetrics();" class="btn btn_primary button">
+    </div>
+  </div>
+
+</div>
+
 
 
 
@@ -88,28 +131,6 @@
   <tr>
     <td>
       <strong>Total:</strong> test count  -  ${statistic.allTestCount} ; duration  -  <bs:printTime time="${statistic.totalDuration/1000}" showIfNotPositiveTime="&lt; 1s"/>
-    </td>
-    <td width="200px" rowspan="2" id="deselectedMetrics">
-      <span class="nowrap" style="float: left; width: 100%">Default deselected series: <a href="#" onclick="saveDeselectedMetrics();" style="float: right">Save</a></span>
-
-      <table style="width: 100%">
-        <tr>
-          <td><input type="checkbox" name="metric" value="Min"
-                     <c:if test="${deselectedSeries['Min'] == 'true'}">checked</c:if>
-                  > Min</td>
-          <td><input type="checkbox" name="metric" value="Average"
-                     <c:if test="${deselectedSeries['Average'] == 'true'}">checked</c:if>
-                  > Average</td>
-        </tr>
-        <tr>
-          <td><input type="checkbox" name="metric" value="Max"
-                     <c:if test="${deselectedSeries['Max'] == 'true'}">checked</c:if>
-                  > Max</td>
-          <td><input type="checkbox" name="metric" value="90Line"
-                     <c:if test="${deselectedSeries['90Line'] == 'true'}">checked</c:if>
-                  > 90% line</td>
-        </tr>
-      </table>
     </td>
   </tr>
 
@@ -137,12 +158,19 @@
           </select>
         </span>
         </c:if>
+        <script type="text/javascript">
+          BS.DefaultChartPopup = new BS.Popup('deselectedMetrics', {hideDelay: -1});
+        </script>
+
+        <span style="float: right; color: #6D9CB3; cursor: pointer" id="defaultChartSettings"
+              onclick="BS.DefaultChartPopup.showPopupNearElement(this); return false;" title="Show default charts settings">
+          <i class="icon-cog"></i>
+        </span>
+
       </div>
     </td>
   </tr>
 </table>
-
-
 
 <c:if test="${not empty performanceFailedTests}">
   <table id="perfTestFailed" cellspacing="0" class="testList dark sortable borderBottom" width="1000" style="margin: 10px 0">
@@ -344,6 +372,7 @@
         }
       }
     });
+    BS.Hider.hideDiv('deselectedMetrics');
   }
 </script>
 </div>

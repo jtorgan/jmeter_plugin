@@ -1,4 +1,4 @@
-package perf_statistic.server.remote_monitoring;
+package perf_statistic.server;
 
 import jetbrains.buildServer.controllers.BaseController;
 import jetbrains.buildServer.serverSide.CustomDataStorage;
@@ -16,15 +16,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
-public class RemotePerfMonController extends BaseController {
+public class PerformancePostChartController extends BaseController {
 
-	enum Type {
+	enum RequestType {
 		CHANGE_STATE,
-		LOG_VIEW,
 		SAVE_DESELECTED
 	}
 
-	public RemotePerfMonController(@NotNull final SBuildServer server, @NotNull final WebControllerManager manager) {
+	public PerformancePostChartController(@NotNull final SBuildServer server, @NotNull final WebControllerManager manager) {
 		super(server);
 		manager.registerController("/app/performance_test_analyzer/**", this);
 	}
@@ -36,7 +35,7 @@ public class RemotePerfMonController extends BaseController {
 		SBuildType buildType = myServer.getProjectManager().findBuildTypeByExternalId(buildTypeId);
 		if (buildType != null) {
 			String requestType = request.getParameter("reqtype");
-			if (requestType != null && requestType.equals(Type.SAVE_DESELECTED.name().toLowerCase())) {
+			if (requestType != null && requestType.equals(RequestType.SAVE_DESELECTED.name().toLowerCase())) {
 				updateDefaultDeselectedMetrics(buildType, request.getParameter("deselected").split(","));
 			} else {
 				String graphID = request.getParameter("graphId");
@@ -64,9 +63,11 @@ public class RemotePerfMonController extends BaseController {
 		for (PerformanceStatisticMetrics metric: PerformanceStatisticMetrics.values()) {
 			stateStorage.putValue(metric.getKey(), "false");
 		}
-		for (String series: deselectedSeries) {
-			stateStorage.putValue(series, "true");
+		if (deselectedSeries.length > 0 && !deselectedSeries[0].isEmpty()) {
+			for (String series: deselectedSeries) {
+				stateStorage.putValue(series, "true");
+			}
 		}
-		stateStorage.flush();
+        stateStorage.flush();
 	}
 }
