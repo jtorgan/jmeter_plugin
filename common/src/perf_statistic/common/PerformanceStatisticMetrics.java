@@ -50,6 +50,10 @@ public enum PerformanceStatisticMetrics {
 	public String getReferenceKey() {
 		return getKey() + "_reference";
 	}
+	public static PerformanceStatisticMetrics getMetricByReferenceKey(String key) {
+		key = key.substring(0, key.length() - 10);
+		return getMetricByKey(key);
+	}
 
 	public static PerformanceStatisticMetrics getMetricByKey(String key) {
 		for(PerformanceStatisticMetrics metric : PerformanceStatisticMetrics.values()) {

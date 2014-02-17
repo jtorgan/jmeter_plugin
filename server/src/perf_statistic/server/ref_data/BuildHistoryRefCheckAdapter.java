@@ -15,6 +15,8 @@ import java.math.BigDecimal;
 import java.util.*;
 
 public class BuildHistoryRefCheckAdapter extends BuildServerAdapter {
+	private static final String CHECK_REFERENCE_ACTIVITY_NAME_BUILD_HISTORY = "Check reference values calculated from BUILD HISTORY";
+
 	protected final BuildDataStorage myStorage;
 
 	public BuildHistoryRefCheckAdapter(@NotNull final BuildDataStorage storage, @NotNull final EventDispatcher<BuildServerListener> dispatcher) {
@@ -26,6 +28,7 @@ public class BuildHistoryRefCheckAdapter extends BuildServerAdapter {
 	public void beforeBuildFinish(@NotNull final SRunningBuild runningBuild) {
 		ParametersProvider parametersProvider = runningBuild.getParametersProvider();
 		if ("true".equals(parametersProvider.get(PluginConstants.PARAMS_REF_CHECK)) && "true".equals(parametersProvider.get(PluginConstants.PARAMS_REF_TYPE_BUILD_HISTORY))) {
+			runningBuild.addBuildMessage(DefaultMessagesInfo.createBlockStart(CHECK_REFERENCE_ACTIVITY_NAME_BUILD_HISTORY, DefaultMessagesInfo.BLOCK_TYPE_MODULE));
 			boolean[] referenceMetrics = new boolean[3];
 			referenceMetrics[2] = Boolean.parseBoolean(parametersProvider.get(PluginConstants.PARAMS_REF_METRIC_MAX));
 			referenceMetrics[0] = Boolean.parseBoolean(parametersProvider.get(PluginConstants.PARAMS_REF_METRIC_AVG));
@@ -39,6 +42,8 @@ public class BuildHistoryRefCheckAdapter extends BuildServerAdapter {
 			SBuildType buildType = runningBuild.getBuildType();
 			if (buildType != null) {
 				for (String key : currentValues.keySet()) {
+					if (currentValues.get(key) == null)
+						continue;
 //					init array
 					List<BigDecimal> values = historyValues.get(key);
 					if (values == null) {
@@ -69,6 +74,8 @@ public class BuildHistoryRefCheckAdapter extends BuildServerAdapter {
 			}
 			if (!historyValues.isEmpty()) {
 				for (String key : currentValues.keySet()) {
+					if (currentValues.get(key) == null)
+						continue;
 					PerformanceMessage message = currentValues.get(key);
 					List<BigDecimal> values = historyValues.get(key);
 
@@ -102,6 +109,7 @@ public class BuildHistoryRefCheckAdapter extends BuildServerAdapter {
 					}
 				}
 			}
+			runningBuild.addBuildMessage(DefaultMessagesInfo.createBlockEnd(CHECK_REFERENCE_ACTIVITY_NAME_BUILD_HISTORY, DefaultMessagesInfo.BLOCK_TYPE_MODULE));
 		}
 	}
 
@@ -125,11 +133,20 @@ public class BuildHistoryRefCheckAdapter extends BuildServerAdapter {
 			PerformanceMessage message = PerformanceMessageParser.getPerformanceTestingMessage(iterator.next().getText().trim());
 			if (message != null) {
 				PerformanceStatisticMetrics metric = PerformanceStatisticMetrics.getMetricByKey(message.getMetric());
-				 if (metric == PerformanceStatisticMetrics.AVERAGE && referenceMetrics[0]
+				 if (metric != null && metric == PerformanceStatisticMetrics.AVERAGE && referenceMetrics[0]
 						 || metric == PerformanceStatisticMetrics.LINE90 && referenceMetrics[1]
 						 || metric == PerformanceStatisticMetrics.MAX && referenceMetrics[2]){
 					 currentValues.put(buildTypeId + '_' + message.getMetric() + '_' + getAlias(message), message);
-				 }
+				 } else if (metric == null) {
+					metric = PerformanceStatisticMetrics.getMetricByReferenceKey(message.getMetric());
+					if (metric != null) {
+						if (metric == PerformanceStatisticMetrics.AVERAGE && referenceMetrics[0]
+								|| metric == PerformanceStatisticMetrics.LINE90 && referenceMetrics[1]
+								|| metric == PerformanceStatisticMetrics.MAX && referenceMetrics[2]){
+							currentValues.put(buildTypeId + '_' + metric.getKey() + '_' + getAlias(message), null);
+						}
+					}
+				}
 			}
 		}
 

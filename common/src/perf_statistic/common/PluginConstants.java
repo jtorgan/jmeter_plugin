@@ -57,7 +57,7 @@ public class PluginConstants {
 
 //	Log constants
 	public static final String PERFORMANCE_TESTS_ACTIVITY_NAME = "Performance tests statistic";
-	public static final String CHECK_REFERENCE_ACTIVITY_NAME = "Check reference values";
+	public static final String CHECK_REFERENCE_ACTIVITY_NAME = "Check reference values from FILE";
 
 
 }
