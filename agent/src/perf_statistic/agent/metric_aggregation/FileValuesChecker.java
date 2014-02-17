@@ -4,6 +4,7 @@ import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import perf_statistic.agent.common.BaseFileReader;
 import perf_statistic.agent.common.PerformanceLogger;
+import perf_statistic.agent.metric_aggregation.counting.TestAggregation;
 import perf_statistic.agent.metric_aggregation.counting.TestsGroupAggregation;
 import perf_statistic.agent.metric_aggregation.counting.TestsReport;
 import perf_statistic.common.*;
@@ -53,11 +54,16 @@ public class FileValuesChecker {
 				System.out.println("CHECK testname - " + testName);
 				System.out.println("CHECK group - " + testGroupName);
 
+				TestAggregation test = testGroup.getTest(testName);
+				if (test == null) {
+					System.out.println("Not found the test with name: " + fullTestName);
+					continue;
+				}
 				for (PerformanceStatisticMetrics metric : referenceTestValues.values.keySet()) {
 					System.out.println(metric.toString());
 					System.out.println(metric.toString());
 
-					double newValue = testGroup.getTest(testName).getAggregateValue(metric);
+					double newValue = test.getAggregateValue(metric);
 					Pair<Double, Double> testRefValues = referenceTestValues.values.get(metric);
 					logger.logMessage(testGroupName, testName, metric.getReferenceKey(), Math.round(testRefValues.first), null);
 					if (testRefValues != null && newValue > testRefValues.first * (1 + testRefValues.second)) {
