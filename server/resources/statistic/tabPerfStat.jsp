@@ -10,6 +10,7 @@
 <%--@elvariable id="performanceOKTests" type="java.util.Collection<perf_statistic.server.perf_tests.PerformanceTestRun>"--%>
 <%--@elvariable id="performanceFailedTests" type="java.util.Collection<perf_statistic.server.perf_tests.PerformanceTestRun>"--%>
 <%--@elvariable id="isShowResponseCodes" type="java.lang.Boolean"--%>
+<%--@elvariable id="isLogSaved" type="java.lang.Boolean"--%>
 
 <%--@elvariable id="allTestNames" type="java.util.Collection<java.lang.String>"--%>
 <%--@elvariable id="allTestGroups" type="java.util.Collection<java.lang.String>"--%>
@@ -248,7 +249,7 @@
 
     if (!$j.trim($j(tcChartContainer).html())) {
       //load TC charts: averages, response codes
-      BS.ajaxUpdater($j(tcChartContainer).get(0), "/buildGraph.html?jsp=${teamcityPluginResourcesPath}statistic/perfChartsTC.jsp&buildTypeId=${build.buildTypeExternalId}&buildId=${build.buildId}&chartKey=" + testChartKey + "&testName=" + testName + "&rescode=" + ${isShowResponseCodes}, {
+      BS.ajaxUpdater($j(tcChartContainer).get(0), "/buildGraph.html?jsp=${teamcityPluginResourcesPath}statistic/perfChartsTC.jsp&buildTypeId=${build.buildTypeExternalId}&buildId=${build.buildId}&chartKey=" + testChartKey + "&testName=" + testName + "&rescode=" + ${isShowResponseCodes} + "&isLogSaved=" + ${isLogSaved}, {
         method: "get",
         evalScripts: true
       });

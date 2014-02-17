@@ -6,16 +6,18 @@ import jetbrains.buildServer.log.Loggers;
 import jetbrains.buildServer.serverSide.SBuild;
 import jetbrains.buildServer.serverSide.SBuildServer;
 import jetbrains.buildServer.serverSide.STestRun;
+import jetbrains.buildServer.serverSide.artifacts.BuildArtifact;
+import jetbrains.buildServer.serverSide.artifacts.BuildArtifactsViewMode;
 import jetbrains.buildServer.serverSide.statistics.ValueProvider;
 import jetbrains.buildServer.serverSide.statistics.ValueProviderRegistry;
 import jetbrains.buildServer.serverSide.statistics.build.BuildDataStorage;
 import org.jetbrains.annotations.NotNull;
-import perf_statistic.common.StringUtils;
-import perf_statistic.server.perf_test_charts.types.PerformanceMetricCompositeVT;
-import perf_statistic.server.perf_test_charts.types.ResponseCodeCompositeVT;
 import perf_statistic.common.PerformanceMessageParser;
 import perf_statistic.common.PerformanceStatisticMetrics;
 import perf_statistic.common.PluginConstants;
+import perf_statistic.common.StringUtils;
+import perf_statistic.server.perf_test_charts.types.PerformanceMetricCompositeVT;
+import perf_statistic.server.perf_test_charts.types.ResponseCodeCompositeVT;
 
 import java.io.*;
 import java.util.*;
@@ -89,12 +91,23 @@ public class PerformanceTestProvider {
 
 		String logFileName =  build.getParametersProvider().get(PluginConstants.PARAMS_AGGREGATE_FILE);
 		if (logFileName != null) {
-			logTitles = myLogDataProvider.readLog(build.getArtifactsDirectory().getAbsolutePath() + File.separator + logFileName, testRun);
+			BuildArtifact artifact = build.getArtifacts(BuildArtifactsViewMode.VIEW_ALL).getArtifact(logFileName);
+			if (artifact != null && artifact.isFile()) {
+				logTitles = myLogDataProvider.readLog(build.getArtifactsDirectory().getAbsolutePath() + File.separator + logFileName, testRun);
+			}
 		}
 
 		return logTitles;
 	}
 
+	public boolean isLogAvailable(@NotNull SBuild build) {
+		String logFileName =  build.getParametersProvider().get(PluginConstants.PARAMS_AGGREGATE_FILE);
+		if (logFileName != null) {
+			BuildArtifact artifact = build.getArtifacts(BuildArtifactsViewMode.VIEW_ALL).getArtifact(logFileName);
+			return artifact != null && artifact.isFile();
+		}
+		return false;
+	}
 
 	private synchronized void updateTestList(@NotNull SBuild build) {
 		Comparator<PerformanceTestRun> comparator = new Comparator<PerformanceTestRun>() {
@@ -194,15 +207,15 @@ public class PerformanceTestProvider {
 					}
 				}
 			} catch (FileNotFoundException e) {
-				Loggers.STATS.error(PluginConstants.FEATURE_TYPE_REMOTE_MONITORING + " plugin error. File " + fileName + " not found!", e);
+				Loggers.STATS.error(PluginConstants.FEATURE_TYPE_AGGREGATION + " plugin error. File " + fileName + " not found!", e);
 			} catch (IOException e) {
-				Loggers.STATS.error(PluginConstants.FEATURE_TYPE_REMOTE_MONITORING + " plugin error. Error reading file " + fileName, e);
+				Loggers.STATS.error(PluginConstants.FEATURE_TYPE_AGGREGATION + " plugin error. Error reading file " + fileName, e);
 			} finally {
 				if (reader != null) {
 					try {
 						reader.close();
 					} catch (IOException e) {
-						Loggers.STATS.error(PluginConstants.FEATURE_TYPE_REMOTE_MONITORING + " plugin error. Error closing file " + fileName, e);
+						Loggers.STATS.error(PluginConstants.FEATURE_TYPE_AGGREGATION + " plugin error. Error closing file " + fileName, e);
 					}
 				}
 			}
@@ -211,7 +224,7 @@ public class PerformanceTestProvider {
 
 		private boolean checkItem(String[] values) {
 			if (values.length < 3) {
-				Loggers.STATS.error(PluginConstants.FEATURE_TYPE_REMOTE_MONITORING + " plugin error. \nItem: timestamp\tresultValue\tlabel \n Found: " + Arrays.toString(values));
+				Loggers.STATS.error(PluginConstants.FEATURE_TYPE_AGGREGATION + " plugin error. \nItem: timestamp\tresultValue\tlabel \n Found: " + Arrays.toString(values));
 				return false;
 			}
 			return (values[0].matches("\\d+") && values[1].matches("[0-9]*\\.?[0-9]*([Ee][+-]?[0-9]+)?"));

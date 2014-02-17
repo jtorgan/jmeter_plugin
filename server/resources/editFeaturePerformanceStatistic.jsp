@@ -105,35 +105,72 @@
   </td>
 </tr>
 
+
+
+<%--TODO:
+  1) add optionlly  for Min, Max, Avg, 90line
+  2) add ability to select both - from file (static values - limit for max value), and counting from build history (for example - average, 90 line)
+  3) redesign feature
+  4) merge UI for default settings
+  5) deploy defaul settings to buildserver
+--%>
+
 <tr class="reference_data" ${display}>
   <th><label>Get reference values from: <l:star/></label></th>
   <td>
-    <table>
+    <table width="100%">
       <tr>
         <td>
+          <%--Static values from FILE--%>
           <div>
-            <props:radioButtonProperty name="perfTest.ref.type" value="file"/>
-            <label for="perfTest.ref.type"> file </label>
-            <props:textProperty name="perfTest.ref.data" style="width: 20em"/>
-            <bs:vcsTree fieldId="perfTest.ref.data"/>
+            <props:checkboxProperty name="perfTest.ref.type.file"
+                                    onclick="perfAnalyzerChanged(this, 'fileProperties');"
+                                    checked="${propertiesBean.properties['perfTest.check.type.file'] == 'true'}"/>
+            <label for="perfTest.ref.type.file"> file </label>
           </div>
-          <div>
-            <span class="smallNote">The path to the reference file</span>
-            <span class="error" id="error_perfTest.ref.data"></span>
+
+          <c:set var="displayFile"><c:if test="${propertiesBean.properties['perfTest.check.type.file'] != 'true'}">style="display: none"</c:if></c:set>
+          <div class="fileProperties" ${displayFile}>
+            <div style="padding-top: 5px">
+              <props:textProperty name="perfTest.ref.data" style="width: 20em;"/>
+              <bs:vcsTree fieldId="perfTest.ref.data"/>
+                          <span class="smallNote">The path to the reference file.<br/>
+              Note: There is the static values. It overrides dynamic reference values counted form build history.</span>
+              <span class="error" id="error_perfTest.ref.data"></span>
+            </div>
           </div>
+          <script type="text/javascript">
+            perfAnalyzerChanged($('perfTest.ref.type.file'), 'fileProperties');
+          </script>
         </td>
       </tr>
       <tr>
         <td>
+          <%--Build history--%>
           <div>
-            <props:radioButtonProperty name="perfTest.ref.type" value="builds"/>
-            <label for="perfTest.ref.type"> builds </label>
-            <props:textProperty name="perfTest.ref.buildCount" style="width: 10em"/>
+            <props:checkboxProperty name="perfTest.ref.type.builds"
+                                    onclick="perfAnalyzerChanged(this, 'buildHistoryProperties');"
+                                    checked="${propertiesBean.properties['perfTest.check.type.builds'] == 'true'}"/>
+            <label for="perfTest.ref.type.builds"> build history </label>
           </div>
-          <div>
-            <span class="smallNote">Set count of last builds to calculate reference values</span>
-            <span class="error" id="error_perfTest.ref.buildCount"></span>
+          <c:set var="displayBuilds"><c:if test="${propertiesBean.properties['perfTest.check.type.builds'] != 'true'}">style="display: none"</c:if></c:set>
+          <div class="buildHistoryProperties" ${displayBuilds}>
+            <div style="padding-top: 5px;">
+              <props:textProperty name="perfTest.ref.buildCount" style="width: 10em"/>
+              <span class="smallNote">Set count of last builds to calculate reference values</span>
+              <span class="error" id="error_perfTest.ref.buildCount"></span>
+
+              <div>Count reference values for:</div>
+              <div style="margin-left: 10px">
+                <props:checkboxProperty name="perfTest.agg.ref.avg" style="margin-right: 5px"/><label for="perfTest.agg.ref.avg">Average</label> <br/>
+                <props:checkboxProperty name="perfTest.agg.ref.90line" style="margin-right: 5px"/><label for="perfTest.agg.ref.90line">90% line</label> <br/>
+                <props:checkboxProperty name="perfTest.agg.ref.max" style="margin-right: 5px"/><label for="perfTest.agg.ref.max">Max</label> <br/>
+              </div>
+            </div>
           </div>
+          <script type="text/javascript">
+            perfAnalyzerChanged($('perfTest.ref.type.builds'), 'buildHistoryProperties');
+          </script>
         </td>
       </tr>
     </table>

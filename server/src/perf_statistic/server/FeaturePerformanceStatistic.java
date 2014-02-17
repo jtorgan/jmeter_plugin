@@ -79,10 +79,10 @@ public class FeaturePerformanceStatistic extends BuildFeature {
 					invalidProperties.add(new InvalidProperty(PluginConstants.PARAMS_AGGREGATE_FILE, "File with data to aggregate can't be empty!"));
 				}
 				if (Boolean.parseBoolean(params.get(PluginConstants.PARAMS_REF_CHECK))) {
-					if ("builds".equals(params.get(PluginConstants.PARAMS_REF_TYPE)) && params.get(PluginConstants.PARAMS_REF_BUILD_COUNT) == null) {
+					if (Boolean.parseBoolean(params.get(PluginConstants.PARAMS_REF_TYPE_BUILD_HISTORY)) && params.get(PluginConstants.PARAMS_REF_BUILD_COUNT) == null) {
 						invalidProperties.add(new InvalidProperty(PluginConstants.PARAMS_REF_BUILD_COUNT, "Set count of build to calculate reference value!"));
 					}
-					if ("file".equals(params.get(PluginConstants.PARAMS_REF_TYPE)) && params.get(PluginConstants.PARAMS_REF_DATA_FILE) == null) {
+					if (Boolean.parseBoolean(params.get(PluginConstants.PARAMS_REF_TYPE_FILE)) && params.get(PluginConstants.PARAMS_REF_DATA_FILE) == null) {
 						invalidProperties.add(new InvalidProperty(PluginConstants.PARAMS_REF_DATA_FILE, "Set checkout file with references values!"));
 					}
 				}

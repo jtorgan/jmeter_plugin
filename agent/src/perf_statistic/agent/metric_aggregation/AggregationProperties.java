@@ -25,11 +25,15 @@ public class AggregationProperties {
 
 //  Check references values
 	private final boolean checkReferences;
-	private boolean isFileValues;
-
-	private int buildCount;
-	private String referencesDataFile;
 	private double variation;
+
+	private boolean isFileValues;
+	private String referencesDataFile;
+
+	private boolean isBuildHistoryValues;
+	private int buildCount;
+	private boolean[] refMetrics;
+
 
 	public AggregationProperties(@NotNull Map<String, String> params) {
 		aggregateFile = params.get(PluginConstants.PARAMS_AGGREGATE_FILE);
@@ -52,11 +56,17 @@ public class AggregationProperties {
 			String tmp = params.get(PluginConstants.PARAMS_VARIATION);
 			variation = tmp == null ? 0.05 : Double.parseDouble(tmp);
 
-			isFileValues = "file".equals(params.get(PluginConstants.PARAMS_REF_TYPE));
+			isFileValues = Boolean.parseBoolean(params.get(PluginConstants.PARAMS_REF_TYPE_FILE));
+			isBuildHistoryValues = Boolean.parseBoolean(params.get(PluginConstants.PARAMS_REF_TYPE_BUILD_HISTORY));
 			if (isFileValues) {
 				referencesDataFile = params.get(PluginConstants.PARAMS_REF_DATA_FILE);
-			} else {
+			}
+			if (isBuildHistoryValues) {
 				buildCount = Integer.parseInt(params.get(PluginConstants.PARAMS_REF_BUILD_COUNT));
+				refMetrics = new boolean[3];
+				refMetrics[0] = Boolean.parseBoolean(params.get(PluginConstants.PARAMS_REF_METRIC_AVG));
+				refMetrics[1] = Boolean.parseBoolean(params.get(PluginConstants.PARAMS_REF_METRIC_LINE90));
+				refMetrics[2] = Boolean.parseBoolean(params.get(PluginConstants.PARAMS_REF_METRIC_MAX));
 			}
 		}
 	}
@@ -113,8 +123,22 @@ public class AggregationProperties {
 		return isFileValues;
 	}
 
+	public boolean isBuildHistoryValues() {
+		return isBuildHistoryValues;
+	}
+
 	public int getBuildCount() {
 		return buildCount;
+	}
+
+	public boolean isCountMaxReference() {
+		return refMetrics[2];
+	}
+	public boolean isCountAverageReference() {
+		return refMetrics[0];
+	}
+	public boolean isCount90LineReference() {
+		return refMetrics[1];
 	}
 
 	public String getReferencesDataFile(String workingDir) {

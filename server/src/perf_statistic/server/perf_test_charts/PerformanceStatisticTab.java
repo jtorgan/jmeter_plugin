@@ -79,5 +79,6 @@ public class PerformanceStatisticTab extends SimpleCustomTab {
 		model.put("build", build);
 		model.put("statistic", build.getFullStatistics());
 		model.put("isShowResponseCodes", build.getParametersProvider().get(PluginConstants.PARAMS_HTTP_RESPONSE_CODE) == null ? false : build.getParametersProvider().get(PluginConstants.PARAMS_HTTP_RESPONSE_CODE));
+		model.put("isLogSaved", myPerformanceTestHolder.isLogAvailable(build));
 	}
 }

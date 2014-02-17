@@ -19,9 +19,18 @@ public class PluginConstants {
 	public static final String PARAMS_TEST_GROUPS = "perfTest.agg.testGroups";
 
 	public static final String PARAMS_REF_CHECK = "perfTest.check.ref.data";
-	public static final String PARAMS_REF_TYPE = "perfTest.ref.type";
-	public static final String PARAMS_REF_BUILD_COUNT = "perfTest.ref.buildCount";
+
+	public static final String PARAMS_REF_TYPE_FILE = "perfTest.ref.type.file";
 	public static final String PARAMS_REF_DATA_FILE = "perfTest.ref.data";
+
+	public static final String PARAMS_REF_TYPE_BUILD_HISTORY = "perfTest.ref.type.builds";
+	public static final String PARAMS_REF_BUILD_COUNT = "perfTest.ref.buildCount";
+	public static final String PARAMS_REF_METRIC_MAX = "perfTest.agg.ref.max";
+	public static final String PARAMS_REF_METRIC_AVG = "perfTest.agg.ref.avg";
+	public static final String PARAMS_REF_METRIC_LINE90 = "perfTest.agg.ref.90line";
+
+	public static final String PARAMS_REF_TYPE = "perfTest.ref.type";
+
 	public static final String PARAMS_VARIATION = "perfTest.ref.variation";
 
 	public static final String PARAMS_BUILD_STEP_TO_ANALYZE = "perfTest.buildStep";

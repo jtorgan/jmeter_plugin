@@ -20,7 +20,7 @@
     <stats:buildGraph id="ResponseCode_${param['chartKey']}" valueType="ResponseCode_${param['chartKey']}" height="170" width="1250" defaultFilter="showFailed" controllerUrl="buildGraph.html"/>
   </c:if>
 
-  <c:if test="${not fn:endsWith(param['testName'], 'Total')}">
+  <c:if test="${not fn:endsWith(param['testName'], 'Total') and param['isLogSaved']}">
     <div>
       <input type="hidden" name="testName" value="${param['testName']}"/>
 
