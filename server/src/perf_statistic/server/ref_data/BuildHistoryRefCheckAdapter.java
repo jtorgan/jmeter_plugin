@@ -50,6 +50,7 @@ public class BuildHistoryRefCheckAdapter extends BuildServerAdapter {
 						values = new SortedList<BigDecimal>(new Comparator<BigDecimal>() {
 							@Override
 							public int compare(BigDecimal o1, BigDecimal o2) {
+								if (o1 == null) return -1;
 								return o1.compareTo(o2);
 							}
 						});
@@ -78,6 +79,9 @@ public class BuildHistoryRefCheckAdapter extends BuildServerAdapter {
 						continue;
 					PerformanceMessage message = currentValues.get(key);
 					List<BigDecimal> values = historyValues.get(key);
+
+					if (values.isEmpty())
+						continue;
 
 					int count = 0;
 					double sum = 0;
