@@ -73,6 +73,16 @@ public enum PerformanceStatisticMetrics {
 		return StringUtil.EMPTY;
 	}
 
+	public static String getNonReferenceTitleByKey(String key) {
+		boolean isReferenceMetric = key.indexOf("_reference") != -1;
+		String searchKey = isReferenceMetric ? key.split("_")[0] : key;
+		PerformanceStatisticMetrics metric = getMetricByKey(searchKey);
+		if (metric != null) {
+			return metric.getTitle();
+		}
+		return StringUtil.EMPTY;
+	}
+
 	public static boolean isReferenceKey(String key) {
 		return key.indexOf("_reference") != -1;
 	}
