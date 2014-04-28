@@ -30,6 +30,12 @@ public class PerformanceLogger {
 	public void logMessage(final String testGroup, final String testName, final String metricName, final long value, final String code, final boolean warning) {
 		String message = PerformanceMessageParser.createJMeterMessage(testGroup, testName, metricName, value, code, warning);
 		logger.logMessage(DefaultMessagesInfo.createTextMessage(message));
+		if (warning)
+			logger.warning("Exceed variation:" + testGroup + " " + testName + "; metric = " + metricName);
+	}
+
+	public void logWarningBuildStatus() {
+		logger.logMessage(DefaultMessagesInfo.createTextMessage("##teamcity[buildStatus text='{build.status.text}; Warning: exceed non-critical variation!']"));
 	}
 
 	public void logBuildProblem(final String metric, final String testName, final String type, final String description) {

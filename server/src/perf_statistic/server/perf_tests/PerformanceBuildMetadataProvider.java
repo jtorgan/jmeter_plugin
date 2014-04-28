@@ -67,8 +67,8 @@ public class PerformanceBuildMetadataProvider implements BuildMetadataProvider {
 					if (warning) {
 						String key = !testsGroup.isEmpty() ? testsGroup + " : " + testName : testName;
 						String warn = warnings.get(key);
-						String msg = "Exceed variation: metric - " + metricValue + "; value  - " + value;
-						warnings.put(key, warn == null ? msg : warn + "\n" + msg);
+						String msg = "Exceed variation: metric - " + PerformanceStatisticMetrics.getTitleByKey(metricValue) + "; value  - " + value;
+						warnings.put(key, warn == null ? msg : warn + "<br/>" + msg);
 					}
 
 					String alias;

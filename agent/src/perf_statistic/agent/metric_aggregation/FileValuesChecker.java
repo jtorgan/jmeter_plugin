@@ -17,6 +17,8 @@ import java.util.Map;
 
 public class FileValuesChecker {
 	private Map<String, ReferenceTestValues> referenceData;
+	public volatile boolean isWarning;
+	public volatile boolean isFailed;
 
 	public FileValuesChecker(@NotNull PerformanceLogger logger, String refFile, double criticalVariation, double variation) throws BaseFileReader.FileFormatException {
 			referenceData = new HashMap<String, ReferenceTestValues>();
@@ -55,6 +57,7 @@ public class FileValuesChecker {
 								+ "; variation: " + testRefValues.getCriticalVariation();
 						logger.logBuildProblem(metric.getKey(), fullTestName, PluginConstants.CRITICAL_PERFORMANCE_PROBLEM_TYPE, errorMsg);
 					}
+
 				}
 			} else {
 				System.out.println("CHECK testname - " + testName);
@@ -78,12 +81,15 @@ public class FileValuesChecker {
 					logger.logMessage(testGroupName, testName, metric.getReferenceKey(), Math.round(testRefValues.getReferenceValue()), null, exceedCriticalVariation || exceedVariation);
 
 					if (exceedCriticalVariation) {
+						isFailed = true;
 						String errorMsg = "Metric - " + metric.getTitle() + "; test - " + fullTestName
 								+ "; \nreference value: " + Math.round(testRefValues.getReferenceValue())
 								+ "; current value: " + Math.round(newValue)
 								+ "; variation: " + testRefValues.getCriticalVariation();
 						logger.logBuildProblem(metric.getKey(), fullTestName, PluginConstants.CRITICAL_PERFORMANCE_PROBLEM_TYPE, errorMsg);
 					}
+					if (exceedVariation)
+						isWarning = true;
 				}
 			}
 

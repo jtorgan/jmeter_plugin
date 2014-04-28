@@ -53,6 +53,9 @@ public class AggregationAgentAdapter extends AgentLifeCycleAdapter {
 								properties.getReferencesDataFile(build.getCheckoutDirectory().getAbsolutePath()),
 								properties.getCriticalVariation(), properties.getVariation());
 						checker.checkValues(logger, reader.myReport);
+
+						if (checker.isWarning && !checker.isFailed)
+							logger.logWarningBuildStatus();
 					} catch (BaseFileReader.FileFormatException e) {
 						logger.logBuildProblem(BuildProblemTypes.TC_ERROR_MESSAGE_TYPE, "FileFormatException", e.getMessage());
 					}
