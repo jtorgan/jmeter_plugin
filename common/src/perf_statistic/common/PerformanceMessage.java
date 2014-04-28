@@ -12,6 +12,9 @@ public class PerformanceMessage {
 	private String codeLabel;
 	private boolean warning;
 
+	private String currValue;
+	private String variation;
+
 	private String testsGroupName;
 
 	@NotNull
@@ -60,5 +63,21 @@ public class PerformanceMessage {
 	}
 	public void setWarning(boolean warning) {
 		this.warning = warning;
+	}
+
+	public String getCurrValue() {
+		return currValue;
+	}
+
+	public void setCurrValue(String currValue) {
+		this.currValue = currValue;
+	}
+
+	public String getVariation() {
+		return variation;
+	}
+
+	public void setVariation(String variation) {
+		this.variation = variation;
 	}
 }

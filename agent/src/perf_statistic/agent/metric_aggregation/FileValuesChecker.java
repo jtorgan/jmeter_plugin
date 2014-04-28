@@ -29,14 +29,12 @@ public class FileValuesChecker {
 	}
 
 	public void checkValues(@NotNull PerformanceLogger logger, TestsReport report) {
-		System.out.println("------------CHECK REFERENCE------------");
+//		System.out.println("------------CHECK REFERENCE------------");
 		for (String fullTestName : referenceData.keySet()) {
-			System.out.println("fullTestName = " + fullTestName);
 
 			String[] testNameParts = fullTestName.split(":");
 			String testGroupName = testNameParts.length >= 2 ? testNameParts[0].trim() : StringUtils.EMPTY;
 			String testName = testNameParts.length >= 2 ? testNameParts[1].trim() : fullTestName.trim();
-			System.out.println("testName = " + testName);
 
 			TestsGroupAggregation testGroup = report.getTestGroup(testGroupName);
 			ReferenceTestValues referenceTestValues = referenceData.get(fullTestName);
@@ -60,8 +58,8 @@ public class FileValuesChecker {
 
 				}
 			} else {
-				System.out.println("CHECK testname - " + testName);
-				System.out.println("CHECK group - " + testGroupName);
+//				System.out.println("CHECK testname - " + testName);
+//				System.out.println("CHECK group - " + testGroupName);
 
 				TestAggregation test = testGroup.getTest(testName);
 				if (test == null) {
@@ -69,16 +67,17 @@ public class FileValuesChecker {
 					continue;
 				}
 				for (PerformanceStatisticMetrics metric : referenceTestValues.values.keySet()) {
-					System.out.println(metric.toString());
-					System.out.println(metric.toString());
+
 
 					double newValue = test.getAggregateValue(metric);
 					ReferenceChecker testRefValues = referenceTestValues.values.get(metric);
 
+//					System.out.println(metric.toString());
+//					System.out.println(testRefValues);
+
 					boolean exceedVariation = testRefValues != null && testRefValues.getVariation() != Double.NEGATIVE_INFINITY && newValue > testRefValues.getReferenceValue() * (1 + testRefValues.getVariation());
 					boolean exceedCriticalVariation = testRefValues != null && newValue > testRefValues.getReferenceValue() * (1 + testRefValues.getCriticalVariation());
 
-					logger.logMessage(testGroupName, testName, metric.getReferenceKey(), Math.round(testRefValues.getReferenceValue()), null, exceedCriticalVariation || exceedVariation);
 
 					if (exceedCriticalVariation) {
 						isFailed = true;
@@ -88,8 +87,14 @@ public class FileValuesChecker {
 								+ "; variation: " + testRefValues.getCriticalVariation();
 						logger.logBuildProblem(metric.getKey(), fullTestName, PluginConstants.CRITICAL_PERFORMANCE_PROBLEM_TYPE, errorMsg);
 					}
-					if (exceedVariation)
+
+					if (exceedVariation)  {
+						logger.logWarningMessage(testGroupName, testName, metric.getReferenceKey(), Math.round(testRefValues.getReferenceValue()),
+								null, Math.round(newValue), testRefValues.variation);
 						isWarning = true;
+					} else {
+						logger.logMessage(testGroupName, testName, metric.getReferenceKey(), Math.round(testRefValues.getReferenceValue()), null, false);
+					}
 				}
 			}
 
@@ -118,8 +123,6 @@ public class FileValuesChecker {
 			double criticalVariation = referenceItem.length > 3 && referenceItem[3] != null ? Double.parseDouble(referenceItem[3]) : baseCriticalVariation;
 
 			double variation = referenceItem.length > 4 && referenceItem[4] != null ? Double.parseDouble(referenceItem[4]) : baseVariation;
-
-//			myLogger.logMessage(metric.getReferenceKey(), Math.round(referenceValue), testID);
 
 			if (referenceData.get(testID) == null) {
 				referenceData.put(testID, new ReferenceTestValues());
@@ -161,6 +164,11 @@ public class FileValuesChecker {
 
 		public double getCriticalVariation() {
 			return criticalVariation;
+		}
+
+		@Override
+		public String toString() {
+			return "critical = " + criticalVariation + "; variation = " + variation + "; ref val =" + referenceValue;
 		}
 	}
 }
