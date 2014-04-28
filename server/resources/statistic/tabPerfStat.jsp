@@ -248,8 +248,13 @@
         <td class="nameT test-collapse"> ${successTest.testName} </td>
         <td class="test-collapse">${successTest.testsGroupName}</td>
         <td class="test-status"><tt:testStatus testRun="${successTest.testRun}"/></td>
-        <td class="test-collapse">${successTest.performanceStatus}</td>
-        <td class="test-collapse"></td>
+        <td class="test-collapse">
+          <span
+                  <c:if test="${successTest.performanceStatus == 'DECLINE'}"> style="font-weight: bolder" </c:if>
+                  > ${successTest.performanceStatus} </span>
+
+        </td>
+        <td class="test-collapse"><span style="color: #a97605">${successTest.warning}</span></td>
       </tr>
       <tr class="chart-content" id="performance${successTest.ID}Chart">
         <td colspan="5" style="padding: 0 !important;" class="chartPerfTestContainer">

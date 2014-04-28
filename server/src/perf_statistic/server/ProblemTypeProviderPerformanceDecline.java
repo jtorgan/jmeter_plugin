@@ -11,18 +11,18 @@ public class ProblemTypeProviderPerformanceDecline extends BaseBuildProblemTypeD
 
 	@Nullable
 	public String getStatusText(@NotNull final BuildProblemData buildProblem, @NotNull final SBuild build) {
-		return PluginConstants.BAD_PERFORMANCE_PROBLEM_TYPE;
+		return PluginConstants.CRITICAL_PERFORMANCE_PROBLEM_TYPE;
 	}
 
 	@NotNull
 	@Override
 	public String getType() {
-		return PluginConstants.BAD_PERFORMANCE_PROBLEM_TYPE;
+		return PluginConstants.CRITICAL_PERFORMANCE_PROBLEM_TYPE;
 	}
 
 	@Nullable
 	@Override
 	public String getTypeDescription() {
-		return PluginConstants.BAD_PERFORMANCE_PROBLEM_TYPE;
+		return PluginConstants.CRITICAL_PERFORMANCE_PROBLEM_TYPE;
 	}
 }

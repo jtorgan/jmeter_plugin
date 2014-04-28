@@ -12,9 +12,8 @@
     <bean id="performanceTestFailProblemType" class="perf_statistic.server.ProblemTypeProviderPerformanceTestFailed"/>
     <bean id="performanceDeclineProblemType" class="perf_statistic.server.ProblemTypeProviderPerformanceDecline"/>
 
-    <bean id="performanceStatisticPublisher" class="perf_statistic.server.perf_tests.PerformanceStatisticsPublisher">
+    <bean id="performanceMetaData" class="perf_statistic.server.perf_tests.PerformanceBuildMetadataProvider">
         <constructor-arg index="0" ref="BuildDataStorage"/>
-        <constructor-arg index="1" ref="valueProviderRegistry"/>
     </bean>
 
     <!-- VIEW RESULTS: Performance statistic tab -->

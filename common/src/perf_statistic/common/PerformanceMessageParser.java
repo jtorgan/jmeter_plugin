@@ -13,6 +13,7 @@ public class PerformanceMessageParser {
 	private static final String MESSAGE_KEY_CODE_LABEL = "code=";
 	private static final String MESSAGE_KEY_VALUE = "value=";
 	private static final String MESSAGE_KEY_TESTS_GROUP_NAME = "testsGroup=";
+	private static final String MESSAGE_KEY_TEST_WARNING = "warning=";
 
 
 	public static PerformanceMessage getPerformanceTestingMessage(String message) {
@@ -39,13 +40,16 @@ public class PerformanceMessageParser {
 				if (attribute.startsWith(MESSAGE_KEY_TESTS_GROUP_NAME)) {
 					perfTestMessage.setTestsGroupName(attribute.substring(11));
 				}
+				if (attribute.startsWith(MESSAGE_KEY_TEST_WARNING)) {
+					perfTestMessage.setWarning(Boolean.parseBoolean(attribute.substring(8)));
+				}
 			}
 			return perfTestMessage;
 		}
 		return null;
 	}
 
-	public static String createJMeterMessage(final String testGroup, final String testName, final String metric, final long value, final String code) {
+	public static String createJMeterMessage(final String testGroup, final String testName, final String metric, final long value, final String code, final boolean warning) {
 		StringBuilder message = new StringBuilder(MESSAGE_START);
 		if (testGroup != null && !testGroup.isEmpty()) {
 			message.append(MESSAGE_KEY_TESTS_GROUP_NAME).append(testGroup).append(DELIMITER);
@@ -54,9 +58,11 @@ public class PerformanceMessageParser {
 				.append(MESSAGE_KEY_METRIC).append(metric).append(DELIMITER);
 		if (code != null && !code.isEmpty()) {
 			message.append(MESSAGE_KEY_CODE_LABEL).append(code).append(DELIMITER);
-
 		}
+
+		message.append(MESSAGE_KEY_TEST_WARNING).append(warning).append(DELIMITER);
 		message.append(MESSAGE_KEY_VALUE).append(value).append(MESSAGE_END);
+
 		return message.toString();
 	}
 }

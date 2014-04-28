@@ -72,4 +72,8 @@ public enum PerformanceStatisticMetrics {
 		}
 		return StringUtil.EMPTY;
 	}
+
+	public static boolean isReferenceKey(String key) {
+		return key.indexOf("_reference") != -1;
+	}
 }

@@ -130,7 +130,7 @@ public class PerformanceTestProvider {
 
 		Map<String, List<BuildProblemData>> problems = new HashMap<String, List<BuildProblemData>>();
 		for(BuildProblemData buildProblem : build.getFailureReasons()) {
-			if (PluginConstants.BAD_PERFORMANCE_PROBLEM_TYPE.equals(buildProblem.getType())) {
+			if (PluginConstants.CRITICAL_PERFORMANCE_PROBLEM_TYPE.equals(buildProblem.getType())) {
 				String fullTestName = buildProblem.getAdditionalData().trim();
 				List<BuildProblemData> buildProblemDataList = problems.get(fullTestName);
 				if (buildProblemDataList == null) {

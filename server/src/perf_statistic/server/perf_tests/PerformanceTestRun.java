@@ -12,13 +12,14 @@ public class PerformanceTestRun implements Comparable<PerformanceTestRun> {
 	private static final Pattern non_word_pattern = Pattern.compile("\\W");
 
 	enum PerformanceStatus {
-		OK, Decline
+		OK, CRITICAL_DECLINE, DECLINE
 	}
 	private final STestRun myTest;
 	private final String myChartKey;
 	private final String myTestName;
 	private final String myGroupName;
 
+	private String myWarning = "";
 	private List<BuildProblemData> myPerformanceProblems;
 
 	private List<List<Long>> mySRTValues;
@@ -62,7 +63,11 @@ public class PerformanceTestRun implements Comparable<PerformanceTestRun> {
 	}
 
 	public String getPerformanceStatus() {
-		return myPerformanceProblems != null ? PerformanceStatus.Decline.toString() : PerformanceStatus.OK.toString();
+		if (myPerformanceProblems != null && !myPerformanceProblems.isEmpty())
+			return PerformanceStatus.CRITICAL_DECLINE.toString();
+		if (!myWarning.isEmpty())
+			return PerformanceStatus.DECLINE.toString();
+		return PerformanceStatus.OK.toString();
 	}
 
 	public Collection<BuildProblemData> getPerformanceProblems() {
@@ -75,6 +80,13 @@ public class PerformanceTestRun implements Comparable<PerformanceTestRun> {
 		myPerformanceProblems = performanceProblems;
 	}
 
+	public String getWarning() {
+		return myWarning;
+	}
+
+	public void setWarning(String warning) {
+		myWarning = warning;
+	}
 
 	public List<List<Long>> getSRTValues() {
 		return mySRTValues;

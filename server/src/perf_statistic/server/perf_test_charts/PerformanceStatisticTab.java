@@ -4,6 +4,8 @@ import jetbrains.buildServer.controllers.BuildDataExtensionUtil;
 import jetbrains.buildServer.parameters.ParametersProvider;
 import jetbrains.buildServer.serverSide.SBuild;
 import jetbrains.buildServer.serverSide.SBuildServer;
+import jetbrains.buildServer.serverSide.metadata.BuildMetadataEntry;
+import jetbrains.buildServer.serverSide.metadata.MetadataStorage;
 import jetbrains.buildServer.serverSide.statistics.ValueProviderRegistry;
 import jetbrains.buildServer.serverSide.statistics.build.BuildDataStorage;
 import jetbrains.buildServer.web.openapi.PagePlaces;
@@ -14,8 +16,12 @@ import jetbrains.buildServer.web.statistics.graph.BuildGraphHelper;
 import org.jetbrains.annotations.NotNull;
 import perf_statistic.common.PluginConstants;
 import perf_statistic.server.perf_tests.PerformanceTestProvider;
+import perf_statistic.server.perf_tests.PerformanceTestRun;
+import perf_statistic.server.perf_tests.PerformanceBuildMetadataProvider;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 
 public class PerformanceStatisticTab extends SimpleCustomTab {
@@ -26,18 +32,21 @@ public class PerformanceStatisticTab extends SimpleCustomTab {
 	private final ValueProviderRegistry myRegistry;
 	private final SBuildServer myServer;
 	private final BuildDataStorage myStorage;
+	private final MetadataStorage myMetadataStorage;
+
 
 	private final PerformanceTestProvider myPerformanceTestHolder;
 
 	public PerformanceStatisticTab(@NotNull final PagePlaces pagePlaces, @NotNull final SBuildServer server, final BuildDataStorage storage,
 	                               @NotNull final ValueProviderRegistry valueProviderRegistry, @NotNull final BuildGraphHelper buildGraphHelper,
-	                               @NotNull final PerformanceTestProvider testHolder, @NotNull final PluginDescriptor descriptor) {
+	                               @NotNull final PerformanceTestProvider testHolder, @NotNull final PluginDescriptor descriptor, @NotNull MetadataStorage metadataStorage) {
 		super(pagePlaces, PlaceId.BUILD_RESULTS_TAB, "performanceTests",  descriptor.getPluginResourcesPath(resourceURL), "Performance Statistics");
 		myServer = server;
 		myRegistry = valueProviderRegistry;
 		myStorage = storage;
 		myGraphHelper = buildGraphHelper;
 		myPerformanceTestHolder = testHolder;
+		myMetadataStorage = metadataStorage;
 
 		addCssFile("/css/buildGraph.css");
 
@@ -69,12 +78,29 @@ public class PerformanceStatisticTab extends SimpleCustomTab {
 		SBuild build = BuildDataExtensionUtil.retrieveBuild(request, myServer);
 		model.put("deselectedSeries", build.getBuildType().getCustomDataStorage(PluginConstants.STORAGE_ID_DEFAULT_DESELECTED_SERIES).getValues());
 
-		model.put("performanceOKTests", myPerformanceTestHolder.getSuccessTestRuns(build));
+
+		Collection<PerformanceTestRun> successTests = myPerformanceTestHolder.getSuccessTestRuns(build);
+
+		for (Iterator<BuildMetadataEntry> it = myMetadataStorage.getBuildEntry(build.getBuildId(), PerformanceBuildMetadataProvider.PERFORMANCE_META_DATA_PROVIDER_ID); it.hasNext();)  {
+			BuildMetadataEntry entry = it.next();
+			if (PerformanceBuildMetadataProvider.KEY_META_DATA_WARNINGS.equals(entry.getKey())) {
+				Map<String, String> warnings = entry.getMetadata();
+				if (!warnings.isEmpty()) {
+					for (PerformanceTestRun test : successTests) {
+						String testID = test.getFullName();
+						if (warnings.containsKey(testID)) {
+							test.setWarning(warnings.get(testID));
+						}
+					}
+				}
+			}
+		}
+
+		model.put("performanceOKTests", successTests);
 		model.put("performanceFailedTests", myPerformanceTestHolder.getFailedTestRuns(build));
 
 		model.put("allTestNames", myPerformanceTestHolder.getAllTestNames(build));
 		model.put("allTestGroups", myPerformanceTestHolder.getAllThreadGroups(build));
-
 
 		model.put("build", build);
 		model.put("statistic", build.getFullStatistics());

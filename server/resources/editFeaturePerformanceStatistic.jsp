@@ -105,8 +105,6 @@
   </td>
 </tr>
 
-
-
 <%--TODO:
   1) add optionlly  for Min, Max, Avg, 90line
   2) add ability to select both - from file (static values - limit for max value), and counting from build history (for example - average, 90 line)
@@ -177,13 +175,23 @@
   </td>
 </tr>
 
+
 <tr class="reference_data" ${display}>
-  <th><label for="perfTest.ref.variation">Variation:</label></th>
+  <th><label for="perfTest.ref.warn.variation">Variation (warning):</label></th>
+  <td>
+    <props:textProperty name="perfTest.ref.warn.variation"/>
+    <span class="smallNote">Default: none</span>
+  </td>
+</tr>
+
+<tr class="reference_data" ${display}>
+  <th><label for="perfTest.ref.variation">Critical variation (fail build):</label></th>
   <td>
     <props:textProperty name="perfTest.ref.variation"/>
     <span class="smallNote">Default: 0.05</span>
   </td>
 </tr>
+
 
 <script type="text/javascript">
   perfAnalyzerChanged($('perfTest.check.ref.data'), 'reference_data');

@@ -10,6 +10,7 @@ public class PerformanceMessage {
 	private String value;
 	private String testName;
 	private String codeLabel;
+	private boolean warning;
 
 	private String testsGroupName;
 
@@ -37,6 +38,10 @@ public class PerformanceMessage {
 		return codeLabel == null ? EMPTY : codeLabel;
 	}
 
+	public boolean isWarning() {
+		return warning;
+	}
+
 	//	PerformanceMessageParser only can set values
 	void setMetric(String metric) {
 		this.metric = metric;
@@ -53,5 +58,7 @@ public class PerformanceMessage {
 	public void setCodeLabel(String label) {
 		this.codeLabel = label;
 	}
-
+	public void setWarning(boolean warning) {
+		this.warning = warning;
+	}
 }

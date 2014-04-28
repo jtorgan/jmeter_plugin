@@ -25,6 +25,7 @@ public class AggregationProperties {
 
 //  Check references values
 	private final boolean checkReferences;
+	private double criticalVariation;
 	private double variation;
 
 	private boolean isFileValues;
@@ -53,8 +54,10 @@ public class AggregationProperties {
 
 		checkReferences = Boolean.parseBoolean(params.get(PluginConstants.PARAMS_REF_CHECK));
 		if (checkReferences) {
-			String tmp = params.get(PluginConstants.PARAMS_VARIATION);
-			variation = tmp == null ? 0.05 : Double.parseDouble(tmp);
+			String tmp = params.get(PluginConstants.PARAMS_VARIATION_CRITICAL);
+			criticalVariation = tmp == null ? 0.05 : Double.parseDouble(tmp);
+			tmp = params.get(PluginConstants.PARAMS_VARIATION_WARN);
+			variation = tmp == null ? Double.NEGATIVE_INFINITY : Double.parseDouble(tmp);
 
 			isFileValues = Boolean.parseBoolean(params.get(PluginConstants.PARAMS_REF_TYPE_FILE));
 			isBuildHistoryValues = Boolean.parseBoolean(params.get(PluginConstants.PARAMS_REF_TYPE_BUILD_HISTORY));
@@ -146,6 +149,10 @@ public class AggregationProperties {
 			throw new IllegalArgumentException("File with references values must not be null!");
 		}
 		return workingDir + File.separator + referencesDataFile;
+	}
+
+	public double getCriticalVariation() {
+		return criticalVariation;
 	}
 
 	public double getVariation() {

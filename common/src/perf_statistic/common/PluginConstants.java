@@ -31,7 +31,8 @@ public class PluginConstants {
 
 	public static final String PARAMS_REF_TYPE = "perfTest.ref.type";
 
-	public static final String PARAMS_VARIATION = "perfTest.ref.variation";
+	public static final String PARAMS_VARIATION_CRITICAL = "perfTest.ref.variation";
+	public static final String PARAMS_VARIATION_WARN = "perfTest.ref.warn.variation";
 
 	public static final String PARAMS_BUILD_STEP_TO_ANALYZE = "perfTest.buildStep";
 	public static final String PARAMS_REMOTE_PERF_MON_HOST = "perfTest.mon.host";
@@ -43,13 +44,16 @@ public class PluginConstants {
 	public static final String MONITORING_RESULT_FILE = "monitoring.csv";
 
 	//	build problem type
-	public static final String BAD_PERFORMANCE_PROBLEM_TYPE = "Performance worsened";
+	public static final String CRITICAL_PERFORMANCE_PROBLEM_TYPE = "Performance worsened (critical)";
+	public static final String WARN_PERFORMANCE_PROBLEM_TYPE = "Performance worsened";
 	public static final String ASSERTION_FAILED_PROBLEM_TYPE = "Assertion failed";
 
 	//	custom build type storage constants
 	public static final String STORAGE_ID_COMMON_JMETER = "teamcity.jmeter.statistic";
 	public static final String STORAGE_ID_TEST_ALIAS = "teamcity.jmeter.sample.keys";
 	public static final String STORAGE_ID_DEFAULT_DESELECTED_SERIES = "teamcity.jmeter.default.deselected.series";
+	public static final String STORAGE_ID_WARNINGS = "teamcity.jmeter.build.warnings";
+
 
 	public static final String STORAGE_KEY_METRIC = "Metrics";
 	public static final String STORAGE_KEY_SAMPLES = "Samples";

@@ -34,7 +34,9 @@ public class BuildHistoryRefCheckAdapter extends BuildServerAdapter {
 			referenceMetrics[0] = Boolean.parseBoolean(parametersProvider.get(PluginConstants.PARAMS_REF_METRIC_AVG));
 			referenceMetrics[1] = Boolean.parseBoolean(parametersProvider.get(PluginConstants.PARAMS_REF_METRIC_LINE90));
 
-			Double variation = parametersProvider.get(PluginConstants.PARAMS_VARIATION) == null ? 0.15 : Double.parseDouble(parametersProvider.get(PluginConstants.PARAMS_VARIATION));
+			Double criticalVariation = parametersProvider.get(PluginConstants.PARAMS_VARIATION_CRITICAL) == null ? 0.15 : Double.parseDouble(parametersProvider.get(PluginConstants.PARAMS_VARIATION_CRITICAL));
+			Double variation = parametersProvider.get(PluginConstants.PARAMS_VARIATION_WARN) == null ? Double.NEGATIVE_INFINITY : Double.parseDouble(parametersProvider.get(PluginConstants.PARAMS_VARIATION_WARN));
+
 			Map<String, PerformanceMessage> currentValues = getServiceMessagesToCompareReferenceValues(runningBuild, referenceMetrics);
 
 //		    calculate ref values form history build
@@ -96,19 +98,24 @@ public class BuildHistoryRefCheckAdapter extends BuildServerAdapter {
 					}
 
 					long average = Math.round(sum / count);
+					long actual = Long.parseLong(message.getValue());
+
+					boolean exceedVariation = variation != Double.NEGATIVE_INFINITY && actual > average * (1 + variation);
+					boolean exceedCriticalVariation = actual > average * (1 + criticalVariation);
+
 					String refMsg = PerformanceMessageParser.createJMeterMessage(message.getTestsGroupName(), message.getTestName(),
-							PerformanceStatisticMetrics.getMetricByKey(message.getMetric()).getReferenceKey(), average, null);
+							PerformanceStatisticMetrics.getMetricByKey(message.getMetric()).getReferenceKey(), average, null, exceedCriticalVariation || exceedVariation);
 					runningBuild.addBuildMessage(DefaultMessagesInfo.createTextMessage(refMsg));
 
-					long actual = Long.parseLong(message.getValue());
-					if (actual > average * (variation + 1)) {
+
+					if (exceedCriticalVariation) {
 						String fullName = message.getTestsGroupName().isEmpty() ? message.getTestName() : message.getTestsGroupName() + ": " + message.getTestName();
 						String description = "Metric - " + message.getMetric() + "; test - " + fullName
 								+ "; \nreference value: " + Math.round(average)
 								+ "; current value: " + Math.round(actual)
-								+ "; variation: " + variation;
+								+ "; variation: " + criticalVariation;
 						BuildProblemData buildProblem = BuildProblemData.createBuildProblem(StringUtils.getBuildProblemId(message.getMetric(), fullName),
-								PluginConstants.BAD_PERFORMANCE_PROBLEM_TYPE, description, fullName);
+								PluginConstants.CRITICAL_PERFORMANCE_PROBLEM_TYPE, description, fullName);
 						runningBuild.addBuildProblem(buildProblem);
 					}
 				}

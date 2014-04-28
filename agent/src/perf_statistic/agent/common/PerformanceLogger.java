@@ -27,8 +27,8 @@ public class PerformanceLogger {
 		logger.logMessage(DefaultMessagesInfo.createTextMessage(message));
 	}
 
-	public void logMessage(final String testGroup, final String testName, final String metricName, final long value, final String code) {
-		String message = PerformanceMessageParser.createJMeterMessage(testGroup, testName, metricName, value, code);
+	public void logMessage(final String testGroup, final String testName, final String metricName, final long value, final String code, final boolean warning) {
+		String message = PerformanceMessageParser.createJMeterMessage(testGroup, testName, metricName, value, code, warning);
 		logger.logMessage(DefaultMessagesInfo.createTextMessage(message));
 	}
 

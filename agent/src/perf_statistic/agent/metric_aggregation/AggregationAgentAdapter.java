@@ -51,7 +51,7 @@ public class AggregationAgentAdapter extends AgentLifeCycleAdapter {
 					try {
 						checker = new FileValuesChecker(logger,
 								properties.getReferencesDataFile(build.getCheckoutDirectory().getAbsolutePath()),
-								properties.getVariation());
+								properties.getCriticalVariation(), properties.getVariation());
 						checker.checkValues(logger, reader.myReport);
 					} catch (BaseFileReader.FileFormatException e) {
 						logger.logBuildProblem(BuildProblemTypes.TC_ERROR_MESSAGE_TYPE, "FileFormatException", e.getMessage());
@@ -65,7 +65,8 @@ public class AggregationAgentAdapter extends AgentLifeCycleAdapter {
 					build.addSharedConfigParameter(PluginConstants.PARAMS_REF_METRIC_AVG, String.valueOf(properties.isCountAverageReference()));
 					build.addSharedConfigParameter(PluginConstants.PARAMS_REF_METRIC_MAX, String.valueOf(properties.isCountMaxReference()));
 					build.addSharedConfigParameter(PluginConstants.PARAMS_REF_METRIC_LINE90, String.valueOf(properties.isCount90LineReference()));
-					build.addSharedConfigParameter(PluginConstants.PARAMS_VARIATION, String.valueOf(properties.getVariation()));
+					build.addSharedConfigParameter(PluginConstants.PARAMS_VARIATION_CRITICAL, String.valueOf(properties.getCriticalVariation()));
+					build.addSharedConfigParameter(PluginConstants.PARAMS_VARIATION_WARN, String.valueOf(properties.getCriticalVariation()));
 				}
 			}
 
@@ -158,10 +159,10 @@ public class AggregationAgentAdapter extends AgentLifeCycleAdapter {
 				if (metric == PerformanceStatisticMetrics.RESPONSE_CODE && myProperties.isCalculateResponseCodes()) {
 					Map<String, Long> codes = test.getCodes();
 					for(String code : codes.keySet()) {
-						myLogger.logMessage(testsGroupName, test.getTitle(), PerformanceStatisticMetrics.RESPONSE_CODE.getKey(), codes.get(code), code);
+						myLogger.logMessage(testsGroupName, test.getTitle(), PerformanceStatisticMetrics.RESPONSE_CODE.getKey(), codes.get(code), code, false);
 					}
 				} else if (test.isAggregationCalculated()) {
-					myLogger.logMessage(testsGroupName, test.getTitle(), metric.getKey(), Math.round(test.getAggregateValue(metric)), null);
+					myLogger.logMessage(testsGroupName, test.getTitle(), metric.getKey(), Math.round(test.getAggregateValue(metric)), null, false);
 				}
 			}
 		}
