@@ -40,66 +40,66 @@ public class PerformanceBuildMetadataProvider implements BuildMetadataProvider {
 
 	@Override
 	public void generateMedatadata(@NotNull SBuild build, @NotNull MetadataStorageWriter metadataStorageWriter) {
-		Map<String, String> warnings = new HashMap<String, String>();
+		SBuildType buildType = build.getBuildType();
+		if (buildType == null || buildType.getBuildFeaturesOfType(PluginConstants.FEATURE_TYPE_AGGREGATION).isEmpty())
+			return;
 
+		Map<String, String> warnings = new HashMap<String, String>();
 
 		List<PerformanceMessage> serviceMessages = getJMeterServiceMessages(build.getBuildLog());
 		if (!serviceMessages.isEmpty()) {
 			long buildId = build.getBuildId();
 			String buildTypeId = build.getBuildTypeExternalId();
 
-			SBuildType buildType = build.getBuildType();
-			if (buildType != null) {
-				CustomDataStorage sampleAliasStorage = buildType.getCustomDataStorage(PluginConstants.STORAGE_ID_TEST_ALIAS);
+			CustomDataStorage sampleAliasStorage = buildType.getCustomDataStorage(PluginConstants.STORAGE_ID_TEST_ALIAS);
 
-				Set<String> metrics = new HashSet<String>();
-				Set<String> codes = new HashSet<String>();
-				Set<String> samples = new HashSet<String>();
+			Set<String> metrics = new HashSet<String>();
+			Set<String> codes = new HashSet<String>();
+			Set<String> samples = new HashSet<String>();
 
-				for (PerformanceMessage message : serviceMessages) {
-					String testsGroup = message.getTestsGroupName();
-					String testName = message.getTestName();
-					String metricValue = message.getMetric();
-					String code = message.getCode();
-					String value = message.getValue();
-					boolean warning = message.isWarning();
+			for (PerformanceMessage message : serviceMessages) {
+				String testsGroup = message.getTestsGroupName();
+				String testName = message.getTestName();
+				String metricValue = message.getMetric();
+				String code = message.getCode();
+				String value = message.getValue();
+				boolean warning = message.isWarning();
 
-					if (warning) {
-						String key = !testsGroup.isEmpty() ? testsGroup + " : " + testName : testName;
-						String warn = warnings.get(key);
-						String msg = "Exceed variation: metric - " + PerformanceStatisticMetrics.getNonReferenceTitleByKey(metricValue)
-								+ "; reference value - " + value + "; current value  - " + message.getCurrValue()  + "; variation - " + message.getVariation();
-						warnings.put(key, warn == null ? msg : warn + "<br/>" + msg);
-					}
-
-					String alias;
-					if (testsGroup.isEmpty()) {
-						alias = non_word_pattern.matcher(testName).replaceAll("");
-						updateStorageValue(sampleAliasStorage, alias, testName);
-					} else {
-						alias = non_word_pattern.matcher(testsGroup + testName).replaceAll("");
-						updateStorageValue(sampleAliasStorage, alias, testsGroup + ": " + testName);
-					}
-
-					if (code != null) {
-						alias += non_word_pattern.matcher(code).replaceAll("");
-					}
-					myStorage.publishValue(buildTypeId + '_' + metricValue + '_' + alias, buildId, new BigDecimal(value));
-
-					if (metricValue.equals(PerformanceStatisticMetrics.RESPONSE_CODE.getKey())) {
-						codes.add(code);
-					} else {
-						metrics.add(metricValue);
-						samples.add(alias);
-					}
+				if (warning) {
+					String key = !testsGroup.isEmpty() ? testsGroup + " : " + testName : testName;
+					String warn = warnings.get(key);
+					String msg = "Exceed variation: metric - " + PerformanceStatisticMetrics.getNonReferenceTitleByKey(metricValue)
+							+ "; reference value - " + value + "; current value  - " + message.getCurrValue() + "; variation - " + message.getVariation();
+					warnings.put(key, warn == null ? msg : warn + "<br/>" + msg);
 				}
+
+				String alias;
+				if (testsGroup.isEmpty()) {
+					alias = non_word_pattern.matcher(testName).replaceAll("");
+					updateStorageValue(sampleAliasStorage, alias, testName);
+				} else {
+					alias = non_word_pattern.matcher(testsGroup + testName).replaceAll("");
+					updateStorageValue(sampleAliasStorage, alias, testsGroup + ": " + testName);
+				}
+
+				if (code != null) {
+					alias += non_word_pattern.matcher(code).replaceAll("");
+				}
+				myStorage.publishValue(buildTypeId + '_' + metricValue + '_' + alias, buildId, new BigDecimal(value));
+
+				if (metricValue.equals(PerformanceStatisticMetrics.RESPONSE_CODE.getKey())) {
+					codes.add(code);
+				} else {
+					metrics.add(metricValue);
+					samples.add(alias);
+				}
+			}
 //				updateStorageValue(sampleOrderStorage, PerformanceStatisticMetrics.RESPONSE_CODE.getKey(), "0"); // response codes is the first
 
-				CustomDataStorage commonStorage = buildType.getCustomDataStorage(PluginConstants.STORAGE_ID_COMMON_JMETER);
-				updateStorageValue(commonStorage, PluginConstants.STORAGE_KEY_METRIC, metrics);
-				updateStorageValue(commonStorage, PluginConstants.STORAGE_KEY_CODE, codes);
-				updateStorageValue(commonStorage, PluginConstants.STORAGE_KEY_SAMPLES, samples);
-			}
+			CustomDataStorage commonStorage = buildType.getCustomDataStorage(PluginConstants.STORAGE_ID_COMMON_JMETER);
+			updateStorageValue(commonStorage, PluginConstants.STORAGE_KEY_METRIC, metrics);
+			updateStorageValue(commonStorage, PluginConstants.STORAGE_KEY_CODE, codes);
+			updateStorageValue(commonStorage, PluginConstants.STORAGE_KEY_SAMPLES, samples);
 		}
 
 		if (!warnings.isEmpty()) {
@@ -109,12 +109,13 @@ public class PerformanceBuildMetadataProvider implements BuildMetadataProvider {
 
 	/**
 	 * parses build log, returns collection of service messages provided by jmeter agent runner
+	 *
 	 * @param log
 	 * @return
 	 */
 	private List<PerformanceMessage> getJMeterServiceMessages(@NotNull BuildLog log) {
 		List<PerformanceMessage> messages = new ArrayList<PerformanceMessage>();
-		for (Iterator<LogMessage> iterator = log.getMessagesIterator(); iterator.hasNext();) {
+		for (Iterator<LogMessage> iterator = log.getMessagesIterator(); iterator.hasNext(); ) {
 			PerformanceMessage message = PerformanceMessageParser.getPerformanceTestingMessage(iterator.next().getText().trim());
 			if (message != null) {
 				messages.add(message);

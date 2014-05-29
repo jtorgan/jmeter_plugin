@@ -1,7 +1,6 @@
 package perf_statistic.server.perf_test_charts;
 
 import jetbrains.buildServer.controllers.BuildDataExtensionUtil;
-import jetbrains.buildServer.parameters.ParametersProvider;
 import jetbrains.buildServer.serverSide.SBuild;
 import jetbrains.buildServer.serverSide.SBuildServer;
 import jetbrains.buildServer.serverSide.metadata.BuildMetadataEntry;
@@ -15,9 +14,9 @@ import jetbrains.buildServer.web.openapi.SimpleCustomTab;
 import jetbrains.buildServer.web.statistics.graph.BuildGraphHelper;
 import org.jetbrains.annotations.NotNull;
 import perf_statistic.common.PluginConstants;
+import perf_statistic.server.perf_tests.PerformanceBuildMetadataProvider;
 import perf_statistic.server.perf_tests.PerformanceTestProvider;
 import perf_statistic.server.perf_tests.PerformanceTestRun;
-import perf_statistic.server.perf_tests.PerformanceBuildMetadataProvider;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
@@ -63,13 +62,11 @@ public class PerformanceStatisticTab extends SimpleCustomTab {
 	@Override
 	public boolean isAvailable(@NotNull final HttpServletRequest request) {
 		SBuild build = BuildDataExtensionUtil.retrieveBuild(request, myServer);
-		if (build == null) {
-			return false;
-		}
-		ParametersProvider parametersProvider = build.getParametersProvider();
+		return build != null && build.getBuildType() != null && !build.getBuildType().getBuildFeaturesOfType(PluginConstants.FEATURE_TYPE_AGGREGATION).isEmpty();
+		/*		ParametersProvider parametersProvider = build.getParametersProvider();
 		return parametersProvider.get(PluginConstants.PARAMS_AGGREGATE_FILE) != null
 				&& parametersProvider.get(PluginConstants.PARAMS_CALC_TOTAL) != null
-				&& parametersProvider.get(PluginConstants.PARAMS_HTTP_RESPONSE_CODE) != null;
+				&& parametersProvider.get(PluginConstants.PARAMS_HTTP_RESPONSE_CODE) != null;*/
 	}
 
 	public void fillModel(@NotNull Map<String, Object> model, @NotNull HttpServletRequest request) {

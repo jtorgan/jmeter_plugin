@@ -51,8 +51,10 @@ public class RemotePerfMonTab extends SimpleCustomTab {
 		if (build == null) {
 			return false;
 		}
+		boolean hasFeature = build.getBuildType() != null && !build.getBuildType().getBuildFeaturesOfType(PluginConstants.FEATURE_TYPE_REMOTE_MONITORING).isEmpty();
+
 		monitoringLogFile = build.getArtifacts(BuildArtifactsViewMode.VIEW_ALL).getArtifact(PluginConstants.MONITORING_RESULT_FILE);
-		return monitoringLogFile != null && monitoringLogFile.isFile();
+		return hasFeature && monitoringLogFile != null && monitoringLogFile.isFile();
 	}
 
 	public void fillModel(@NotNull Map<String, Object> model, @NotNull HttpServletRequest request) {
