@@ -48,9 +48,12 @@ public abstract class AbstractCompositeVT extends CompositeVTB {
 	@NotNull
 	public List<BuildValue> getDataSet(@NotNull final ChartSettings _chartSettings) {
 		if (_chartSettings instanceof BuildChartSettings) {
-			BuildChartSettings settings = (BuildChartSettings) _chartSettings;
-			updateKeys(settings.getBuildTypeId());
-			setDefaultDeselectedKeys(settings);
+			if (subKeys == null) {
+				BuildChartSettings settings = (BuildChartSettings) _chartSettings;
+				updateKeys(settings.getBuildTypeId());
+				setDefaultDeselectedKeys(settings);
+			}
+
 			return super.getDataSet(_chartSettings);
 		}
 		return Collections.emptyList();
@@ -116,5 +119,16 @@ public abstract class AbstractCompositeVT extends CompositeVTB {
 			chartSettings.setAll(BuildChartSettings.FILTER_S, deselectedKeys.toArray(new String[deselectedKeys.size()]));
 			chartSettings.setSingle("_resetDefaults", ""); // hack, because default setting show all series
 		}
+	}
+
+	@Override
+	public boolean hasData(final ChartSettings buildChartSettings) {
+		if (subKeys == null) {
+			BuildChartSettings settings = (BuildChartSettings) buildChartSettings;
+			updateKeys(settings.getBuildTypeId());
+			setDefaultDeselectedKeys(settings);
+		}
+
+		return super.hasData(buildChartSettings);
 	}
 }
