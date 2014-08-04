@@ -47,35 +47,29 @@ public class PerformanceTestProvider {
 		myLogDataProvider = new LogDataProvider();
 	}
 
-	public Collection<PerformanceTestRun> getFailedTestRuns(@NotNull SBuild build) {
-		if (build.getBuildId() != myBuildID) {
-			updateTestList(build);
-		}
+	public synchronized Collection<PerformanceTestRun> getFailedTestRuns(@NotNull SBuild build) {
+		updateTestList(build);
 		return myFailedTestRuns != null ? myFailedTestRuns : Collections.<PerformanceTestRun>emptyList();
 	}
 
-	public Collection<PerformanceTestRun> getSuccessTestRuns(@NotNull SBuild build) {
-		if (build.getBuildId() != myBuildID) {
-			updateTestList(build);
-		}
+	public synchronized Collection<PerformanceTestRun> getSuccessTestRuns(@NotNull SBuild build) {
+		updateTestList(build);
 		return mySuccessTestRuns != null ? mySuccessTestRuns : Collections.<PerformanceTestRun>emptyList();
 	}
 
-	public Collection<String> getAllTestNames(@NotNull SBuild build) {
-		if (build.getBuildId() != myBuildID) {
-			updateTestList(build);
-		}
+	public synchronized Collection<String> getAllTestNames(@NotNull SBuild build) {
+		updateTestList(build);
 		return testNames;
 	}
 
-	public Collection<String> getAllThreadGroups(@NotNull SBuild build) {
+	public synchronized Collection<String> getAllThreadGroups(@NotNull SBuild build) {
 		if (build.getBuildId() != myBuildID) {
 			updateTestList(build);
 		}
 		return threadGroups;
 	}
 
-	public PerformanceTestRun findTestByName(@NotNull SBuild build, String testName) {
+	public synchronized PerformanceTestRun findTestByName(@NotNull SBuild build, String testName) {
 		updateTestList(build);
 		for(PerformanceTestRun test : myFailedTestRuns) {
 			if (test.getFullName().equals(testName)) return test;
@@ -86,7 +80,7 @@ public class PerformanceTestProvider {
 		return null;
 	}
 
-	public String[] fillLogItems(@NotNull SBuild build, @NotNull PerformanceTestRun testRun) {
+	public synchronized String[] fillLogItems(@NotNull SBuild build, @NotNull PerformanceTestRun testRun) {
 		updateTestList(build);
 
 		String logFileName =  build.getParametersProvider().get(PluginConstants.PARAMS_AGGREGATE_FILE);
@@ -109,7 +103,9 @@ public class PerformanceTestProvider {
 		return false;
 	}
 
-	private synchronized void updateTestList(@NotNull SBuild build) {
+	private void updateTestList(@NotNull SBuild build) {
+		if (build.getBuildId() == myBuildID)
+			return;
 		Comparator<PerformanceTestRun> comparator = new Comparator<PerformanceTestRun>() {
 			@Override
 			public int compare(PerformanceTestRun o1, PerformanceTestRun o2) {

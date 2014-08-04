@@ -63,10 +63,6 @@ public class PerformanceStatisticTab extends SimpleCustomTab {
 	public boolean isAvailable(@NotNull final HttpServletRequest request) {
 		SBuild build = BuildDataExtensionUtil.retrieveBuild(request, myServer);
 		return build != null && build.getBuildType() != null && !build.getBuildType().getBuildFeaturesOfType(PluginConstants.FEATURE_TYPE_AGGREGATION).isEmpty();
-		/*		ParametersProvider parametersProvider = build.getParametersProvider();
-		return parametersProvider.get(PluginConstants.PARAMS_AGGREGATE_FILE) != null
-				&& parametersProvider.get(PluginConstants.PARAMS_CALC_TOTAL) != null
-				&& parametersProvider.get(PluginConstants.PARAMS_HTTP_RESPONSE_CODE) != null;*/
 	}
 
 	public void fillModel(@NotNull Map<String, Object> model, @NotNull HttpServletRequest request) {
