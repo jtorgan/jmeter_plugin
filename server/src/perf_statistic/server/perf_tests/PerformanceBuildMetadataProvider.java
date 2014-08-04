@@ -82,7 +82,7 @@ public class PerformanceBuildMetadataProvider implements BuildMetadataProvider {
 					updateStorageValue(sampleAliasStorage, alias, testsGroup + ": " + testName);
 				}
 
-				if (code != null) {
+				if (code != null && !code.isEmpty()) {
 					alias += non_word_pattern.matcher(code).replaceAll("");
 				}
 				myStorage.publishValue(buildTypeId + '_' + metricValue + '_' + alias, buildId, new BigDecimal(value));

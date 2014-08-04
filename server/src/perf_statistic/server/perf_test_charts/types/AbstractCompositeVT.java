@@ -19,7 +19,7 @@ public abstract class AbstractCompositeVT extends CompositeVTB {
 	protected static final Pattern comma_pattern = Pattern.compile(",");
 
 	protected String[] subKeys;
-	protected String currentBuildTypeID;
+	protected volatile String currentBuildTypeID;
 
 	protected AbstractCompositeVT(BuildDataStorage buildDataStorage, ValueProviderRegistry valueProviderRegistry, SBuildServer server, String key) {
 		super(buildDataStorage, valueProviderRegistry, server, key);
@@ -123,12 +123,9 @@ public abstract class AbstractCompositeVT extends CompositeVTB {
 
 	@Override
 	public boolean hasData(final ChartSettings buildChartSettings) {
-		if (subKeys == null) {
-			BuildChartSettings settings = (BuildChartSettings) buildChartSettings;
-			updateKeys(settings.getBuildTypeId());
-			setDefaultDeselectedKeys(settings);
-		}
-
-		return super.hasData(buildChartSettings);
+		BuildChartSettings settings = (BuildChartSettings) buildChartSettings;
+		updateKeys(settings.getBuildTypeId());
+		setDefaultDeselectedKeys(settings);
+		return subKeys != null && subKeys.length != 0;
 	}
 }

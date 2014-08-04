@@ -37,7 +37,7 @@ public class PerformanceTestProvider {
 
 	private String[] logTitles;
 
-	private long myBuildID = -1;
+	private volatile long myBuildID = -1;
 
 
 	public PerformanceTestProvider(@NotNull SBuildServer server, @NotNull final BuildDataStorage storage, @NotNull final ValueProviderRegistry valueProviderRegistry) {
