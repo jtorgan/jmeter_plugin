@@ -46,13 +46,13 @@ public class PerformanceMessage {
 	}
 
 	//	PerformanceMessageParser only can set values
-	void setMetric(String metric) {
+	void setMetric(@NotNull final String metric) {
 		this.metric = metric;
 	}
-	void setTestName(String testName) {
+	void setTestName(@NotNull final String testName) {
 		this.testName = testName;
 	}
-	void setValue(String value) {
+	void setValue(@NotNull final String value) {
 		this.value = value;
 	}
 	void setTestsGroupName(String testsGroupName) {

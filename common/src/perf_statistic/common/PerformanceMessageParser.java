@@ -51,6 +51,10 @@ public class PerformanceMessageParser {
 				if (attribute.startsWith(MESSAGE_KEY_WARNING_VARIATION)) {
 					perfTestMessage.setVariation(attribute.substring(10));
 				}
+				// todo: temporary to support old format; will be removed in future
+				if (attribute.startsWith("label=")) {
+					perfTestMessage.setTestName(attribute.substring(6));
+				}
 			}
 			return perfTestMessage;
 		}
