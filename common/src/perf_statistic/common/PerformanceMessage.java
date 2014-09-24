@@ -24,7 +24,7 @@ public class PerformanceMessage {
 
 	@NotNull
 	public String getTestName() {
-		return testName;
+		return testName == null ? EMPTY : testName;
 	}
 
 	@NotNull
