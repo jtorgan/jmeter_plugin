@@ -47,9 +47,9 @@ public class AggregationAgentAdapter extends AgentLifeCycleAdapter {
 			if (properties.isCheckReferences()) {
 				if (properties.isFileValues()) {
 					logger.activityStarted(PluginConstants.CHECK_REFERENCE_ACTIVITY_NAME);
-					FileValuesChecker checker;
+					FilevaluesChecker checker;
 					try {
-						checker = new FileValuesChecker(logger,
+						checker = new FilevaluesChecker(logger,
 								properties.getReferencesDataFile(build.getCheckoutDirectory().getAbsolutePath()),
 								properties.getCriticalVariation(), properties.getVariation());
 						checker.checkValues(logger, reader.myReport);

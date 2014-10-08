@@ -15,12 +15,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FileValuesChecker {
+public class FilevaluesChecker {
 	private Map<String, ReferenceTestValues> referenceData;
 	public volatile boolean isWarning;
 	public volatile boolean isFailed;
 
-	public FileValuesChecker(@NotNull PerformanceLogger logger, String refFile, double criticalVariation, double variation) throws BaseFileReader.FileFormatException {
+	public FilevaluesChecker(@NotNull PerformanceLogger logger, String refFile, double criticalVariation, double variation) throws BaseFileReader.FileFormatException {
 			referenceData = new HashMap<String, ReferenceTestValues>();
 
 			ReferenceDataReader reader = new ReferenceDataReader(logger, variation, criticalVariation);
