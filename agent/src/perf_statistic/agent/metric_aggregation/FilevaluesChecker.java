@@ -68,8 +68,7 @@ public class FilevaluesChecker {
 				}
 				for (PerformanceStatisticMetrics metric : referenceTestValues.values.keySet()) {
 
-
-					double newValue = test.getAggregateValue(metric);
+					double newValue = Math.floor(test.getAggregateValue(metric) * 100) / 100;
 					ReferenceChecker testRefValues = referenceTestValues.values.get(metric);
 
 //					System.out.println(metric.toString());
@@ -80,10 +79,11 @@ public class FilevaluesChecker {
 
 
 					if (exceedCriticalVariation) {
+						double diff = Math.round(newValue) - testRefValues.getReferenceValue();
 						isFailed = true;
 						String errorMsg = "Metric - " + metric.getTitle() + "; test - " + fullTestName
-								+ "; \nreference value: " + Math.round(testRefValues.getReferenceValue())
-								+ "; current value: " + Math.round(newValue)
+								+ "; \nreference value: " + testRefValues.getReferenceValue()
+								+ "; current value: " + (diff != 0.0 ? Math.round(newValue) : newValue)
 								+ "; variation: " + testRefValues.getCriticalVariation();
 						logger.logBuildProblem(metric.getKey(), fullTestName, PluginConstants.CRITICAL_PERFORMANCE_PROBLEM_TYPE, errorMsg);
 					}
