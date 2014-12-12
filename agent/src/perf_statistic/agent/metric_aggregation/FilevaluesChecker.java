@@ -68,22 +68,21 @@ public class FilevaluesChecker {
 				}
 				for (PerformanceStatisticMetrics metric : referenceTestValues.values.keySet()) {
 
-					double newValue = Math.floor(test.getAggregateValue(metric) * 100) / 100;
 					ReferenceChecker testRefValues = referenceTestValues.values.get(metric);
+					if (testRefValues == null) continue;
 
-//					System.out.println(metric.toString());
-//					System.out.println(testRefValues);
+					Long refValue = testRefValues.getReferenceValue();
+					long newValue = Math.round(test.getAggregateValue(metric));
 
-					boolean exceedVariation = testRefValues != null && testRefValues.getVariation() != Double.NEGATIVE_INFINITY && newValue > testRefValues.getReferenceValue() * (1 + testRefValues.getVariation());
-					boolean exceedCriticalVariation = testRefValues != null && newValue > testRefValues.getReferenceValue() * (1 + testRefValues.getCriticalVariation());
+					boolean exceedVariation = testRefValues.getVariation() != Double.NEGATIVE_INFINITY && newValue > refValue * (1 + testRefValues.getVariation());
+					boolean exceedCriticalVariation = newValue > refValue * (1 + testRefValues.getCriticalVariation());
 
 
 					if (exceedCriticalVariation) {
-						double diff = Math.round(newValue) - testRefValues.getReferenceValue();
 						isFailed = true;
 						String errorMsg = "Metric - " + metric.getTitle() + "; test - " + fullTestName
-								+ "; \nreference value: " + testRefValues.getReferenceValue()
-								+ "; current value: " + (diff != 0.0 ? Math.round(newValue) : newValue)
+								+ "; \nreference value: " + refValue
+								+ "; current value: " + newValue
 								+ "; variation: " + testRefValues.getCriticalVariation();
 						logger.logBuildProblem(metric.getKey(), fullTestName, PluginConstants.CRITICAL_PERFORMANCE_PROBLEM_TYPE, errorMsg);
 					}
@@ -119,7 +118,7 @@ public class FilevaluesChecker {
 			}
 			String testID = StringUtils.checkTestName(referenceItem[0]);
 			PerformanceStatisticMetrics metric = PerformanceStatisticMetrics.valueOf(referenceItem[1].toUpperCase());
-			Double referenceValue = Double.parseDouble(referenceItem[2]);
+			Long referenceValue = Long.parseLong(referenceItem[2]);
 			double criticalVariation = referenceItem.length > 3 && referenceItem[3] != null ? Double.parseDouble(referenceItem[3]) : baseCriticalVariation;
 
 			double variation = referenceItem.length > 4 && referenceItem[4] != null ? Double.parseDouble(referenceItem[4]) : baseVariation;
@@ -144,17 +143,17 @@ public class FilevaluesChecker {
 	}
 
 	private class ReferenceChecker {
-		private double referenceValue;
+		private long referenceValue;
 		private double variation;
 		private double criticalVariation;
 
-		private ReferenceChecker(double referenceValue, double variation, double criticalVariation) {
+		private ReferenceChecker(long referenceValue, double variation, double criticalVariation) {
 			this.referenceValue = referenceValue;
 			this.variation = variation;
 			this.criticalVariation = criticalVariation;
 		}
 
-		public double getReferenceValue() {
+		public long getReferenceValue() {
 			return referenceValue;
 		}
 
