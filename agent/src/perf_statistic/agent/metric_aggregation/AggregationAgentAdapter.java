@@ -24,55 +24,55 @@ public class AggregationAgentAdapter extends AgentLifeCycleAdapter {
 	public void beforeBuildFinish(@NotNull AgentRunningBuild build, @NotNull BuildFinishedStatus buildStatus) {
 		Collection<AgentBuildFeature> features = build.getBuildFeaturesOfType(PluginConstants.FEATURE_TYPE_AGGREGATION);
 		if (!features.isEmpty()) {
-
-			AggregationProperties properties = new AggregationProperties(features.iterator().next().getParameters());
 			PerformanceLogger logger = new PerformanceLogger(build.getBuildLogger());
-
 			logger.activityStarted(PluginConstants.PERFORMANCE_TESTS_ACTIVITY_NAME);
-			LogReader reader = new LogReader(logger, properties);
-			reader.workingDir = build.getWorkingDirectory().getAbsolutePath();
+			for (AgentBuildFeature feature : features) {
+				AggregationProperties properties = new AggregationProperties(feature.getParameters());
 
-			try {
-				reader.processFile(properties.getAggregateDataFile(build.getWorkingDirectory().getAbsolutePath()));
-				reader.logProcessingResults();
-			} catch (BaseFileReader.FileFormatException e) {
-				logger.logBuildProblem(BuildProblemTypes.TC_ERROR_MESSAGE_TYPE, "FileFormatException", e.getMessage());
-			} finally {
-				logger.activityFinished(PluginConstants.PERFORMANCE_TESTS_ACTIVITY_NAME);
-				build.addSharedConfigParameter(PluginConstants.PARAMS_AGGREGATE_FILE, properties.getAggregateDataFile());
-				build.addSharedConfigParameter(PluginConstants.PARAMS_CALC_TOTAL, String.valueOf(properties.isCalculateTotal()));
-				build.addSharedConfigParameter(PluginConstants.PARAMS_HTTP_RESPONSE_CODE, String.valueOf(properties.isCalculateResponseCodes()));
-			}
+				LogReader reader = new LogReader(logger, properties);
+				reader.workingDir = build.getWorkingDirectory().getAbsolutePath();
 
-			if (properties.isCheckReferences()) {
-				if (properties.isFileValues()) {
-					logger.activityStarted(PluginConstants.CHECK_REFERENCE_ACTIVITY_NAME);
-					FilevaluesChecker checker;
-					try {
-						checker = new FilevaluesChecker(logger,
-								properties.getReferencesDataFile(build.getCheckoutDirectory().getAbsolutePath()),
-								properties.getCriticalVariation(), properties.getVariation());
-						checker.checkValues(logger, reader.myReport);
+				try {
+					reader.processFile(properties.getAggregateDataFile(build.getWorkingDirectory().getAbsolutePath()));
+					reader.logProcessingResults();
+				} catch (BaseFileReader.FileFormatException e) {
+					logger.logBuildProblem(BuildProblemTypes.TC_ERROR_MESSAGE_TYPE, "FileFormatException", e.getMessage());
+				} finally {
+					build.addSharedConfigParameter(PluginConstants.PARAMS_AGGREGATE_FILE, properties.getAggregateDataFile());
+					build.addSharedConfigParameter(PluginConstants.PARAMS_CALC_TOTAL, String.valueOf(properties.isCalculateTotal()));
+					build.addSharedConfigParameter(PluginConstants.PARAMS_HTTP_RESPONSE_CODE, String.valueOf(properties.isCalculateResponseCodes()));
+				}
 
-						if (checker.isWarning && !checker.isFailed)
-							logger.logWarningBuildStatus();
-					} catch (BaseFileReader.FileFormatException e) {
-						logger.logBuildProblem(BuildProblemTypes.TC_ERROR_MESSAGE_TYPE, "FileFormatException", e.getMessage());
+				if (properties.isCheckReferences()) {
+					if (properties.isFileValues()) {
+						logger.activityStarted(PluginConstants.CHECK_REFERENCE_ACTIVITY_NAME);
+						FilevaluesChecker checker;
+						try {
+							checker = new FilevaluesChecker(logger,
+									properties.getReferencesDataFile(build.getCheckoutDirectory().getAbsolutePath()),
+									properties.getCriticalVariation(), properties.getVariation());
+							checker.checkValues(logger, reader.myReport);
+
+							if (checker.isWarning && !checker.isFailed)
+								logger.logWarningBuildStatus();
+						} catch (BaseFileReader.FileFormatException e) {
+							logger.logBuildProblem(BuildProblemTypes.TC_ERROR_MESSAGE_TYPE, "FileFormatException", e.getMessage());
+						}
+						logger.activityFinished(PluginConstants.CHECK_REFERENCE_ACTIVITY_NAME);
 					}
-					logger.activityFinished(PluginConstants.CHECK_REFERENCE_ACTIVITY_NAME);
-				}
-				if (properties.isBuildHistoryValues()) {
-					build.addSharedConfigParameter(PluginConstants.PARAMS_REF_CHECK, "true");
-					build.addSharedConfigParameter(PluginConstants.PARAMS_REF_TYPE_BUILD_HISTORY, "true");
-					build.addSharedConfigParameter(PluginConstants.PARAMS_REF_BUILD_COUNT, String.valueOf(properties.getBuildCount()));
-					build.addSharedConfigParameter(PluginConstants.PARAMS_REF_METRIC_AVG, String.valueOf(properties.isCountAverageReference()));
-					build.addSharedConfigParameter(PluginConstants.PARAMS_REF_METRIC_MAX, String.valueOf(properties.isCountMaxReference()));
-					build.addSharedConfigParameter(PluginConstants.PARAMS_REF_METRIC_LINE90, String.valueOf(properties.isCount90LineReference()));
-					build.addSharedConfigParameter(PluginConstants.PARAMS_VARIATION_CRITICAL, String.valueOf(properties.getCriticalVariation()));
-					build.addSharedConfigParameter(PluginConstants.PARAMS_VARIATION_WARN, String.valueOf(properties.getCriticalVariation()));
+					if (properties.isBuildHistoryValues()) {
+						build.addSharedConfigParameter(PluginConstants.PARAMS_REF_CHECK, "true");
+						build.addSharedConfigParameter(PluginConstants.PARAMS_REF_TYPE_BUILD_HISTORY, "true");
+						build.addSharedConfigParameter(PluginConstants.PARAMS_REF_BUILD_COUNT, String.valueOf(properties.getBuildCount()));
+						build.addSharedConfigParameter(PluginConstants.PARAMS_REF_METRIC_AVG, String.valueOf(properties.isCountAverageReference()));
+						build.addSharedConfigParameter(PluginConstants.PARAMS_REF_METRIC_MAX, String.valueOf(properties.isCountMaxReference()));
+						build.addSharedConfigParameter(PluginConstants.PARAMS_REF_METRIC_LINE90, String.valueOf(properties.isCount90LineReference()));
+						build.addSharedConfigParameter(PluginConstants.PARAMS_VARIATION_CRITICAL, String.valueOf(properties.getCriticalVariation()));
+						build.addSharedConfigParameter(PluginConstants.PARAMS_VARIATION_WARN, String.valueOf(properties.getCriticalVariation()));
+					}
 				}
 			}
-
+			logger.activityFinished(PluginConstants.PERFORMANCE_TESTS_ACTIVITY_NAME);
 		}
 	}
 
