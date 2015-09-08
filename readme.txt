@@ -5,7 +5,7 @@ It has the ability to aggregate results from a log file, calculate metrics,
 compare results with reference values, monitor a remote machine with the tested application. 
 Additionally, it allows viewing all the results of performance tests as charts.
 
-Last version: https://teamcity.jetbrains.com/repository/download/TeamCityPluginsByJetBrains_JMeterPlugin_Build/357439:id/jmeter.zip
+Last version: https://teamcity.jetbrains.com/repository/download/TeamCityPluginsByJetBrains_JMeterPlugin_Build/.lastSuccessful/jmeter.zip
 
 How it works
 ==============
