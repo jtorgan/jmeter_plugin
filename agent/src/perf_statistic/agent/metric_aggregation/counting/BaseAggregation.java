@@ -45,7 +45,7 @@ public abstract class BaseAggregation {
 	}
 
 	public void addItem(Item item) {
-		if (myProperties.isCheckAssertions() && item.isSuccessful() || !myProperties.isCheckAssertions()) {
+		if (!myProperties.isCheckAssertions() || item.isSuccessful()) {
 			addCalculatedValue(item.getResponseTime());
 		}
 		if (myProperties.isCalculateResponseCodes()) {

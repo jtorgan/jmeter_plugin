@@ -40,6 +40,7 @@ public class FilevaluesChecker {
 			ReferenceTestValues referenceTestValues = referenceData.get(fullTestName);
 			if (testName.endsWith("Total")) {
 				for (PerformanceStatisticMetrics metric : referenceTestValues.values.keySet()) {
+					if(!testGroup.isAggregationCalculated()) continue;
 					double newValue = testGroup.getAggregateValue(metric);
 					ReferenceChecker testRefValues = referenceTestValues.values.get(metric);
 
@@ -70,6 +71,7 @@ public class FilevaluesChecker {
 
 					ReferenceChecker testRefValues = referenceTestValues.values.get(metric);
 					if (testRefValues == null) continue;
+					if (!test.isAggregationCalculated()) continue;
 
 					Long refValue = testRefValues.getReferenceValue();
 					long newValue = Math.round(test.getAggregateValue(metric));
