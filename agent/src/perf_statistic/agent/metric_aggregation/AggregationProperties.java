@@ -44,7 +44,7 @@ public class AggregationProperties {
 		metrics[2] = Boolean.parseBoolean(params.get(PluginConstants.PARAMS_METRIC_MIN));
 		metrics[3] = Boolean.parseBoolean(params.get(PluginConstants.PARAMS_METRIC_LINE90));
 		metrics[4] = Boolean.parseBoolean(params.get(PluginConstants.PARAMS_HTTP_RESPONSE_CODE));
-		metrics[5] = Boolean.parseBoolean(params.get(PluginConstants.PARAMS_METRIC_LINE50));
+		metrics[5] = Boolean.parseBoolean(params.get(PluginConstants.PARAMS_METRIC_MEDIAN));
 
 		responseCodes = Boolean.parseBoolean(params.get(PluginConstants.PARAMS_HTTP_RESPONSE_CODE));
 		assertions = Boolean.parseBoolean(params.get(PluginConstants.PARAMS_CHECK_ASSERT));
@@ -71,7 +71,7 @@ public class AggregationProperties {
 				refMetrics[0] = Boolean.parseBoolean(params.get(PluginConstants.PARAMS_REF_METRIC_AVG));
 				refMetrics[1] = Boolean.parseBoolean(params.get(PluginConstants.PARAMS_REF_METRIC_LINE90));
 				refMetrics[2] = Boolean.parseBoolean(params.get(PluginConstants.PARAMS_REF_METRIC_MAX));
-				refMetrics[3] = Boolean.parseBoolean(params.get(PluginConstants.PARAMS_REF_METRIC_LINE50));
+				refMetrics[3] = Boolean.parseBoolean(params.get(PluginConstants.PARAMS_REF_METRIC_MEDIAN));
 			}
 		}
 	}
@@ -145,7 +145,7 @@ public class AggregationProperties {
 	public boolean isCount90LineReference() {
 		return refMetrics[1];
 	}
-	public boolean isCount50LineReference() {
+	public boolean isCountMedianReference() {
 		return refMetrics[3];
 	}
 

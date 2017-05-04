@@ -1,6 +1,8 @@
 package perf_statistic.server.perf_tests;
 
 import com.intellij.util.containers.SortedList;
+import com.sun.media.jfxmedia.logging.Logger;
+
 import jetbrains.buildServer.BuildProblemData;
 import jetbrains.buildServer.log.Loggers;
 import jetbrains.buildServer.serverSide.SBuild;
@@ -215,6 +217,7 @@ public class PerformanceTestProvider {
 					}
 				}
 			}
+            
 			return titles;
 		}
 

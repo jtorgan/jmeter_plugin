@@ -33,7 +33,7 @@ public class BuildHistoryRefCheckAdapter extends BuildServerAdapter {
 			referenceMetrics[2] = Boolean.parseBoolean(parametersProvider.get(PluginConstants.PARAMS_REF_METRIC_MAX));
 			referenceMetrics[0] = Boolean.parseBoolean(parametersProvider.get(PluginConstants.PARAMS_REF_METRIC_AVG));
 			referenceMetrics[1] = Boolean.parseBoolean(parametersProvider.get(PluginConstants.PARAMS_REF_METRIC_LINE90));
-            referenceMetrics[3] = Boolean.parseBoolean(parametersProvider.get(PluginConstants.PARAMS_REF_METRIC_LINE50));
+            referenceMetrics[3] = Boolean.parseBoolean(parametersProvider.get(PluginConstants.PARAMS_REF_METRIC_MEDIAN));
 
 			Double criticalVariation = parametersProvider.get(PluginConstants.PARAMS_VARIATION_CRITICAL) == null ? 0.15 : Double.parseDouble(parametersProvider.get(PluginConstants.PARAMS_VARIATION_CRITICAL));
 			Double variation = parametersProvider.get(PluginConstants.PARAMS_VARIATION_WARN) == null ? Double.NEGATIVE_INFINITY : Double.parseDouble(parametersProvider.get(PluginConstants.PARAMS_VARIATION_WARN));
@@ -147,7 +147,7 @@ public class BuildHistoryRefCheckAdapter extends BuildServerAdapter {
 				PerformanceStatisticMetrics metric = PerformanceStatisticMetrics.getMetricByKey(message.getMetric());
 				 if (metric != null && metric == PerformanceStatisticMetrics.AVERAGE && referenceMetrics[0]
 						 || metric == PerformanceStatisticMetrics.LINE90 && referenceMetrics[1]
-                         || metric == PerformanceStatisticMetrics.LINE50 && referenceMetrics[3]
+                         || metric == PerformanceStatisticMetrics.MEDIAN && referenceMetrics[3]
 						 || metric == PerformanceStatisticMetrics.MAX && referenceMetrics[2]){
 					 currentValues.put(buildTypeId + '_' + message.getMetric() + '_' + getAlias(message), message);
 				 } else if (metric == null) {
@@ -155,7 +155,7 @@ public class BuildHistoryRefCheckAdapter extends BuildServerAdapter {
 					if (metric != null) {
 						if (metric == PerformanceStatisticMetrics.AVERAGE && referenceMetrics[0]
 								|| metric == PerformanceStatisticMetrics.LINE90 && referenceMetrics[1]
-                                || metric == PerformanceStatisticMetrics.LINE50 && referenceMetrics[3]
+                                || metric == PerformanceStatisticMetrics.MEDIAN && referenceMetrics[3]
 								|| metric == PerformanceStatisticMetrics.MAX && referenceMetrics[2]){
 							currentValues.put(buildTypeId + '_' + metric.getKey() + '_' + getAlias(message), null);
 						}

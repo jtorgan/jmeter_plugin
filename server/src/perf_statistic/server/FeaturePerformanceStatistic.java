@@ -54,8 +54,8 @@ public class FeaturePerformanceStatistic extends BuildFeature {
 			result.append("avg ");
 		if ("true".equalsIgnoreCase(params.get(PluginConstants.PARAMS_METRIC_LINE90)))
 			result.append("line90 ");
-        if ("true".equalsIgnoreCase(params.get(PluginConstants.PARAMS_METRIC_LINE50)))
-			result.append("line50");
+        if ("true".equalsIgnoreCase(params.get(PluginConstants.PARAMS_METRIC_MEDIAN)))
+			result.append("median");
 		result.append(" ]");
 
 		if ("true".equalsIgnoreCase(params.get(PluginConstants.PARAMS_HTTP_RESPONSE_CODE)))
@@ -90,7 +90,7 @@ public class FeaturePerformanceStatistic extends BuildFeature {
 				}
 				if (!Boolean.parseBoolean(params.get(PluginConstants.PARAMS_METRIC_AVG)) && !Boolean.parseBoolean(params.get(PluginConstants.PARAMS_METRIC_MAX))
 						&& !Boolean.parseBoolean(params.get(PluginConstants.PARAMS_METRIC_MIN)) && !Boolean.parseBoolean(params.get(PluginConstants.PARAMS_METRIC_LINE90)) 
-                        && !Boolean.parseBoolean(params.get(PluginConstants.PARAMS_METRIC_LINE50))) {
+                        && !Boolean.parseBoolean(params.get(PluginConstants.PARAMS_METRIC_MEDIAN))) {
 					invalidProperties.add(new InvalidProperty("perfTest.metrics", "Please, choose at least one metric!"));
 				}
 				return invalidProperties;
