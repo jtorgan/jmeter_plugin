@@ -116,7 +116,7 @@ public class FilevaluesChecker {
 		protected void processLine(String line) throws FileFormatException {
 			String[] referenceItem = PerformanceMessageParser.DELIMITER_PATTERN.split(line);
 			if (referenceItem.length < 3) {
-				throw new FileFormatException("Wrong reference data format!\n format: <testName>\t<metric>\t<value>. find: " + Arrays.toString(referenceItem) + "\n Available metrics: average, min, max, line90");
+				throw new FileFormatException("Wrong reference data format!\n format: <testName>\t<metric>\t<value>. find: " + Arrays.toString(referenceItem) + "\n Available metrics: average, min, max, line90, line50");
 			}
 			String testID = StringUtils.checkTestName(referenceItem[0]);
 			PerformanceStatisticMetrics metric = PerformanceStatisticMetrics.valueOf(referenceItem[1].toUpperCase());

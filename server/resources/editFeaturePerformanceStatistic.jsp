@@ -48,6 +48,9 @@
           <td>
             <props:checkboxProperty name="perfTest.agg.90line"/><label for="perfTest.agg.90line">90% line</label>
           </td>
+          <td>
+            <props:checkboxProperty name="perfTest.agg.50line"/><label for="perfTest.agg.50line">Median</label>
+          </td>
         </tr>
         <tr>
           <td colspan="2">
@@ -162,6 +165,7 @@
               <div style="margin-left: 10px">
                 <props:checkboxProperty name="perfTest.agg.ref.avg" style="margin-right: 5px"/><label for="perfTest.agg.ref.avg">Average</label> <br/>
                 <props:checkboxProperty name="perfTest.agg.ref.90line" style="margin-right: 5px"/><label for="perfTest.agg.ref.90line">90% line</label> <br/>
+                <props:checkboxProperty name="perfTest.agg.ref.50line" style="margin-right: 5px"/><label for="perfTest.agg.ref.50line">Median</label> <br/>
                 <props:checkboxProperty name="perfTest.agg.ref.max" style="margin-right: 5px"/><label for="perfTest.agg.ref.max">Max</label> <br/>
               </div>
             </div>

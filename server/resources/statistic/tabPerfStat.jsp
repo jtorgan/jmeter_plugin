@@ -114,6 +114,9 @@
         <td><input type="checkbox" name="metric" value="90Line"
                    <c:if test="${deselectedSeries['90Line'] == 'true'}">checked</c:if>
                 > 90% line</td>
+        <td><input type="checkbox" name="metric" value="50Line"
+                   <c:if test="${deselectedSeries['50Line'] == 'true'}">checked</c:if>
+                > Median</td>
       </tr>
     </table>
     <div style="border-top: 1px dotted #CCCCCC">

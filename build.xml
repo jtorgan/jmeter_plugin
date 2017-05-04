@@ -2,7 +2,7 @@
 <project name="jmeter-plugin" default="dist">
 
   <property file="build.properties"/>
-  <property name="plugin.name" value="jmeter"/>
+  <property name="plugin.name" value="jmeter_alt"/>
   <property name="javac2.home" value="${basedir}/lib-compile"/>
 
   <import file="teamcity-common.xml"/>
