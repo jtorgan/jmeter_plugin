@@ -27,8 +27,9 @@ public class AggregationAgentAdapter extends AgentLifeCycleAdapter {
 			PerformanceLogger logger = new PerformanceLogger(build.getBuildLogger());
 			logger.activityStarted(PluginConstants.PERFORMANCE_TESTS_ACTIVITY_NAME);
 			for (AgentBuildFeature feature : features) {
-				AggregationProperties properties = new AggregationProperties(feature.getParameters());
 
+                AggregationProperties properties = new AggregationProperties(feature.getParameters());
+                
 				LogReader reader = new LogReader(logger, properties);
 				reader.workingDir = build.getWorkingDirectory().getAbsolutePath();
 

@@ -46,6 +46,7 @@ public class PerformancePostChartController extends BaseController {
 				}
 				else {
 					Map<String, String> states = stateStorage.getValues();
+
 					if (states != null) {
 						for (String key : states.keySet()) {
 							stateStorage.putValue(key, state);
