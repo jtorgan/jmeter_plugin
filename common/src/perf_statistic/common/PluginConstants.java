@@ -2,7 +2,8 @@ package perf_statistic.common;
 
 public class PluginConstants {
 	private PluginConstants() {}
-	public static final String FEATURE_TYPE_AGGREGATION = "performance_test_analyzer";
+	//public static final String FEATURE_TYPE_AGGREGATION = "performance_test_analyzer";
+	public static final String FEATURE_TYPE_AGGREGATION = "performance_test_analysis";
 	public static final String FEATURE_TYPE_REMOTE_MONITORING = "performance_remote_monitoring";
 
 

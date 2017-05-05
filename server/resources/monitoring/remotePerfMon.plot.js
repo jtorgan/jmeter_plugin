@@ -363,7 +363,7 @@ function setUIState(state, id) {
 
 
 function sendState(buildTypeId, newState, graphID) {
-  BS.ajaxRequest("/app/performance_test_analyzer/**", {
+  BS.ajaxRequest("/app/performance_test_analysis/**", {
     method: "post",
     parameters: 'buildTypeId=' + buildTypeId + '&state=' + newState + '&graphId=' + graphID,
     onComplete: function(transport) {

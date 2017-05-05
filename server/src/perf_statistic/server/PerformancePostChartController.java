@@ -25,7 +25,7 @@ public class PerformancePostChartController extends BaseController {
 
 	public PerformancePostChartController(@NotNull final SBuildServer server, @NotNull final WebControllerManager manager) {
 		super(server);
-		manager.registerController("/app/performance_test_analyzer/**", this);
+		manager.registerController("/app/performance_test_analysis/**", this);
 	}
 
 	@Nullable

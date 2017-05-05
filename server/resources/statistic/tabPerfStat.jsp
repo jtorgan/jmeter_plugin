@@ -373,7 +373,7 @@
     $j("#deselectedMetrics").find("input[name=metric]:checked").each(function() {
       deselected = deselected + $j(this).val() + ",";
     });
-    BS.ajaxRequest("/app/performance_test_analyzer/**", {
+    BS.ajaxRequest("/app/performance_test_analysis/**", {
       method: "post",
       parameters: {'buildTypeId' : '${build.buildTypeExternalId}', 'reqtype' : 'save_deselected', 'deselected': deselected},
       onComplete: function(transport) {
