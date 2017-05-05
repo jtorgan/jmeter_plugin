@@ -31,7 +31,7 @@ public class FeaturePerformanceStatistic extends BuildFeature {
 	@NotNull
 	@Override
 	public String getDisplayName() {
-		return "Performance Metrics Calculation";
+		return "Performance Metrics Analysis";
 	}
 
 	@Nullable
