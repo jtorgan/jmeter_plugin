@@ -27,8 +27,9 @@ public class AggregationAgentAdapter extends AgentLifeCycleAdapter {
 			PerformanceLogger logger = new PerformanceLogger(build.getBuildLogger());
 			logger.activityStarted(PluginConstants.PERFORMANCE_TESTS_ACTIVITY_NAME);
 			for (AgentBuildFeature feature : features) {
-				AggregationProperties properties = new AggregationProperties(feature.getParameters());
 
+                AggregationProperties properties = new AggregationProperties(feature.getParameters());
+                
 				LogReader reader = new LogReader(logger, properties);
 				reader.workingDir = build.getWorkingDirectory().getAbsolutePath();
 
@@ -67,6 +68,7 @@ public class AggregationAgentAdapter extends AgentLifeCycleAdapter {
 						build.addSharedConfigParameter(PluginConstants.PARAMS_REF_METRIC_AVG, String.valueOf(properties.isCountAverageReference()));
 						build.addSharedConfigParameter(PluginConstants.PARAMS_REF_METRIC_MAX, String.valueOf(properties.isCountMaxReference()));
 						build.addSharedConfigParameter(PluginConstants.PARAMS_REF_METRIC_LINE90, String.valueOf(properties.isCount90LineReference()));
+						build.addSharedConfigParameter(PluginConstants.PARAMS_REF_METRIC_MEDIAN, String.valueOf(properties.isCountMedianReference()));
 						build.addSharedConfigParameter(PluginConstants.PARAMS_VARIATION_CRITICAL, String.valueOf(properties.getCriticalVariation()));
 						build.addSharedConfigParameter(PluginConstants.PARAMS_VARIATION_WARN, String.valueOf(properties.getCriticalVariation()));
 					}

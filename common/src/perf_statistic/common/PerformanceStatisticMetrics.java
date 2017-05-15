@@ -3,12 +3,18 @@ package perf_statistic.common;
 import jetbrains.buildServer.util.StringUtil;
 
 public enum PerformanceStatisticMetrics {
-	AVERAGE("Average", "Average time", "#162EAE", "#0095d9"),
-	MAX("Max", "Max time", "#95002B", "#e55751"),
-	MIN("Min", "Min time", "#6A0AAB", "#bb79f4"),
-	LINE90("90Line", "90% line", "#BFBC30", "#4dbf6a"),
-
-	RESPONSE_CODE("ResponseCode", "Response codes", null, null);
+	// NOTE: The positional order of these items is tied to the order
+    // of the `metrics` array in class AggregationProperties. 
+    //
+    // The order needs to match between the two or items may
+    // unexpectedly be hidden from the chart due to index
+    // mis-matches.
+    AVERAGE("Average", "Average time", "#162EAE", "#0095d9"),
+    MAX("Max", "Max time", "#95002B", "#e55751"),
+    MIN("Min", "Min time", "#6A0AAB", "#bb79f4"),
+    LINE90("90Line", "90% line", "#c6aa2d", "#c6592d"),
+    RESPONSE_CODE("ResponseCode", "Response codes", null, null),
+    MEDIAN("Median", "Median time", "#708090", "#1f2933");
 
 
 	private final String title;

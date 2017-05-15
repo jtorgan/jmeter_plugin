@@ -1,3 +1,7 @@
+NOTE: This is a fork of the original jmeter_plugin. The original can be found here:
+
+https://github.com/jtorgan/jmeter_plugin
+
 Performance tests analysis plugin for TeamCity
 ==============================================
 This is plugin for TeamCity 8.0 that helps to organize simplest performance testing in CI. 

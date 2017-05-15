@@ -2,7 +2,8 @@ package perf_statistic.common;
 
 public class PluginConstants {
 	private PluginConstants() {}
-	public static final String FEATURE_TYPE_AGGREGATION = "performance_test_analyzer";
+	//public static final String FEATURE_TYPE_AGGREGATION = "performance_test_analyzer";
+	public static final String FEATURE_TYPE_AGGREGATION = "performance_test_analysis";
 	public static final String FEATURE_TYPE_REMOTE_MONITORING = "performance_remote_monitoring";
 
 
@@ -12,6 +13,7 @@ public class PluginConstants {
 	public static final String PARAMS_METRIC_MIN = "perfTest.agg.min";
 	public static final String PARAMS_METRIC_AVG = "perfTest.agg.avg";
 	public static final String PARAMS_METRIC_LINE90 = "perfTest.agg.90line";
+	public static final String PARAMS_METRIC_MEDIAN = "perfTest.agg.median";
 	public static final String PARAMS_HTTP_RESPONSE_CODE = "perfTest.agg.respCode";
 	public static final String PARAMS_USED_TEST_FORMAT = "perfTest.agg.testFormat";
 	public static final String PARAMS_CALC_TOTAL = "perfTest.agg.total";
@@ -28,6 +30,7 @@ public class PluginConstants {
 	public static final String PARAMS_REF_METRIC_MAX = "perfTest.agg.ref.max";
 	public static final String PARAMS_REF_METRIC_AVG = "perfTest.agg.ref.avg";
 	public static final String PARAMS_REF_METRIC_LINE90 = "perfTest.agg.ref.90line";
+	public static final String PARAMS_REF_METRIC_MEDIAN = "perfTest.agg.ref.median";
 
 	public static final String PARAMS_REF_TYPE = "perfTest.ref.type";
 

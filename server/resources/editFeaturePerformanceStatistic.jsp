@@ -50,6 +50,11 @@
           </td>
         </tr>
         <tr>
+            <td colspan="2">
+              <props:checkboxProperty name="perfTest.agg.median"/><label for="perfTest.agg.median">Median</label>
+            </td>
+        </tr>
+        <tr>
           <td colspan="2">
             <props:checkboxProperty name="perfTest.agg.respCode"/><label for="perfTest.agg.respCode">response codes</label>
             <span class="smallNote">set to calculate distribution if log items contains response codes</span>
@@ -162,6 +167,7 @@
               <div style="margin-left: 10px">
                 <props:checkboxProperty name="perfTest.agg.ref.avg" style="margin-right: 5px"/><label for="perfTest.agg.ref.avg">Average</label> <br/>
                 <props:checkboxProperty name="perfTest.agg.ref.90line" style="margin-right: 5px"/><label for="perfTest.agg.ref.90line">90% line</label> <br/>
+                <props:checkboxProperty name="perfTest.agg.ref.median" style="margin-right: 5px"/><label for="perfTest.agg.ref.median">Median</label> <br/>
                 <props:checkboxProperty name="perfTest.agg.ref.max" style="margin-right: 5px"/><label for="perfTest.agg.ref.max">Max</label> <br/>
               </div>
             </div>

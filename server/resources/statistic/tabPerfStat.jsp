@@ -115,6 +115,11 @@
                    <c:if test="${deselectedSeries['90Line'] == 'true'}">checked</c:if>
                 > 90% line</td>
       </tr>
+      <tr>
+        <td colspan="2"><input type="checkbox" name="metric" value="Median"
+                   <c:if test="${deselectedSeries['Median'] == 'true'}">checked</c:if>
+                > Median</td>
+      </tr>
     </table>
     <div style="border-top: 1px dotted #CCCCCC">
       <input type="button" value="Save" onclick="saveDeselectedMetrics();" class="btn btn_primary button">
@@ -368,7 +373,7 @@
     $j("#deselectedMetrics").find("input[name=metric]:checked").each(function() {
       deselected = deselected + $j(this).val() + ",";
     });
-    BS.ajaxRequest("/app/performance_test_analyzer/**", {
+    BS.ajaxRequest("/app/performance_test_analysis/**", {
       method: "post",
       parameters: {'buildTypeId' : '${build.buildTypeExternalId}', 'reqtype' : 'save_deselected', 'deselected': deselected},
       onComplete: function(transport) {

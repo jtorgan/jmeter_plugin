@@ -29,8 +29,9 @@ public class FilevaluesChecker {
 	}
 
 	public void checkValues(@NotNull PerformanceLogger logger, TestsReport report) {
-//		System.out.println("------------CHECK REFERENCE------------");
-		for (String fullTestName : referenceData.keySet()) {
+		//System.out.println("------------CHECK REFERENCE------------");
+        
+        for (String fullTestName : referenceData.keySet()) {
 
 			String[] testNameParts = fullTestName.split(":");
 			String testGroupName = testNameParts.length >= 2 ? testNameParts[0].trim() : StringUtils.EMPTY;
@@ -65,11 +66,11 @@ public class FilevaluesChecker {
 				TestAggregation test = testGroup.getTest(testName);
 				if (test == null) {
 					System.out.println("Not found the test with name: " + fullTestName);
-					continue;
+                    continue;
 				}
 				for (PerformanceStatisticMetrics metric : referenceTestValues.values.keySet()) {
-
-					ReferenceChecker testRefValues = referenceTestValues.values.get(metric);
+                    
+                    ReferenceChecker testRefValues = referenceTestValues.values.get(metric);
 					if (testRefValues == null) continue;
 					if (!test.isAggregationCalculated()) continue;
 
@@ -114,11 +115,13 @@ public class FilevaluesChecker {
 
 		@Override
 		protected void processLine(String line) throws FileFormatException {
+
 			String[] referenceItem = PerformanceMessageParser.DELIMITER_PATTERN.split(line);
 			if (referenceItem.length < 3) {
-				throw new FileFormatException("Wrong reference data format!\n format: <testName>\t<metric>\t<value>. find: " + Arrays.toString(referenceItem) + "\n Available metrics: average, min, max, line90");
+				throw new FileFormatException("Wrong reference data format!\n format: <testName>\t<metric>\t<value>. find: " + Arrays.toString(referenceItem) + "\n Available metrics: average, min, max, line90, median");
 			}
 			String testID = StringUtils.checkTestName(referenceItem[0]);
+            
 			PerformanceStatisticMetrics metric = PerformanceStatisticMetrics.valueOf(referenceItem[1].toUpperCase());
 			Long referenceValue = Long.parseLong(referenceItem[2]);
 			double criticalVariation = referenceItem.length > 3 && referenceItem[3] != null ? Double.parseDouble(referenceItem[3]) : baseCriticalVariation;

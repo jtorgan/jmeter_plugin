@@ -2,14 +2,14 @@
 <teamcity-plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xsi:noNamespaceSchemaLocation="urn:shemas-jetbrains-com:teamcity-plugin-v1-xml">
     <info>
-        <name>jmeter</name>
-        <display-name>JMeter</display-name>
+        <name>jmeter_alt</name>
+        <display-name>JMeterAlt</display-name>
         <version>@version@</version>
-        <description>Performance test analysis(JMeter and other tests)</description>
-        <!--<vendor>-->
-        <!--<name>@Plugin_Vendor@</name>-->
-        <!--<url>@Plugin_Vendor_Url@</url>-->
-        <!--</vendor>-->
+        <description>Performance test analysis (JMeter and other tests)</description>
+        <vendor>
+          <name>Jason Scott</name>
+          <url>https://github.com/jsco2t/jmeter_plugin</url>
+        </vendor>
     </info>
     <deployment use-separate-classloader="true"/>
 </teamcity-plugin>

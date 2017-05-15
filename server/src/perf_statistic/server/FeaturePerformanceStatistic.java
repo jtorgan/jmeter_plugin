@@ -31,7 +31,7 @@ public class FeaturePerformanceStatistic extends BuildFeature {
 	@NotNull
 	@Override
 	public String getDisplayName() {
-		return "Performance Metrics Calculation";
+		return "Performance Metrics Analysis";
 	}
 
 	@Nullable
@@ -53,7 +53,9 @@ public class FeaturePerformanceStatistic extends BuildFeature {
 		if ("true".equalsIgnoreCase(params.get(PluginConstants.PARAMS_METRIC_AVG)))
 			result.append("avg ");
 		if ("true".equalsIgnoreCase(params.get(PluginConstants.PARAMS_METRIC_LINE90)))
-			result.append("line90");
+			result.append("line90 ");
+        if ("true".equalsIgnoreCase(params.get(PluginConstants.PARAMS_METRIC_MEDIAN)))
+			result.append("median");
 		result.append(" ]");
 
 		if ("true".equalsIgnoreCase(params.get(PluginConstants.PARAMS_HTTP_RESPONSE_CODE)))
@@ -87,7 +89,8 @@ public class FeaturePerformanceStatistic extends BuildFeature {
 					}
 				}
 				if (!Boolean.parseBoolean(params.get(PluginConstants.PARAMS_METRIC_AVG)) && !Boolean.parseBoolean(params.get(PluginConstants.PARAMS_METRIC_MAX))
-						&& !Boolean.parseBoolean(params.get(PluginConstants.PARAMS_METRIC_MIN)) && !Boolean.parseBoolean(params.get(PluginConstants.PARAMS_METRIC_LINE90))) {
+						&& !Boolean.parseBoolean(params.get(PluginConstants.PARAMS_METRIC_MIN)) && !Boolean.parseBoolean(params.get(PluginConstants.PARAMS_METRIC_LINE90)) 
+                        && !Boolean.parseBoolean(params.get(PluginConstants.PARAMS_METRIC_MEDIAN))) {
 					invalidProperties.add(new InvalidProperty("perfTest.metrics", "Please, choose at least one metric!"));
 				}
 				return invalidProperties;

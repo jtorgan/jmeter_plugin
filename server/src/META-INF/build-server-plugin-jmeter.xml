@@ -6,7 +6,7 @@
         default-autowire="constructor"
         >
 
-    <!--AGGREGATION & CHECK REFERENCE: calculation of performance metrics - min, max, 90% line, avg -->
+    <!--AGGREGATION & CHECK REFERENCE: calculation of performance metrics - min, max, 90% line, median, avg -->
     <bean id="performanceStatisticFeature" class="perf_statistic.server.FeaturePerformanceStatistic"/>
 
     <bean id="performanceTestFailProblemType" class="perf_statistic.server.ProblemTypeProviderPerformanceTestFailed"/>

@@ -76,6 +76,10 @@ public abstract class BaseAggregation {
 			case LINE90: {
 				int ind90 = (int) Math.round(responseTimesToAggregate.size() * 0.9d);
 				return responseTimesToAggregate.get(ind90 - 1);
+            }
+			case MEDIAN: {
+				int ind50 = (int) Math.round(responseTimesToAggregate.size() * 0.5d);
+				return responseTimesToAggregate.get(ind50 - 1);
 			}
 			default:
 				return null;
